@@ -10,12 +10,13 @@
 "implications": [
     {"from": "ef", "to": "efx", "under": {}},
     {"from": "efx", "to": "ef1", "under": {}},
-    {"from": "ef1", "to": "prop1", "under": {"valuation": "subadd"},
+    {"from": "ef1", "to": "prop1", "under": {"valuation": "add"},
         "proofText": "Adding the most valuable outside item makes the agent's bundle's value ≥ every other bundle's value, and so its value is also more than the average."},
 
     {"from": "ef", "to": "prop", "under": {"valuation": "subadd"}},
     {"from": "prop", "to": "mms", "under": {"valuation": "superadd"}},
     {"from": "mms", "to": "prop1", "under": {"valuation": "add"},
-        "proofLink": "https://doi.org/10.24963/ijcai.2023/284"}
+        "proofLink": "https://doi.org/10.24963/ijcai.2023/284"},
+    {"from": "prop", "to": "prop1", "under": {}}
 ]
 }
