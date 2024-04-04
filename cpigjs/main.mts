@@ -6,18 +6,22 @@ interface ConstrEdge extends Edge<string> {
 }
 
 interface CpigInput {
-    predicates: Info[];
-    implications: ConstrEdge[];
+    predicates?: Info[];
+    implications?: ConstrEdge[];
 }
 
-export function filterByConstraint(input: CpigInput, constraint: unknown, sf: SetFamily): CpigInput {
-    const predicates = input.predicates, imps = input.implications;
-    const newImps = [];
+export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): CpigInput {
+    const predicates = [], imps = [];
     const newConstr = sf.validateInput(constraint);
-    for(const imp of imps) {
-        if (sf.contains(imp.under, newConstr)) {
-            newImps.push(imp);
+    for(const input of inputs) {
+        if(input.predicates) {
+            predicates.push(...input.predicates);
+        }
+        for(const imp of input.implications || []) {
+            if (sf.contains(imp.under, newConstr)) {
+                imps.push(imp);
+            }
         }
     }
-    return {'predicates': predicates, 'implications': newImps};
+    return {'predicates': predicates, 'implications': imps};
 }
