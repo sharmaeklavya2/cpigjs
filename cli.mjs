@@ -27,10 +27,9 @@ async function main() {
     const sf = await sfPromise;
     const inputs = await inputsPromise;
 
-    const filteredInput = filterByConstraint(inputs, constraint, sf);
+    const procInput = filterByConstraint(inputs, constraint, sf);
     // console.log('implications:', filteredInput.implications);
-    const graph = new Graph(filteredInput.implications);
-    const newEdges = graph.getTransitiveClosure();
+    const newEdges = procInput.impG.getTransitiveClosure();
     for(const edge of newEdges) {
         console.log(edge.from, '==>', edge.to);
     }

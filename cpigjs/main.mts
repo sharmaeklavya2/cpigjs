@@ -10,18 +10,33 @@ interface CpigInput {
     implications?: ConstrEdge[];
 }
 
-export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): CpigInput {
-    const predicates = [], imps = [];
+interface ProcessedCpigInput {
+    preds: Map<string, Info>;
+    impG: Graph<string>;
+}
+
+export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
     const newConstr = sf.validateInput(constraint);
+    const imps = [], preds = new Map<string, Info>();
     for(const input of inputs) {
-        if(input.predicates) {
-            predicates.push(...input.predicates);
+        for(const pred of input.predicates || []) {
+            if(preds.has(pred.name)) {
+                throw new Error(`predicate ${pred.name} already exists.`);
+            }
+            else {
+                preds.set(pred.name, pred);
+            }
         }
         for(const imp of input.implications || []) {
+            for(const predName of [imp.from, imp.to]) {
+                if (!preds.has(predName)) {
+                    throw new Error(`unrecognized predicate ${predName} in implication ${imp}`);
+                }
+            }
             if (sf.contains(imp.under, newConstr)) {
                 imps.push(imp);
             }
         }
     }
-    return {'predicates': predicates, 'implications': imps};
+    return {preds: preds, impG: new Graph<string>(imps)};
 }
