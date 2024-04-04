@@ -1,0 +1,20 @@
+*.pyc
+__pycache__
+.mypy_cache
+/node_modules
+cpigjs/*.js
+cpigjs/*.js.map
+cpigjs/*.mjs
+cpigjs/*.mjs.map
+
+/secret
+/output
+/deploy
+.env
+
+# Trash
+*~
+*.sw[po]
+*.db
+Desktop.ini
+.DS_Store

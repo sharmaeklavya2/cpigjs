@@ -1,0 +1,21 @@
+{
+"predicates": [
+    {"name": "ef", "label": "envy free"},
+    {"name": "prop", "label": "proportional"},
+    {"name": "efx", "label": "EFx"},
+    {"name": "ef1", "label": "EF1"},
+    {"name": "mms", "label": "maximin share"},
+    {"name": "prop1"}
+],
+"implications": [
+    {"from": "ef", "to": "efx", "under": {}},
+    {"from": "efx", "to": "ef1", "under": {}},
+    {"from": "ef1", "to": "prop1", "under": {"valuation": "subadd"},
+        "proofText": "Adding the most valuable outside item makes the agent's bundle's value ≥ every other bundle's value, and so its value is also more than the average."},
+
+    {"from": "ef", "to": "prop", "under": {"valuation": "subadd"}},
+    {"from": "prop", "to": "mms", "under": {"valuation": "superadd"}},
+    {"from": "mms", "to": "prop1", "under": {"valuation": "add"},
+        "proofLink": "https://doi.org/10.24963/ijcai.2023/284"}
+]
+}
