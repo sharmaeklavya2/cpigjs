@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.mjs";
 import { filterByConstraint } from "./cpigjs/main.mjs";
 import { Graph } from "./cpigjs/graph.mjs";
@@ -16,6 +17,7 @@ async function main() {
             describe: "constraint as a JSON"})
         .option('from', {type: 'string', describe: "source predicate"})
         .option('to', {type: 'string', describe: "target predicate"})
+        .option('output', {alias: 'o', type: 'string'})
         .implies('from', 'to')
         .implies('to', 'from')
         .help()
@@ -48,15 +50,53 @@ async function main() {
     }
     else {
         const {scc, dag} = procInput.impG.trCompression();
-        for(const edge of dag.edges) {
-            const uS = scc.get(edge.from), vS = scc.get(edge.to);
-            console.log(componentStr(uS), '==>', componentStr(vS));
+        if(args.output) {
+            const ext = getExt(args.output);
+            let s;
+            if(ext === 'dot' || ext === 'svg') {
+                const redDag = dag.trRed();
+                s = redDag.toDot(v => componentStr(scc.get(v), false));
+                if(ext === 'dot') {
+                    await writeFile(args.output, s);
+                }
+                else {
+                    await writeFile(args.output + '.dot', s);
+                    await child_process.spawn('dot', ['-Tsvg', args.output + '.dot', '-o', args.output]);
+                }
+            }
+            else if(ext === 'txt') {
+                s = sccDagToStr(scc, dag);
+                await writeFile(args.output, s);
+            }
+            else {
+                throw new Error('unknown output file type ' + ext);
+            }
+        }
+        else {
+            const s = sccDagToStr(scc, dag);
+            console.log(s);
         }
     }
 }
 
-function componentStr(S) {
-    return S.length === 1 ? S[0] : '( ' + S.join(' = ') + ' )';
+function componentStr(S, parens) {
+    const begDelim = parens ? '( ' : '';
+    const endDelim = parens ? ' )' : '';
+    return S.length === 1 ? S[0] : begDelim + S.join(' = ') + endDelim;
+}
+
+function getExt(fname) {
+    // from https://stackoverflow.com/a/12900504
+    return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
+}
+
+function sccDagToStr(scc, dag) {
+    const lines = [];
+    for(const edge of dag.edges) {
+        const uS = scc.get(edge.from), vS = scc.get(edge.to);
+        lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
+    }
+    return lines.join('\n');
 }
 
 await main();
