@@ -182,4 +182,31 @@ export class Graph<T, ET extends Edge<T>> {
 
         return {scc: sccMap, dag: Graph.fromVE(vertices, newEdges)};
     }
+
+    trRed(): Graph<T, ET> {
+        // compute the transitive reduction of `this` assuming `this` is a toposorted DAG.
+        const vertices = Array.from(this.adj.keys());
+        const n = vertices.length;
+        const redEdges = [];
+        for(let i=0; i<n; ++i) {
+            const u = vertices[i];
+            const dist = new Map<T, number>();
+            for(let j=0; j<n; ++j) {
+                dist.set(vertices[j], -Infinity);
+            }
+            dist.set(u, 0);
+            for(let j=i+1; j<n; ++j) {
+                const v = vertices[j];
+                for(const e of this.radj.get(v)!) {
+                    dist.set(v, Math.max(dist.get(v)!, dist.get(e.from)! + 1));
+                }
+            }
+            for(const e of this.adj.get(u)!) {
+                if(dist.get(e.to) === 1) {
+                    redEdges.push(e);
+                }
+            }
+        }
+        return Graph.fromVE(vertices, redEdges);
+    }
 }
