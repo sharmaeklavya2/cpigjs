@@ -209,4 +209,30 @@ export class Graph<T, ET extends Edge<T>> {
         }
         return Graph.fromVE(vertices, redEdges);
     }
+
+    toDot(vertexLabeler?: ((v: T) => string), edgeLabeler?: (e: ET) => string): string {
+        const lines = ['digraph G {', 'rankdir=LR;'];
+        for(const u of this.adj.keys()) {
+            if(vertexLabeler === undefined) {
+                lines.push(`"${u}";`);
+            }
+            else {
+                const uLabel = vertexLabeler(u);
+                lines.push(`"${u}" [label="${uLabel}"];`);
+            }
+        }
+        for(const u of this.adj.keys()) {
+            for(const e of this.adj.get(u)!) {
+                if(edgeLabeler === undefined) {
+                    lines.push(`"${u}" -> "${e.to}";`);
+                }
+                else {
+                    const eLabel = edgeLabeler(e);
+                    lines.push(`"${u}" -> "${e.to}" [label="${eLabel}"];`);
+                }
+            }
+        }
+        lines.push('}');
+        return lines.join('\n');
+    }
 }
