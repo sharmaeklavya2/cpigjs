@@ -96,7 +96,8 @@ export class Graph<T, ET extends Edge<T>> {
         return edges;
     }
 
-    getTransitiveCompression(S: Iterable<T> | undefined): {scc: Map<T, T[]>, dag: Graph<T, Edge<T>>} {
+    getTransitiveCompression(S: Iterable<T> | undefined, toposort: boolean = true):
+            {scc: Map<T, T[]>, dag: Graph<T, Edge<T>>} {
         // equivalent to doing the following sequence of operations:
         // 1.  compute the transitive closure
         // 2.  get the subgraph induced on S (the entire graph if S === undefined)
@@ -128,7 +129,7 @@ export class Graph<T, ET extends Edge<T>> {
             }
         }
 
-        const sccMap = new Map<T, T[]>();
+        let sccMap = new Map<T, T[]>();
         for(const [follower, leader] of sccLeader.entries()) {
             const fList = sccMap.get(leader);
             if(fList === undefined) {
@@ -140,14 +141,45 @@ export class Graph<T, ET extends Edge<T>> {
         }
 
         const newEdges = [];
+        const newAdj = new Map<T, T[]>();
         for(const u of sccMap.keys()) {
+            const uAdj: T[] = [];
+            newAdj.set(u, uAdj);
             const rFromU = this.getOutTree(u);
             for(const v of sccMap.keys()) {
                 if(rFromU.has(v)) {
                     newEdges.push({'from': u, 'to': v});
+                    uAdj.push(v);
                 }
             }
         }
-        return {scc: sccMap, dag: Graph.fromVE(sccMap.keys(), newEdges)};
+
+        const vertices = Array.from(newAdj.keys());
+        if(toposort) {
+            const endTime = new Map<T, number>();
+            for(const u of vertices) {
+                endTime.set(u, -1);
+            }
+            let time = 0;
+            function visit(u: T) {
+                if(endTime.get(u)! < 0) {
+                    for(const v of newAdj.get(u)!) {
+                        visit(v);
+                    }
+                    endTime.set(u, time++);
+                }
+            }
+            for(const u of vertices) {
+                visit(u);
+            }
+            vertices.sort((u: T, v: T) => endTime.get(v)! - endTime.get(u)!);
+            const newSccMap = new Map();
+            for(const u of vertices) {
+                newSccMap.set(u, sccMap.get(u));
+            }
+            sccMap = newSccMap;
+        }
+
+        return {scc: sccMap, dag: Graph.fromVE(vertices, newEdges)};
     }
 }
