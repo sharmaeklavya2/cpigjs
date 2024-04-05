@@ -93,4 +93,59 @@ export class Graph<T, ET extends Edge<T>> {
         }
         return edges;
     }
+
+    getTransitiveCompression(S: Iterable<T> | undefined): {scc: Map<T, T[]>, dag: Graph<T, Edge<T>>} {
+        // equivalent to doing the following sequence of operations:
+        // 1.  compute the transitive closure
+        // 2.  get the subgraph induced on S (the entire graph if S === undefined)
+        // 3.  do a strongly-connected-component compression
+        const v2i = new Map<T, number>();
+        const sccLeader = new Map<T, T>();
+        if(S === undefined) {
+            S = this.adj.keys();
+        }
+        let i=0;
+        for(const u of S) {
+            v2i.set(u, i);
+            sccLeader.set(u, u);
+            i++;
+        }
+
+        // The following block computes sccLeader correctly because when the first member u
+        // of an SCC is considered, each member v of the SCC gets u as their leader.
+        for(const u of v2i.keys()) {
+            if(sccLeader.get(u) === u) {
+                const rFromU = this.getOutTree(u);
+                for(const v of rFromU.keys()) {
+                    const ui = v2i.get(u)!, vi = v2i.get(v)!;
+                    const rFromV = this.getOutTree(v);
+                    if(rFromV.has(u)) {
+                        sccLeader.set(v, u);
+                    }
+                }
+            }
+        }
+
+        const sccMap = new Map<T, T[]>();
+        for(const [follower, leader] of sccLeader.entries()) {
+            const fList = sccMap.get(leader);
+            if(fList === undefined) {
+                sccMap.set(leader, [follower]);
+            }
+            else {
+                fList.push(follower);
+            }
+        }
+
+        const newEdges = [];
+        for(const u of sccMap.keys()) {
+            const rFromU = this.getOutTree(u);
+            for(const v of sccMap.keys()) {
+                if(rFromU.has(v)) {
+                    newEdges.push({'from': u, 'to': v});
+                }
+            }
+        }
+        return {scc: sccMap, dag: new Graph(sccMap.keys(), newEdges)};
+    }
 }

@@ -47,11 +47,18 @@ async function main() {
         }
     }
     else {
-        const newEdges = procInput.impG.getTransitiveClosure();
-        for(const edge of newEdges) {
-            console.log(edge.from, '==>', edge.to);
+        const {scc, dag} = procInput.impG.getTransitiveCompression();
+        console.log(scc);
+        console.log(dag.edges);
+        for(const edge of dag.edges) {
+            const uS = scc.get(edge.from), vS = scc.get(edge.to);
+            console.log(componentStr(uS), '==>', componentStr(vS));
         }
     }
+}
+
+function componentStr(S) {
+    return S.length === 1 ? S[0] : '( ' + S.join(' = ') + ' )';
 }
 
 await main();
