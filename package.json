@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "description": "Conditional Predicate Implication Graph",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx tsc && npx mocha test.mjs"
   },
   "author": "Eklavya Sharma",
   "license": "MIT",
   "dependencies": {
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.4.0"
   }
 }
