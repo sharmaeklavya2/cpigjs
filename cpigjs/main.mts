@@ -38,5 +38,5 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
             }
         }
     }
-    return {preds: preds, impG: new Graph(preds.keys(), imps)};
+    return {preds: preds, impG: Graph.fromVE(preds.keys(), imps)};
 }

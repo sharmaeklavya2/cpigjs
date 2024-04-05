@@ -7,7 +7,7 @@ function pairsToEdges(pairs) {
 
 describe('Graph.getTransitiveCompression', () => {
     it('test1', () => {
-        const graph = new Graph([0, 1, 2, 3, 4, 5], pairsToEdges([
+        const graph = Graph.fromVE([0, 1, 2, 3, 4, 5], pairsToEdges([
             [0, 1], [1, 0], [1, 3],
             [2, 3], [3, 2], [2, 4],
             [4, 5], [5, 4]]));

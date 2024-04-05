@@ -6,28 +6,29 @@ export interface Edge<T> {
 }
 
 export class Graph<T, ET extends Edge<T>> {
-    adj: Map<T, ET[]>;
-    radj: Map<T, ET[]>;
     outTreeCache: Map<T, Map<T, ET>>;
 
-    constructor(vertices: Iterable<T>, public edges: ET[]) {
-        this.adj = new Map();
-        this.radj = new Map();
+    constructor(public adj: Map<T, ET[]>, public radj: Map<T, ET[]>, public edges: ET[]) {
         this.outTreeCache = new Map();
+    }
+
+    static fromVE<T, ET extends Edge<T>>(vertices: Iterable<T>, edges: ET[]): Graph<T, ET> {
+        const adj = new Map<T, ET[]>();
+        const radj = new Map<T, ET[]>();
         for(const v of vertices) {
-            this.adj.set(v, []);
-            this.radj.set(v, []);
+            adj.set(v, []);
+            radj.set(v, []);
         }
         for(const edge of edges) {
             const u = edge.from, v = edge.to;
-            const uEdges = this.adj.get(u);
+            const uEdges = adj.get(u);
             if(typeof uEdges === 'undefined') {
                 throw new Error(`unknown vertex ${u} in edge ${edge}`);
             }
             else {
                 uEdges.push(edge);
             }
-            const vEdges = this.radj.get(v);
+            const vEdges = radj.get(v);
             if(typeof vEdges === 'undefined') {
                 throw new Error(`unknown vertex ${v} in edge ${edge}`);
             }
@@ -35,6 +36,7 @@ export class Graph<T, ET extends Edge<T>> {
                 vEdges.push(edge);
             }
         }
+        return new Graph(adj, radj, edges);
     }
 
     getOutTree(root: T): Map<T, ET> {
@@ -146,6 +148,6 @@ export class Graph<T, ET extends Edge<T>> {
                 }
             }
         }
-        return {scc: sccMap, dag: new Graph(sccMap.keys(), newEdges)};
+        return {scc: sccMap, dag: Graph.fromVE(sccMap.keys(), newEdges)};
     }
 }
