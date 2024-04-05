@@ -83,7 +83,7 @@ export class Graph<T, ET extends Edge<T>> {
         return edges.reverse();
     }
 
-    getTransitiveClosure(): Edge<T>[] {
+    trClosure(): Edge<T>[] {
         const edges: Edge<T>[] = [];
         for(const u of this.adj.keys()) {
             const uMap = this.getOutTree(u);
@@ -96,7 +96,7 @@ export class Graph<T, ET extends Edge<T>> {
         return edges;
     }
 
-    getTransitiveCompression(S: Iterable<T> | undefined, toposort: boolean = true):
+    trCompression(S: Iterable<T> | undefined, toposort: boolean = true):
             {scc: Map<T, T[]>, dag: Graph<T, Edge<T>>} {
         // equivalent to doing the following sequence of operations:
         // 1.  compute the transitive closure

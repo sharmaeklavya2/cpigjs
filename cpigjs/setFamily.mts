@@ -82,7 +82,7 @@ export class DagSetFamily extends SetFamily {
         this.nameToValue = new Map(values.map((info: Info) => [info.name, info]));
         const edges = containments.map(pairToEdge);
         const graph = Graph.fromVE(this.nameToValue.keys(), edges);
-        const trEdges = graph.getTransitiveClosure();
+        const trEdges = graph.trClosure();
         this.containments = new Set(trEdges.map((e: Edge<string>) => e.from + ',' + e.to));
     }
 

@@ -47,7 +47,7 @@ async function main() {
         }
     }
     else {
-        const {scc, dag} = procInput.impG.getTransitiveCompression();
+        const {scc, dag} = procInput.impG.trCompression();
         for(const edge of dag.edges) {
             const uS = scc.get(edge.from), vS = scc.get(edge.to);
             console.log(componentStr(uS), '==>', componentStr(vS));
