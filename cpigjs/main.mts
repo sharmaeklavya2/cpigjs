@@ -1,18 +1,18 @@
 import { Edge, Graph } from "./graph.mjs";
 import { Info, SetFamily } from "./setFamily.mjs";
 
-interface ConstrEdge extends Edge<string> {
+interface Implication extends Edge<string> {
     under: any;
 }
 
 interface CpigInput {
     predicates?: Info[];
-    implications?: ConstrEdge[];
+    implications?: Implication[];
 }
 
 interface ProcessedCpigInput {
     preds: Map<string, Info>;
-    impG: Graph<string>;
+    impG: Graph<string, Implication>;
 }
 
 export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
@@ -38,5 +38,5 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
             }
         }
     }
-    return {preds: preds, impG: new Graph<string>(imps)};
+    return {preds: preds, impG: new Graph(preds.keys(), imps)};
 }
