@@ -14,6 +14,10 @@ async function main() {
             describe: "path to JSON file containing predicates and implications"})
         .option('constraint', {alias: 'c', type: 'string', demandOption: true,
             describe: "constraint as a JSON"})
+        .option('from', {type: 'string', describe: "source predicate"})
+        .option('to', {type: 'string', describe: "target predicate"})
+        .implies('from', 'to')
+        .implies('to', 'from')
         .help()
         .parse();
 
@@ -29,9 +33,24 @@ async function main() {
 
     const procInput = filterByConstraint(inputs, constraint, sf);
     // console.log('implications:', filteredInput.implications);
-    const newEdges = procInput.impG.getTransitiveClosure();
-    for(const edge of newEdges) {
-        console.log(edge.from, '==>', edge.to);
+
+    if(args.from) {
+        const path = procInput.impG.getPath(args.from, args.to);
+        if(path === undefined) {
+            console.log(`no path from ${args.from} to ${args.to}`);
+        }
+        else {
+            console.log(`path of length ${path.length}`);
+            for(const [i, e] of path.entries()) {
+                console.log((i+1) + ':', e);
+            }
+        }
+    }
+    else {
+        const newEdges = procInput.impG.getTransitiveClosure();
+        for(const edge of newEdges) {
+            console.log(edge.from, '==>', edge.to);
+        }
     }
 }
 

@@ -8,10 +8,12 @@ export interface Edge<T> {
 export class Graph<T, ET extends Edge<T>> {
     adj: Map<T, ET[]>;
     radj: Map<T, ET[]>;
+    outTreeCache: Map<T, Map<T, ET>>;
 
     constructor(vertices: Iterable<T>, public edges: ET[]) {
         this.adj = new Map();
         this.radj = new Map();
+        this.outTreeCache = new Map();
         for(const v of vertices) {
             this.adj.set(v, []);
             this.radj.set(v, []);
@@ -37,7 +39,11 @@ export class Graph<T, ET extends Edge<T>> {
 
     getOutTree(root: T): Map<T, ET> {
         // Returns all (u, e) pairs, where u is reachable from root, and e is an edge incident to u.
-        const pred = new Map<T, ET>();
+        let pred = this.outTreeCache.get(root);
+        if(pred !== undefined) {
+            return pred;
+        }
+        pred = new Map<T, ET>();
         const queue = new CircularQueue<T>(this.adj.size);
         queue.push(root);
         while(queue.size > 0) {
@@ -53,7 +59,26 @@ export class Graph<T, ET extends Edge<T>> {
                 }
             }
         }
+        this.outTreeCache.set(root, pred);
         return pred;
+    }
+
+    getPath(u: T, v: T): ET[] | undefined {
+        if (u === v) {
+            return [];
+        }
+        const outTree = this.getOutTree(u);
+        if(!outTree.has(v)) {
+            return undefined;
+        }
+        let w = v;
+        const edges: ET[] = [];
+        while(w !== u) {
+            const e = outTree.get(w)!;
+            edges.push(e);
+            w = e.from;
+        }
+        return edges.reverse();
     }
 
     getTransitiveClosure(): Edge<T>[] {
