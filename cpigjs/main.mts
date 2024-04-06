@@ -15,6 +15,11 @@ interface ProcessedCpigInput {
     impG: Graph<string, Implication>;
 }
 
+interface Ostream {
+    log: (...args: any[]) => undefined;
+    error: (...args: any[]) => undefined;
+}
+
 export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
     const newConstr = sf.validateInput(constraint);
     const imps = [], preds = new Map<string, Info>();
@@ -39,4 +44,17 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
         }
     }
     return {preds: preds, impG: Graph.fromVE(preds.keys(), imps)};
+}
+
+export function outputPath(impG: Graph<string, Implication>, u: string, v: string, stdout: Ostream): undefined {
+    const path = impG.getPath(u, v);
+    if(path === undefined) {
+        stdout.log(`no path from ${u} to ${v}`);
+    }
+    else {
+        stdout.log(`path of length ${path.length} from ${u} to ${v}`);
+        for(const [i, e] of path.entries()) {
+            stdout.log((i+1) + ':', e);
+        }
+    }
 }

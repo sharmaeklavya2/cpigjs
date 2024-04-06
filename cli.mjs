@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.mjs";
-import { filterByConstraint } from "./cpigjs/main.mjs";
+import { filterByConstraint, outputPath } from "./cpigjs/main.mjs";
 import { Graph } from "./cpigjs/graph.mjs";
 import yargs from 'yargs';
 
@@ -15,11 +15,9 @@ async function main() {
             describe: "path to JSON file containing predicates and implications"})
         .option('constraint', {alias: 'c', type: 'string', demandOption: true,
             describe: "constraint as a JSON"})
-        .option('from', {type: 'string', describe: "source predicate"})
-        .option('to', {type: 'string', describe: "target predicate"})
+        .option('pred', {type: 'string', array: true,
+            describe: "predicates to consider (default: all)"})
         .option('output', {alias: 'o', type: 'string'})
-        .implies('from', 'to')
-        .implies('to', 'from')
         .help()
         .parse();
 
@@ -34,48 +32,39 @@ async function main() {
     const inputs = await inputsPromise;
 
     const procInput = filterByConstraint(inputs, constraint, sf);
-    // console.log('implications:', filteredInput.implications);
 
-    if(args.from) {
-        const path = procInput.impG.getPath(args.from, args.to);
-        if(path === undefined) {
-            console.log(`no path from ${args.from} to ${args.to}`);
-        }
-        else {
-            console.log(`path of length ${path.length}`);
-            for(const [i, e] of path.entries()) {
-                console.log((i+1) + ':', e);
-            }
-        }
+    if(args.pred.length === 2) {
+        const [u, v] = args.pred;
+        outputPath(procInput.impG, u, v, console);
+        outputPath(procInput.impG, v, u, console);
     }
-    else {
-        const {scc, dag} = procInput.impG.trCompression();
-        if(args.output) {
-            const ext = getExt(args.output);
-            let s;
-            if(ext === 'dot' || ext === 'svg') {
-                const redDag = dag.trRed();
-                s = redDag.toDot(v => componentStr(scc.get(v), false));
-                if(ext === 'dot') {
-                    await writeFile(args.output, s);
-                }
-                else {
-                    await writeFile(args.output + '.dot', s);
-                    await child_process.spawn('dot', ['-Tsvg', args.output + '.dot', '-o', args.output]);
-                }
-            }
-            else if(ext === 'txt') {
-                s = sccDagToStr(scc, dag);
+    const chosenPreds = args.pred.length > 0 ? args.pred : undefined;
+    const {scc, dag} = procInput.impG.trCompression(chosenPreds);
+    if(args.output) {
+        const ext = getExt(args.output);
+        let s;
+        if(ext === 'dot' || ext === 'svg') {
+            const redDag = dag.trRed();
+            s = redDag.toDot(v => componentStr(scc.get(v), false));
+            if(ext === 'dot') {
                 await writeFile(args.output, s);
             }
             else {
-                throw new Error('unknown output file type ' + ext);
+                await writeFile(args.output + '.dot', s);
+                child_process.spawn('dot', ['-Tsvg', args.output + '.dot', '-o', args.output]);
             }
         }
-        else {
-            const s = sccDagToStr(scc, dag);
-            console.log(s);
+        else if(ext === 'txt') {
+            s = sccDagToStr(scc, dag);
+            await writeFile(args.output, s);
         }
+        else {
+            throw new Error('unknown output file type ' + ext);
+        }
+    }
+    else {
+        const s = sccDagToStr(scc, dag);
+        console.log(s);
     }
 }
 
