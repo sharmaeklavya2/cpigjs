@@ -7,7 +7,8 @@ declare class Param {
     constructor(name: string, widget: any, label?: string, description?: string);
 }
 declare class ParamGroup {
-    constructor(name: string, paramList: Param[], converter?: any, description?: string);
+    constructor(name: string, paramList: Param[], converter?: any, label?: string,
+        description?: string, compact?: boolean);
 }
 declare var CheckBoxWidget: any;
 declare var SelectWidget: any;
@@ -17,10 +18,15 @@ declare function createForm(wrapperId: string, paramGroup: ParamGroup,
 
 export async function setup(sfUrl: string, inputUrls: string[]) {
     const {sf, input} = await fetchInput(sfUrl, inputUrls);
-    const params: Param[] = [];
-    addSfParams(params, sf);
-    addPredParams(params, input.predicates!);
-    const paramGroup = new ParamGroup('myForm', params);
+
+    const sfParams: Param[] = [];
+    addSfParams(sfParams, sf);
+    const sfParamGroup = new ParamGroup('sf', sfParams, null, sf.info.label);
+    const predParams: Param[] = [];
+    addPredParams(predParams, input.predicates!);
+    const predParamGroup = new ParamGroup('pred', predParams, boolMapToList, 'predicates', undefined, true);
+
+    const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup]);
     createForm('myApp', paramGroup, function (f2fInput, stdout) {
         cli(sf, input, f2fInput, stdout);
     });
@@ -37,19 +43,28 @@ export async function fetchInput(sfUrl: string, inputUrls: string[]) {
         inputUrl => window.fetch(inputUrl).then(response => response.json())));
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);
-    console.log(sf);
-    console.log(input);
     return {sf: sf, input: input};
+}
+
+function boolMapToList(obj: Object): string[] {
+    const a = [];
+    for(const [k, v] of Object.entries(obj)) {
+        if(v) {
+            a.push(k);
+        }
+    }
+    return a;
 }
 
 function addSfParams(output: Param[], setFamily: SetFamily) {
     const name = setFamily.info.name;
+    const label = setFamily.info.label || name;
     if(setFamily instanceof BoolSetFamily) {
-        output.push(new Param(name, new CheckBoxWidget()));
+        output.push(new Param(name, new CheckBoxWidget(), label));
     }
     else if(setFamily instanceof DagSetFamily) {
-        output.push(new Param(name, new SelectWidget(setFamily.values.map(
-            vInfo => new SelectOption(vInfo.name, vInfo.name, vInfo.label || vInfo.name)), setFamily.defVal)));
+        output.push(new Param(name, new SelectWidget(setFamily.values.map( vInfo => new SelectOption(
+            vInfo.name, vInfo.name, vInfo.label || vInfo.name)), setFamily.defVal), label));
     }
     else if(setFamily instanceof ProdSetFamily) {
         for(const part of setFamily.parts) {
@@ -60,25 +75,21 @@ function addSfParams(output: Param[], setFamily: SetFamily) {
 
 function addPredParams(output: Param[], preds: Info[]) {
     for(const pred of preds) {
-        output.push(new Param('pred.' + pred.name, new CheckBoxWidget(), pred.name));
+        output.push(new Param(pred.name, new CheckBoxWidget(true), pred.label || pred.name));
     }
 }
 
 function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream) {
-    const chosenPreds = [];
-    for(const pred of input.predicates!) {
-        if(f2fInput['pred.'+pred.name]) {
-            chosenPreds.push(pred.name);
-        }
-    }
-    const procInput = filterByConstraint([input], f2fInput, sf);
-
-    if(chosenPreds.length === 2) {
-        const [u, v] = chosenPreds;
+    const preds = f2fInput.pred;
+    const procInput = filterByConstraint([input], f2fInput.sf, sf);
+    if(preds.length === 2) {
+        const [u, v] = preds;
         outputPath(procInput.impG, u, v, stdout);
+        stdout.log();
         outputPath(procInput.impG, v, u, stdout);
+        stdout.log();
     }
-    const {scc, dag} = procInput.impG.trCompression(chosenPreds.length > 0 ? chosenPreds : undefined);
+    const {scc, dag} = procInput.impG.trCompression(preds.length > 0 ? preds : undefined);
     const redDag = dag.trRed();
     const s = sccDagToStr(scc, redDag);
     stdout.log(s);

@@ -1,6 +1,6 @@
 {
     "type": "prod",
-    "info": {"name": "root"},
+    "info": {"name": "root", "label": "valuation functions"},
     "parts": [
         {
             "type": "dag",
