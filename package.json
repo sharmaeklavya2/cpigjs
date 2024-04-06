@@ -2,8 +2,9 @@
   "name": "cpigjs",
   "version": "0.1.0",
   "description": "Conditional Predicate Implication Graph",
+  "type": "module",
   "scripts": {
-    "test": "npx tsc && npx mocha test.mjs"
+    "test": "npx tsc && npx mocha test.js"
   },
   "author": "Eklavya Sharma",
   "license": "MIT",

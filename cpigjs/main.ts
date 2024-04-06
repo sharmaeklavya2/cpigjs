@@ -1,5 +1,5 @@
-import { Edge, Graph } from "./graph.mjs";
-import { Info, SetFamily } from "./setFamily.mjs";
+import { Edge, Graph } from "./graph.js";
+import { Info, SetFamily } from "./setFamily.js";
 
 interface Implication extends Edge<string> {
     under: any;

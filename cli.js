@@ -2,9 +2,9 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
-import { SetFamily } from "./cpigjs/setFamily.mjs";
-import { filterByConstraint, outputPath } from "./cpigjs/main.mjs";
-import { Graph } from "./cpigjs/graph.mjs";
+import { SetFamily } from "./cpigjs/setFamily.js";
+import { filterByConstraint, outputPath } from "./cpigjs/main.js";
+import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
 async function main() {

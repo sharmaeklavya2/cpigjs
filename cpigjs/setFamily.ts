@@ -1,4 +1,4 @@
-import { Edge, Graph } from "./graph.mjs";
+import { Edge, Graph } from "./graph.js";
 
 export interface Info {
     name: string;

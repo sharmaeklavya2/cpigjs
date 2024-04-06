@@ -1,4 +1,4 @@
-import { CircularQueue } from "./queue.mjs";
+import { CircularQueue } from "./queue.js";
 
 export interface Edge<T> {
     from: T;

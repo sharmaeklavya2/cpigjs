@@ -30,11 +30,11 @@ and `example/fdig.json` describes the predicates and implications.
 
 To return all implications for additive valuations, run
 
-    node cli.mjs --sf example/fd-family.json -i example/fdig.json -c '{"valuation": "add"}'
+    node cli.js --sf example/fd-family.json -i example/fdig.json -c '{"valuation": "add"}'
 
 To output the sequence of implications from ef (envy freeness) to ef1 for general valuations, run
 
-    node cli.mjs --sf=example/fd-family.json -i example/fdig.json -c '{}' --from ef --to ef1
+    node cli.js --sf=example/fd-family.json -i example/fdig.json -c '{}' --from ef --to ef1
 
 To be able to run this command, you must first install typescript (`npm install -g typescript`)
 and then run `npx tsc` to compile the typescript code in `cpigjs`.
