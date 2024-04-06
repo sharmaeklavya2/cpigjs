@@ -54,7 +54,7 @@ export function outputPath(impG: Graph<string, Implication>, u: string, v: strin
     else {
         stdout.log(`path of length ${path.length} from ${u} to ${v}`);
         for(const [i, e] of path.entries()) {
-            stdout.log((i+1) + ':', e);
+            stdout.log((i+1) + ':', JSON.stringify(e));
         }
     }
 }
