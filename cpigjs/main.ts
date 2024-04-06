@@ -5,7 +5,7 @@ interface Implication extends Edge<string> {
     under: any;
 }
 
-interface CpigInput {
+export interface CpigInput {
     predicates?: Info[];
     implications?: Implication[];
 }
@@ -15,9 +15,18 @@ interface ProcessedCpigInput {
     impG: Graph<string, Implication>;
 }
 
-interface Ostream {
+export interface Ostream {
     log: (...args: any[]) => undefined;
     error: (...args: any[]) => undefined;
+}
+
+export function combineInputs(inputs: CpigInput[]): CpigInput {
+    const imps = [], preds = [];
+    for(const input of inputs) {
+        preds.push(...(input.predicates || []));
+        imps.push(...(input.implications || []));
+    }
+    return {'predicates': preds, 'implications': imps};
 }
 
 export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
