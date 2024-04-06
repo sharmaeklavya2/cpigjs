@@ -2,10 +2,10 @@
 __pycache__
 .mypy_cache
 /node_modules
-cpigjs/*.js
-cpigjs/*.js.map
-cpigjs/*.mjs
-cpigjs/*.mjs.map
+/cpigjs/*.js
+/cpigjs/*.js.map
+/cpigjs/*.mjs
+/cpigjs/*.mjs.map
 
 /secret
 /output
