@@ -15,8 +15,9 @@ declare var SelectWidget: any;
 declare var SelectOption: any;
 declare function createForm(wrapperId: string, paramGroup: ParamGroup,
     func: (input: string, stdout: Ostream) => any, clearOutput?: boolean): any;
+type visualizeDotT = (x: string) => undefined;
 
-export async function setup(sfUrl: string, inputUrls: string[]) {
+export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: visualizeDotT) {
     const {sf, input} = await fetchInput(sfUrl, inputUrls);
 
     const sfParams: Param[] = [];
@@ -28,7 +29,7 @@ export async function setup(sfUrl: string, inputUrls: string[]) {
 
     const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup]);
     createForm('myApp', paramGroup, function (f2fInput, stdout) {
-        cli(sf, input, f2fInput, stdout);
+        cli(sf, input, f2fInput, stdout, visualizeDot);
     });
 }
 
@@ -79,7 +80,7 @@ function addPredParams(output: Param[], preds: Info[]) {
     }
 }
 
-function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream) {
+function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, visualizeDot: visualizeDotT) {
     const preds = f2fInput.pred;
     const procInput = filterByConstraint([input], f2fInput.sf, sf);
     if(preds.length === 2) {
@@ -91,8 +92,9 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream) {
     }
     const {scc, dag} = procInput.impG.trCompression(preds.length > 0 ? preds : undefined);
     const redDag = dag.trRed();
-    const s = sccDagToStr(scc, redDag);
-    stdout.log(s);
+    // const s = sccDagToStr(scc, redDag);
+    // stdout.log(s);
+    visualizeDot(redDag.toDot());
 }
 
 function componentStr(S: string[], parens: boolean) {
