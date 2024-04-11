@@ -35,8 +35,10 @@ async function main() {
 
     if(args.pred.length === 2) {
         const [u, v] = args.pred;
-        outputPath(procInput.impG, u, v, console);
-        outputPath(procInput.impG, v, u, console);
+        outputPath(procInput, u, v, console);
+        console.log();
+        outputPath(procInput, v, u, console);
+        console.log();
     }
     const chosenPreds = args.pred.length > 0 ? args.pred : undefined;
     const {scc, dag} = procInput.impG.trCompression(chosenPreds);

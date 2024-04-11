@@ -18,5 +18,9 @@
     {"from": "mms", "to": "prop1", "under": {"valuation": "add"},
         "proofLink": "https://doi.org/10.24963/ijcai.2023/284"},
     {"from": "prop", "to": "prop1", "under": {}}
+],
+"counterExamples": [
+    {"satisfies": "prop", "butNot": "ef", "under": {"valuation": "add"},
+        "proofText": "Consider 3 agents and goods {1, 2, 3}. Valuation matrix is [[4, 3, 2], [2, 4, 3], [3, 2, 4]]. Then the allocation ({2}, {3}, {1}) is PROP but not EF."}
 ]
 }

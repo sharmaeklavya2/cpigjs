@@ -85,9 +85,9 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, vi
     const procInput = filterByConstraint([input], f2fInput.sf, sf);
     if(preds.length === 2) {
         const [u, v] = preds;
-        outputPath(procInput.impG, u, v, stdout);
+        outputPath(procInput, u, v, stdout);
         stdout.log();
-        outputPath(procInput.impG, v, u, stdout);
+        outputPath(procInput, v, u, stdout);
         stdout.log();
     }
     const {scc, dag} = procInput.impG.trCompression(preds.length > 0 ? preds : undefined);
