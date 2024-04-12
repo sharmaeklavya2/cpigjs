@@ -1,4 +1,6 @@
 {
+"goodnessName": "feasible",
+"badnessName": "infeasible",
 "predicates": [
     {"name": "ef", "label": "EF"},
     {"name": "prop"},
@@ -22,5 +24,14 @@
 "counterExamples": [
     {"satisfies": "prop", "butNot": "ef", "under": {"valuation": "add"},
         "proofText": "Consider 3 agents and goods {1, 2, 3}. Valuation matrix is [[4, 3, 2], [2, 4, 3], [3, 2, 4]]. Then the allocation ({2}, {3}, {1}) is PROP but not EF."}
+],
+"goodPredicates": [
+    {"name": "ef1", "under": {}, "proofText": "Section 2 of <https://doi.org/10.1145/988772.988792>"}
+],
+"badPredicates": [
+    {"name": "ef", "under": {"valuation": "add", "identical": true, "twoAg": true},
+        "proofText": "Two identical agents and a single good."},
+    {"name": "prop", "under": {"valuation": "add", "identical": true, "twoAg": true},
+        "proofText": "Two identical agents and a single good."}
 ]
 }

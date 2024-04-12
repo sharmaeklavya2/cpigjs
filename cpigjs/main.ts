@@ -11,16 +11,29 @@ interface CounterExample {
     under: any;
 }
 
+interface PredAttr {
+    name: string;
+    under: any;
+}
+
 export interface CpigInput {
     predicates?: Info[];
     implications?: Implication[];
     counterExamples?: CounterExample[];
+    goodPredicates?: PredAttr[];
+    badPredicates?: PredAttr[];
+    goodnessName?: string;
+    badnessName?: string;
 }
 
 interface ProcessedCpigInput {
     preds: Map<string, Info>;
     impG: Graph<string, Implication>;
     cExs: CounterExample[];
+    goodPreds: Map<string, PredAttr[]>;
+    badPreds: Map<string, PredAttr[]>;
+    goodnessName: string;
+    badnessName: string;
 }
 
 export interface Ostream {
@@ -29,19 +42,30 @@ export interface Ostream {
 }
 
 export function combineInputs(inputs: CpigInput[]): CpigInput {
-    const preds = [], imps = [], cExs = [];
+    const preds = [], imps = [], cExs = [], goodPreds = [], badPreds = [];
+    let goodnessName, badnessName;
     for(const input of inputs) {
         preds.push(...(input.predicates || []));
         imps.push(...(input.implications || []));
         cExs.push(...(input.counterExamples|| []));
+        goodPreds.push(...(input.goodPredicates || []));
+        badPreds.push(...(input.badPredicates || []));
+        goodnessName = input.goodnessName;
+        badnessName = input.goodnessName;
     }
-    return {'predicates': preds, 'implications': imps, 'counterExamples': cExs};
+    return {'predicates': preds, 'implications': imps, 'counterExamples': cExs,
+        'goodPredicates': goodPreds, 'badPredicates': badPreds,
+        'goodnessName': goodnessName, 'badnessName': badnessName};
 }
 
 export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
     const newConstr = sf.validateInput(constraint);
     const preds = new Map<string, Info>(), imps = [], cExs = [];
+    const origGoodPreds = [], origBadPreds = [];
+    let goodnessName, badnessName;
     for(const input of inputs) {
+        goodnessName = input.goodnessName;
+        badnessName = input.badnessName;
         for(const pred of input.predicates || []) {
             if(preds.has(pred.name)) {
                 throw new Error(`predicate ${pred.name} already exists.`);
@@ -70,8 +94,47 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
                 cExs.push(cEx);
             }
         }
+        for(const predAttr of input.goodPredicates || []) {
+            if(!preds.has(predAttr.name)) {
+                throw new Error(`unrecognized predicate ${predAttr.name} in goodPredicates: ${predAttr}`);
+            }
+            if(sf.contains(predAttr.under, newConstr)) {
+                origGoodPreds.push(predAttr);
+            }
+        }
+        for(const predAttr of input.badPredicates || []) {
+            if(!preds.has(predAttr.name)) {
+                throw new Error(`unrecognized predicate ${predAttr.name} in badPredicates: ${predAttr}`);
+            }
+            if(sf.contains(newConstr, predAttr.under)) {
+                origBadPreds.push(predAttr);
+            }
+        }
     }
-    return {preds: preds, impG: Graph.fromVE(preds.keys(), imps), cExs: cExs};
+    const impG = Graph.fromVE(preds.keys(), imps);
+    const goodPreds = new Map<string, PredAttr[]>(), badPreds = new Map<string, PredAttr[]>();
+    for(const v of preds.keys()) {
+        const vAttrs: PredAttr[] = [];
+        goodPreds.set(v, vAttrs);
+        for(const predAttr of origGoodPreds) {
+            const u = predAttr.name;
+            if(impG.hasPath(u, v)) {
+                vAttrs.push(predAttr);
+            }
+        }
+    }
+    for(const u of preds.keys()) {
+        const uAttrs: PredAttr[] = [];
+        badPreds.set(u, uAttrs);
+        for(const predAttr of origBadPreds) {
+            const v = predAttr.name;
+            if(impG.hasPath(u, v)) {
+                uAttrs.push(predAttr);
+            }
+        }
+    }
+    return {preds: preds, impG: impG, cExs: cExs, goodPreds: goodPreds, badPreds: badPreds,
+        goodnessName: goodnessName || 'good', badnessName: badnessName || 'bad'};
 }
 
 export function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
@@ -117,6 +180,22 @@ export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdo
         const uc = cEx.satisfies, vc = cEx.butNot;
         if(impG.hasPath(uc, u) && impG.hasPath(v, vc)) {
             stdout.log('counterexample:', JSON.stringify(cEx));
+        }
+    }
+}
+
+export function outputGoodBadReasons(input: ProcessedCpigInput, predNames: string[], stdout: Ostream) {
+    const mainList: [string, Map<string, PredAttr[]>][] =
+            [[input.goodnessName, input.goodPreds], [input.badnessName, input.badPreds]];
+    for(const [attrName, attrReasonsMap] of mainList) {
+        for(const predName of predNames) {
+            const reasons = attrReasonsMap.get(predName)!;
+            if(reasons.length > 0) {
+                stdout.log(`${predName} is ${attrName}:`);
+                for(const [i, reason] of reasons.entries()) {
+                    stdout.log(`${i}: ${JSON.stringify(reason)}`);
+                }
+            }
         }
     }
 }

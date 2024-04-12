@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
-import { filterByConstraint, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr, sccDagToStr } from "./cpigjs/main.js";
+import { filterByConstraint, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr, sccDagToStr, outputGoodBadReasons } from "./cpigjs/main.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
@@ -39,6 +39,8 @@ async function main() {
         outputPath(procInput, u, v, console);
         console.log();
         outputPath(procInput, v, u, console);
+        console.log();
+        outputGoodBadReasons(procInput, args.pred, console);
         console.log();
     }
     const chosenPreds = args.pred.length > 0 ? args.pred : undefined;

@@ -1,6 +1,6 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr } from "./main.js";
+import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr, outputGoodBadReasons } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
@@ -89,6 +89,8 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, vi
         outputPath(procInput, u, v, stdout);
         stdout.log();
         outputPath(procInput, v, u, stdout);
+        stdout.log();
+        outputGoodBadReasons(procInput, preds, stdout);
         stdout.log();
     }
     const {scc, dag} = procInput.impG.trCompression(preds.length > 0 ? preds : undefined);
