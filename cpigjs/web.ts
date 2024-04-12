@@ -1,6 +1,6 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot } from "./main.js";
+import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
@@ -101,19 +101,4 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, vi
         addMaybeEdgesToDot(dotLines, maybeEdges);
     }
     visualizeDot(dotLines.join('\n'));
-}
-
-function componentStr(S: string[], parens: boolean) {
-    const begDelim = parens ? '( ' : '';
-    const endDelim = parens ? ' )' : '';
-    return S.length === 1 ? S[0] : begDelim + S.join(' = ') + endDelim;
-}
-
-function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>>) {
-    const lines = [];
-    for(const edge of dag.edges) {
-        const uS = scc.get(edge.from)!, vS = scc.get(edge.to)!;
-        lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
-    }
-    return lines.join('\n');
 }

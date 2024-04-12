@@ -120,3 +120,26 @@ export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdo
         }
     }
 }
+
+export function componentStr(S: string[], parens: boolean) {
+    const begDelim = parens ? '( ' : '';
+    const endDelim = parens ? ' )' : '';
+    return S.length === 1 ? S[0] : begDelim + S.join(' = ') + endDelim;
+}
+
+export function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>>, maybeEdges: Edge<string>[]) {
+    const lines = [];
+    for(const edge of dag.edges) {
+        const uS = scc.get(edge.from)!, vS = scc.get(edge.to)!;
+        lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
+    }
+    if(maybeEdges.length > 0) {
+        lines.push('');
+        lines.push('speculative implications:')
+        for(const edge of maybeEdges) {
+            const uS = scc.get(edge.from)!, vS = scc.get(edge.to)!;
+            lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
+        }
+    }
+    return lines.join('\n');
+}
