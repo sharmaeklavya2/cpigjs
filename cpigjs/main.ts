@@ -74,6 +74,32 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
     return {preds: preds, impG: Graph.fromVE(preds.keys(), imps), cExs: cExs};
 }
 
+export function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
+        cExs: CounterExample[]): Edge<string>[] {
+    const maybeEdges = [];
+    for(const u of scc.keys()) {
+        for(const v of scc.keys()) {
+            if(!impG.hasPath(u, v)) {
+                for(const cEx of cExs) {
+                    const uc = cEx.satisfies, vc = cEx.butNot;
+                    if(!(impG.hasPath(uc, u) && impG.hasPath(v, vc))) {
+                        maybeEdges.push({'from': u, 'to': v});
+                    }
+                }
+            }
+        }
+    }
+    return maybeEdges;
+}
+
+export function addMaybeEdgesToDot(dotLines: string[], maybeEdges: Edge<string>[]) {
+    dotLines.pop();
+    for(const e of maybeEdges) {
+        dotLines.push(`"${e.from}" -> "${e.to}" [style=dashed, constraint=false];`);
+    }
+    dotLines.push('}');
+}
+
 export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdout: Ostream): undefined {
     const impG = input.impG, cExs = input.cExs;
     const path = impG.getPath(u, v);
@@ -89,9 +115,8 @@ export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdo
 
     for(const cEx of cExs) {
         const uc = cEx.satisfies, vc = cEx.butNot;
-        const path1 = impG.getPath(uc, u), path2 = impG.getPath(v, vc);
-        if(path1 !== undefined && path2 !== undefined) {
-            stdout.log('known counterexample:', JSON.stringify(cEx));
+        if(impG.hasPath(uc, u) && impG.hasPath(v, vc)) {
+            stdout.log('counterexample:', JSON.stringify(cEx));
         }
     }
 }

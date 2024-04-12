@@ -65,6 +65,14 @@ export class Graph<T, ET extends Edge<T>> {
         return pred;
     }
 
+    hasPath(u: T, v: T): boolean {
+        if(u === v) {
+            return true;
+        }
+        const outTree = this.getOutTree(u);
+        return outTree.has(v);
+    }
+
     getPath(u: T, v: T): ET[] | undefined {
         if (u === v) {
             return [];
@@ -210,7 +218,7 @@ export class Graph<T, ET extends Edge<T>> {
         return Graph.fromVE(vertices, redEdges);
     }
 
-    toDot(vertexLabeler?: ((v: T) => string), edgeLabeler?: (e: ET) => string): string {
+    toDot(vertexLabeler?: ((v: T) => string), edgeLabeler?: (e: ET) => string): string[] {
         const lines = ['digraph G {', 'rankdir=LR;'];
         for(const u of this.adj.keys()) {
             if(vertexLabeler === undefined) {
@@ -233,6 +241,6 @@ export class Graph<T, ET extends Edge<T>> {
             }
         }
         lines.push('}');
-        return lines.join('\n');
+        return lines;
     }
 }

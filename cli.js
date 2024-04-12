@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
-import { filterByConstraint, outputPath } from "./cpigjs/main.js";
+import { filterByConstraint, outputPath, getMaybeEdges, addMaybeEdgesToDot } from "./cpigjs/main.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
@@ -18,6 +18,7 @@ async function main() {
         .option('pred', {type: 'string', array: true,
             describe: "predicates to consider (default: all)"})
         .option('output', {alias: 'o', type: 'string'})
+        .option('maybe', {boolean: true, describe: "show speculative implications"})
         .help()
         .parse();
 
@@ -42,12 +43,14 @@ async function main() {
     }
     const chosenPreds = args.pred.length > 0 ? args.pred : undefined;
     const {scc, dag} = procInput.impG.trCompression(chosenPreds);
+    const maybeEdges = args.maybe ? getMaybeEdges(scc, procInput.impG, procInput.cExs) : [];
     if(args.output) {
         const ext = getExt(args.output);
-        let s;
         if(ext === 'dot' || ext === 'svg') {
             const redDag = dag.trRed();
-            s = redDag.toDot(v => componentStr(scc.get(v), false));
+            const dotLines = redDag.toDot(v => componentStr(scc.get(v), false));
+            addMaybeEdgesToDot(dotLines, maybeEdges);
+            const s = dotLines.join('\n');
             if(ext === 'dot') {
                 await writeFile(args.output, s);
             }
@@ -57,7 +60,7 @@ async function main() {
             }
         }
         else if(ext === 'txt') {
-            s = sccDagToStr(scc, dag);
+            const s = sccDagToStr(scc, dag, maybeEdges);
             await writeFile(args.output, s);
         }
         else {
@@ -65,7 +68,7 @@ async function main() {
         }
     }
     else {
-        const s = sccDagToStr(scc, dag);
+        const s = sccDagToStr(scc, dag, maybeEdges);
         console.log(s);
     }
 }
@@ -81,11 +84,19 @@ function getExt(fname) {
     return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
 }
 
-function sccDagToStr(scc, dag) {
+function sccDagToStr(scc, dag, maybeEdges) {
     const lines = [];
     for(const edge of dag.edges) {
         const uS = scc.get(edge.from), vS = scc.get(edge.to);
         lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
+    }
+    if(maybeEdges.length > 0) {
+        lines.push('');
+        lines.push('speculative implications:')
+        for(const edge of maybeEdges) {
+            const uS = scc.get(edge.from), vS = scc.get(edge.to);
+            lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
+        }
     }
     return lines.join('\n');
 }

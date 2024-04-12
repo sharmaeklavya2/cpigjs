@@ -1,6 +1,6 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath } from "./main.js";
+import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
@@ -26,8 +26,9 @@ export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: vi
     const predParams: Param[] = [];
     addPredParams(predParams, input.predicates!);
     const predParamGroup = new ParamGroup('pred', predParams, boolMapToList, 'predicates', undefined, true);
+    const maybeParam = new Param('maybe', new CheckBoxWidget(true), 'show speculative edges');
 
-    const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup]);
+    const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup, maybeParam]);
     createForm('myApp', paramGroup, function (f2fInput, stdout) {
         cli(sf, input, f2fInput, stdout, visualizeDot);
     });
@@ -94,7 +95,12 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, vi
     const redDag = dag.trRed();
     // const s = sccDagToStr(scc, redDag);
     // stdout.log(s);
-    visualizeDot(redDag.toDot());
+    const dotLines = redDag.toDot(v => componentStr(scc.get(v)!, false));
+    if(f2fInput.maybe) {
+        const maybeEdges = getMaybeEdges(scc, procInput.impG, procInput.cExs);
+        addMaybeEdgesToDot(dotLines, maybeEdges);
+    }
+    visualizeDot(dotLines.join('\n'));
 }
 
 function componentStr(S: string[], parens: boolean) {
