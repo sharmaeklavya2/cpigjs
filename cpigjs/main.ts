@@ -147,11 +147,15 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     for(const u of scc.keys()) {
         for(const v of scc.keys()) {
             if(!impG.hasPath(u, v)) {
+                let isMaybeEdge = true;
                 for(const cEx of cExs) {
                     const uc = cEx.satisfies, vc = cEx.butNot;
-                    if(!(impG.hasPath(uc, u) && impG.hasPath(v, vc))) {
-                        maybeEdges.push({'from': u, 'to': v});
+                    if(impG.hasPath(uc, u) && impG.hasPath(v, vc)) {
+                        isMaybeEdge = false;
                     }
+                }
+                if(isMaybeEdge) {
+                    maybeEdges.push({'from': u, 'to': v});
                 }
             }
         }
