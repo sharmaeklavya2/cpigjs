@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
-import { filterByConstraint, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr, sccDagToStr, outputGoodBadReasons } from "./cpigjs/main.js";
+import { filterByConstraint, outputPath, outputGoodBadReasons, serializeGraph } from "./cpigjs/main.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
@@ -34,44 +34,40 @@ async function main() {
 
     const procInput = filterByConstraint(inputs, constraint, sf);
 
-    if(args.pred.length === 2) {
+    const predNames = args.pred || []
+    if(predNames.length === 2) {
         const [u, v] = args.pred;
         outputPath(procInput, u, v, console);
         console.log();
         outputPath(procInput, v, u, console);
-        console.log();
-        outputGoodBadReasons(procInput, args.pred, console);
-        console.log();
     }
-    const chosenPreds = args.pred.length > 0 ? args.pred : undefined;
-    const {scc, dag} = procInput.impG.trCompression(chosenPreds);
-    const maybeEdges = args.maybe ? getMaybeEdges(scc, procInput.impG, procInput.cExs) : [];
+    if(predNames.length <= 2 && predNames.length >= 1) {
+        outputGoodBadReasons(procInput, predNames, console);
+    }
+    console.log();
     if(args.output) {
         const ext = getExt(args.output);
         if(ext === 'dot' || ext === 'svg') {
-            const redDag = dag.trRed();
-            const dotLines = redDag.toDot(v => componentStr(scc.get(v), false));
-            addMaybeEdgesToDot(dotLines, maybeEdges);
-            const s = dotLines.join('\n');
+            const lines = serializeGraph(procInput, predNames, args.maybe, 'dot');
             if(ext === 'dot') {
-                await writeFile(args.output, s);
+                await writeFile(args.output, lines.join('\n'));
             }
             else {
-                await writeFile(args.output + '.dot', s);
+                await writeFile(args.output + '.dot', lines.join('\n'));
                 child_process.spawn('dot', ['-Tsvg', args.output + '.dot', '-o', args.output]);
             }
         }
         else if(ext === 'txt') {
-            const s = sccDagToStr(scc, dag, maybeEdges);
-            await writeFile(args.output, s);
+            const lines = serializeGraph(procInput, predNames, args.maybe, 'txt');
+            await writeFile(args.output, lines.join('\n'));
         }
         else {
             throw new Error('unknown output file type ' + ext);
         }
     }
     else {
-        const s = sccDagToStr(scc, dag, maybeEdges);
-        console.log(s);
+        const lines = serializeGraph(procInput, predNames, args.maybe, 'txt');
+        console.log(lines.join('\n'));
     }
 }
 

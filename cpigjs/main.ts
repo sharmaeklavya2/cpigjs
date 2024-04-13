@@ -51,7 +51,7 @@ export function combineInputs(inputs: CpigInput[]): CpigInput {
         goodPreds.push(...(input.goodPredicates || []));
         badPreds.push(...(input.badPredicates || []));
         goodnessName = input.goodnessName;
-        badnessName = input.goodnessName;
+        badnessName = input.badnessName;
     }
     return {'predicates': preds, 'implications': imps, 'counterExamples': cExs,
         'goodPredicates': goodPreds, 'badPredicates': badPreds,
@@ -115,29 +115,33 @@ export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf:
     const goodPreds = new Map<string, PredAttr[]>(), badPreds = new Map<string, PredAttr[]>();
     for(const v of preds.keys()) {
         const vAttrs: PredAttr[] = [];
-        goodPreds.set(v, vAttrs);
         for(const predAttr of origGoodPreds) {
             const u = predAttr.name;
             if(impG.hasPath(u, v)) {
                 vAttrs.push(predAttr);
             }
         }
+        if(vAttrs.length > 0) {
+            goodPreds.set(v, vAttrs);
+        }
     }
     for(const u of preds.keys()) {
         const uAttrs: PredAttr[] = [];
-        badPreds.set(u, uAttrs);
         for(const predAttr of origBadPreds) {
             const v = predAttr.name;
             if(impG.hasPath(u, v)) {
                 uAttrs.push(predAttr);
             }
         }
+        if(uAttrs.length > 0) {
+            badPreds.set(u, uAttrs);
+        }
     }
     return {preds: preds, impG: impG, cExs: cExs, goodPreds: goodPreds, badPreds: badPreds,
         goodnessName: goodnessName || 'good', badnessName: badnessName || 'bad'};
 }
 
-export function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
+function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
         cExs: CounterExample[]): Edge<string>[] {
     const maybeEdges = [];
     for(const u of scc.keys()) {
@@ -153,14 +157,6 @@ export function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Im
         }
     }
     return maybeEdges;
-}
-
-export function addMaybeEdgesToDot(dotLines: string[], maybeEdges: Edge<string>[]) {
-    dotLines.pop();
-    for(const e of maybeEdges) {
-        dotLines.push(`"${e.from}" -> "${e.to}" [style=dashed, constraint=false];`);
-    }
-    dotLines.push('}');
 }
 
 export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdout: Ostream): undefined {
@@ -189,24 +185,25 @@ export function outputGoodBadReasons(input: ProcessedCpigInput, predNames: strin
             [[input.goodnessName, input.goodPreds], [input.badnessName, input.badPreds]];
     for(const [attrName, attrReasonsMap] of mainList) {
         for(const predName of predNames) {
-            const reasons = attrReasonsMap.get(predName)!;
-            if(reasons.length > 0) {
+            const reasons = attrReasonsMap.get(predName);
+            if(reasons !== undefined) {
+                stdout.log('');
                 stdout.log(`${predName} is ${attrName}:`);
                 for(const [i, reason] of reasons.entries()) {
-                    stdout.log(`${i}: ${JSON.stringify(reason)}`);
+                    stdout.log(`${i+1}: ${JSON.stringify(reason)}`);
                 }
             }
         }
     }
 }
 
-export function componentStr(S: string[], parens: boolean) {
+function componentStr(S: string[], parens: boolean) {
     const begDelim = parens ? '( ' : '';
     const endDelim = parens ? ' )' : '';
     return S.length === 1 ? S[0] : begDelim + S.join(' = ') + endDelim;
 }
 
-export function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>>, maybeEdges: Edge<string>[]) {
+function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>>, maybeEdges: Edge<string>[]): string[] {
     const lines = [];
     for(const edge of dag.edges) {
         const uS = scc.get(edge.from)!, vS = scc.get(edge.to)!;
@@ -220,5 +217,72 @@ export function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<
             lines.push(componentStr(uS, true) + ' ==> ' + componentStr(vS, true));
         }
     }
-    return lines.join('\n');
+    return lines;
+}
+
+function toDotAttrs(d: object): string {
+    const parts = [];
+    for(const [k, v] of Object.entries(d)) {
+        parts.push(`${k}=${v}`);
+    }
+    if(parts.length > 0) {
+        return ' [' + parts.join(',') + ']';
+    }
+    else {
+        return '';
+    }
+}
+
+export function serializeGraph(input: ProcessedCpigInput, predNames: string[], showMaybeEdges: boolean,
+        format: string): string[] {
+    if(format === 'txt') {
+        const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
+        const redDag = dag.trRed();
+        const maybeEdges = showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExs) : [];
+        return sccDagToStr(scc, dag, maybeEdges);
+    }
+    else if(format === 'dot') {
+        return getDotGraph(input, predNames, showMaybeEdges);
+    }
+    else {
+        throw new Error('unknown format ' + format);
+    }
+}
+
+export function getDotGraph(input: ProcessedCpigInput, predNames: string[], showMaybeEdges: boolean): string[] {
+    const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
+    const redDag = dag.trRed();
+    const lines = ['digraph G {', 'rankdir=LR;', 'edge [arrowhead=vee];'];
+    for(const u of redDag.adj.keys()) {
+        const uAttrs: any = {'label': componentStr(scc.get(u)!, false)};
+        if(input.goodPreds.has(u)) {
+            uAttrs['fontcolor'] = 'green';
+            if(input.badPreds.has(u)) {
+                uAttrs.color = 'red';
+            }
+            else {
+                uAttrs.color = 'green';
+            }
+        }
+        else if(input.badPreds.has(u)) {
+            uAttrs.fontcolor = 'red';
+            uAttrs.color = 'red';
+        }
+        lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
+    }
+    if(showMaybeEdges) {
+        const maybeEdges = getMaybeEdges(scc, input.impG, input.cExs);
+        for(const e of maybeEdges) {
+            const eAttrs = {'style': 'dashed', 'constraint': 'false', 'color': 'gray', 'penwidth': '0.6'};
+            lines.push(`"${e.from}" -> "${e.to}"${toDotAttrs(eAttrs)};`);
+        }
+    }
+    for(const u of redDag.adj.keys()) {
+        for(const e of redDag.adj.get(u)!) {
+            const eAttrs = {};
+            lines.push(`"${u}" -> "${e.to}"${toDotAttrs(eAttrs)};`);
+        }
+    }
+    lines.push('}');
+    return lines;
 }

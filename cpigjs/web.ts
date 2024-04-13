@@ -1,6 +1,6 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getMaybeEdges, addMaybeEdgesToDot, componentStr, outputGoodBadReasons } from "./main.js";
+import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getDotGraph, outputGoodBadReasons } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
@@ -89,18 +89,10 @@ function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, vi
         outputPath(procInput, u, v, stdout);
         stdout.log();
         outputPath(procInput, v, u, stdout);
-        stdout.log();
+    }
+    if(preds.length <= 2 && preds.length >= 1) {
         outputGoodBadReasons(procInput, preds, stdout);
-        stdout.log();
     }
-    const {scc, dag} = procInput.impG.trCompression(preds.length > 0 ? preds : undefined);
-    const redDag = dag.trRed();
-    // const s = sccDagToStr(scc, redDag);
-    // stdout.log(s);
-    const dotLines = redDag.toDot(v => componentStr(scc.get(v)!, false));
-    if(f2fInput.maybe) {
-        const maybeEdges = getMaybeEdges(scc, procInput.impG, procInput.cExs);
-        addMaybeEdgesToDot(dotLines, maybeEdges);
-    }
+    const dotLines = getDotGraph(procInput, preds, f2fInput.maybe);
     visualizeDot(dotLines.join('\n'));
 }
