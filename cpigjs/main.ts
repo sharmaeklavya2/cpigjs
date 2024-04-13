@@ -223,7 +223,7 @@ function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>
 function toDotAttrs(d: object): string {
     const parts = [];
     for(const [k, v] of Object.entries(d)) {
-        parts.push(`${k}=${v}`);
+        parts.push(`${k}="${v}"`);
     }
     if(parts.length > 0) {
         return ' [' + parts.join(',') + ']';
