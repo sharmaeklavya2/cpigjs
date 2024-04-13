@@ -128,10 +128,12 @@ export class Graph<T, ET extends Edge<T>> {
             if(sccLeader.get(u) === u) {
                 const rFromU = this.getOutTree(u);
                 for(const v of rFromU.keys()) {
-                    const ui = v2i.get(u)!, vi = v2i.get(v)!;
-                    const rFromV = this.getOutTree(v);
-                    if(rFromV.has(u)) {
-                        sccLeader.set(v, u);
+                    if(v2i.has(v)) {
+                        const ui = v2i.get(u)!, vi = v2i.get(v)!;
+                        const rFromV = this.getOutTree(v);
+                        if(rFromV.has(u)) {
+                            sccLeader.set(v, u);
+                        }
                     }
                 }
             }
