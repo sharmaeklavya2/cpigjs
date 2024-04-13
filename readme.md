@@ -25,16 +25,16 @@ and given a set $S ∈ Σ$, display all predicate implications conditional on $S
 
 ## How to Run with node
 
-For the fair allocation problem, `example/fd-family.json` describes the family $Σ$
-and `example/fdig.json` describes the predicates and implications.
+For the fair allocation problem, `fairDiv/fd-family.json` describes the family $Σ$
+and `fairDiv/fdig.json` describes the predicates and implications.
 
 To return all implications for additive valuations, run
 
-    node cli.js --sf example/fd-family.json -i example/fdig.json -c '{"valuation": "add"}'
+    node cli.js --sf fairDiv/fd-family.json -i fairDiv/fdig.json -c '{"valuation": "add"}'
 
 To output the sequence of implications from ef (envy freeness) to ef1 for general valuations, run
 
-    node cli.js --sf=example/fd-family.json -i example/fdig.json -c '{}' --from ef --to ef1
+    node cli.js --sf fairDiv/fd-family.json -i fairDiv/fdig.json -c '{}' --from ef --to ef1
 
 To be able to run this command, you must first install typescript (`npm install -g typescript`)
 and then run `npx tsc` to compile the typescript code in `cpigjs`.
