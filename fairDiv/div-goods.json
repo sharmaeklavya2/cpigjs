@@ -1,0 +1,23 @@
+{
+"goodnessName": "feasible",
+"badnessName": "infeasible",
+"predicates": [
+    {"name": "ef"},
+    {"name": "eef"},
+    {"name": "prop"}
+],
+"implications": [
+    {"from": "ef", "to": "eef", "under": {}},
+    {"from": "eef", "to": "ef", "under": {"twoAg": true}},
+    {"from": "eef", "to": "prop", "under": {"valuation": "subadd"}},
+    {"from": "prop", "to": "eef", "under": {"valuation": "additive"}, "proofText": "$A$ is PROP for agent $i$ iff $v_i(A_i) ≥ v_i(M∖A_i)/(n-1)$. We can partition $M∖A_i$ into $n-1$ parts of value equal to agent $i$. This gives us $i$'s EEF certificate."},
+    {"from": "prop", "to": "ef", "under": {"valuation": "superadd", "identical": true}, "proofText": "Suppose $v(A_i) > v(M)/n$ for some agent $i$. By PROP, $v(A_j) ≥ v(M)/n$ for all $j$. Hence, $\\sum_{j=1}^n v(A_j) > v(M)$, which contradicts super-additivity. Hence, $v(A_i) = v(M)/n$ for all $i$. Hence, $A$ is EF."}
+],
+"counterExamples": [
+    {"satisfies": "ef", "butNot": "prop", "under": {"valuation": "superadd", "identical": true, "twoAg": true},
+        "proofText": "Let $M = [0, 1]$ and $v(S) = |S|^2$. If allocation $A$ is envy-free, then $v(A_1) = v(A_2)$. On solving this equation, we get $|A_1| = |A_2| = 1/2$. Hence, $v(A_1) = 1/4$, but $v(M)/n = 1/2$."},
+    {"satisfies": "eef", "butNot": "ef", "under": {"valuation": "additive"}, "proofText": "Let $n=3$. Let $A$ be an allocation such that $v_1(A_1) = 3$, $v_1(A_2) = 2$, $v_1(A_3) = 4$, $v_2(A_1) = 4$, $v_2(A_2) = 3$, $v_2(A_3) = 2$, $v_3(A_1) = 2$, $v_3(A_2) = 4$, $v_3(A_3) = 3$. Then $A$ is EEF and PROP but not EF."}
+],
+"goodPredicates": [],
+"badPredicates": []
+}

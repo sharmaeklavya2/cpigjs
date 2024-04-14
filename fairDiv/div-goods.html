@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark light" />
+<title>Fair Division Implications</title>
+<link rel="stylesheet" href="https://sharmaeklavya2.github.io/funcToForm/funcToForm.css" />
+<script type="text/javascript" src="https://sharmaeklavya2.github.io/funcToForm/funcToForm.js"></script>
+<!--<link rel="stylesheet" href="http://localhost:8080/websites/funcToForm/funcToForm.css" />
+<script type="text/javascript" src="http://localhost:8080/websites/funcToForm/funcToForm.js"></script>-->
+<script type="module" src="cpigjs/web.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs"></script>
+<style>
+@media (prefers-color-scheme: dark) {
+    #graph {
+        filter: brightness(.85) invert(1) brightness(.75) hue-rotate(180deg);
+    }
+}
+</style>
+<script type="module">
+import { setup } from './cpigjs/web.js';
+import { instance } from "https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs";
+
+function visualizeDot(dotInput) {
+    const graphElem = document.getElementById("graph");
+    graphElem.innerText = '';
+    instance().then(viz => {
+        const svg = viz.renderSVGElement(dotInput);
+        graphElem.appendChild(svg);
+    });
+}
+
+await setup('div-family.json', ['div-goods.json'], visualizeDot);
+</script>
+</head>
+
+<body>
+<h1>Fair Division Implications (Divisible Goods)</h1>
+<div id="myApp"></div>
+<div id="graph"></div>
+</body>
+</html>
