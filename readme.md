@@ -30,11 +30,11 @@ and `fairDiv/indiv-goods.json` describes the predicates and implications.
 
 To return all implications for additive valuations, run
 
-    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/iniv-goods.json -c '{"valuation": "add"}'
+    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv-goods.json -c '{"valuation": "add"}'
 
 To output the sequence of implications from ef (envy freeness) to ef1 for general valuations, run
 
-    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv-goods.json -c '{}' --from ef --to ef1
+    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv-goods.json -c '{}' --pred ef ef1
 
 To be able to run this command, you must first install typescript (`npm install -g typescript`)
 and then run `npx tsc` to compile the typescript code in `cpigjs`.
