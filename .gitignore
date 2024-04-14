@@ -2,11 +2,6 @@
 __pycache__
 .mypy_cache
 /node_modules
-/cpigjs/*.js
-/cpigjs/*.js.map
-/cpigjs/*.mjs
-/cpigjs/*.mjs.map
-/fairDiv/*.html
 
 /secret
 /output
