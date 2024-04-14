@@ -4,5 +4,8 @@
 "dotvizUrl": "https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs",
 "familyFile": "setFamily.json",
 "dataFiles": ["data.json"],
-"config": {}
+"config": {
+    "texRefsUrl": "texRefs.json",
+    "defaultProofUrl": "https://arxiv.org/abs/2502.02815v1"
+}
 }
