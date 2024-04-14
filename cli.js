@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
-import { filterByConstraint, outputPath, outputGoodBadReasons, serializeGraph } from "./cpigjs/main.js";
+import { combineInputs, processInput, filterInput, outputPath, outputGoodBadReasons, serializeGraph } from "./cpigjs/main.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
@@ -32,23 +32,25 @@ async function main() {
     const sf = await sfPromise;
     const inputs = await inputsPromise;
 
-    const procInput = filterByConstraint(inputs, constraint, sf);
+    const input = combineInputs(inputs);
+    const procInput = processInput(input, sf);
+    const filteredInput = filterInput(procInput, sf, constraint);
 
     const predNames = args.pred || []
     if(predNames.length === 2) {
         const [u, v] = args.pred;
-        outputPath(procInput, u, v, console);
+        outputPath(filteredInput, u, v, console);
         console.log();
-        outputPath(procInput, v, u, console);
+        outputPath(filteredInput, v, u, console);
     }
     if(predNames.length <= 2 && predNames.length >= 1) {
-        outputGoodBadReasons(procInput, predNames, console);
+        outputGoodBadReasons(filteredInput, predNames, console);
     }
     console.log();
     if(args.output) {
         const ext = getExt(args.output);
         if(ext === 'dot' || ext === 'svg') {
-            const lines = serializeGraph(procInput, predNames, args.maybe, 'dot');
+            const lines = serializeGraph(filteredInput, predNames, args.maybe, 'dot');
             if(ext === 'dot') {
                 await writeFile(args.output, lines.join('\n'));
             }
@@ -58,7 +60,7 @@ async function main() {
             }
         }
         else if(ext === 'txt') {
-            const lines = serializeGraph(procInput, predNames, args.maybe, 'txt');
+            const lines = serializeGraph(filteredInput, predNames, args.maybe, 'txt');
             await writeFile(args.output, lines.join('\n'));
         }
         else {
@@ -66,7 +68,7 @@ async function main() {
         }
     }
     else {
-        const lines = serializeGraph(procInput, predNames, args.maybe, 'txt');
+        const lines = serializeGraph(filteredInput, predNames, args.maybe, 'txt');
         console.log(lines.join('\n'));
     }
 }

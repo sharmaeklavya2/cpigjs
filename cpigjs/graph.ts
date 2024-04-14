@@ -7,9 +7,11 @@ export interface Edge<T> {
 
 export class Graph<T, ET extends Edge<T>> {
     outTreeCache: Map<T, Map<T, ET>>;
+    inTreeCache: Map<T, Map<T, ET>>;
 
     constructor(public adj: Map<T, ET[]>, public radj: Map<T, ET[]>, public edges: ET[]) {
         this.outTreeCache = new Map();
+        this.inTreeCache = new Map();
     }
 
     static fromVE<T, ET extends Edge<T>>(vertices: Iterable<T>, edges: ET[]): Graph<T, ET> {
@@ -63,6 +65,32 @@ export class Graph<T, ET extends Edge<T>> {
         }
         this.outTreeCache.set(root, pred);
         return pred;
+    }
+
+    getInTree(root: T): Map<T, ET> {
+        // Returns all (u, e) pairs, where root is reachable from u, and e is an edge originating from u.
+        let succ = this.inTreeCache.get(root);
+        if(succ !== undefined) {
+            return succ;
+        }
+        succ = new Map<T, ET>();
+        const queue = new CircularQueue<T>(this.adj.size);
+        queue.push(root);
+        while(queue.size > 0) {
+            const v = queue.pop();
+            const vEdges = this.radj.get(v);
+            if(vEdges !== undefined) {
+                for(const edge of vEdges) {
+                    const u = edge.from;
+                    if(u !== root && !succ.has(u)) {
+                        succ.set(u, edge);
+                        queue.push(u);
+                    }
+                }
+            }
+        }
+        this.inTreeCache.set(root, succ);
+        return succ;
     }
 
     hasPath(u: T, v: T): boolean {

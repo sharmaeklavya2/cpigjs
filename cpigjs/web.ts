@@ -1,6 +1,7 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { filterByConstraint, combineInputs, Ostream, CpigInput, outputPath, getDotGraph, outputGoodBadReasons } from "./main.js";
+import { Ostream, CpigInput, ProcessedCpigInput } from "./main.js";
+import { combineInputs, processInput, filterInput, outputPath, getDotGraph, outputGoodBadReasons } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
@@ -19,6 +20,7 @@ type visualizeDotT = (x: string) => undefined;
 
 export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: visualizeDotT) {
     const {sf, input} = await fetchInput(sfUrl, inputUrls);
+    const procInput = processInput(input, sf);
 
     const sfParams: Param[] = [];
     addSfParams(sfParams, sf);
@@ -30,7 +32,7 @@ export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: vi
 
     const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup, maybeParam]);
     createForm('myApp', paramGroup, function (f2fInput, stdout) {
-        cli(sf, input, f2fInput, stdout, visualizeDot);
+        cli(sf, procInput, f2fInput, stdout, visualizeDot);
     });
 }
 
@@ -81,18 +83,18 @@ function addPredParams(output: Param[], preds: Info[]) {
     }
 }
 
-function cli(sf: SetFamily, input: CpigInput, f2fInput: any, stdout: Ostream, visualizeDot: visualizeDotT) {
-    const preds = f2fInput.pred;
-    const procInput = filterByConstraint([input], f2fInput.sf, sf);
-    if(preds.length === 2) {
-        const [u, v] = preds;
-        outputPath(procInput, u, v, stdout);
+function cli(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, stdout: Ostream, visualizeDot: visualizeDotT) {
+    const predNames = f2fInput.pred;
+    const filteredInput = filterInput(input, sf, f2fInput.sf);
+    if(predNames.length === 2) {
+        const [u, v] = predNames;
+        outputPath(filteredInput, u, v, stdout);
         stdout.log();
-        outputPath(procInput, v, u, stdout);
+        outputPath(filteredInput, v, u, stdout);
     }
-    if(preds.length <= 2 && preds.length >= 1) {
-        outputGoodBadReasons(procInput, preds, stdout);
+    if(predNames.length <= 2 && predNames.length >= 1) {
+        outputGoodBadReasons(filteredInput, predNames, stdout);
     }
-    const dotLines = getDotGraph(procInput, preds, f2fInput.maybe);
+    const dotLines = getDotGraph(filteredInput, predNames, f2fInput.maybe);
     visualizeDot(dotLines.join('\n'));
 }

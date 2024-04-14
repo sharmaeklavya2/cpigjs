@@ -30,11 +30,11 @@ export class SetFamily {
         }
     }
 
-    validateInput(x: unknown): Object {
-        throw new Error('SetFamily.validateInput is not implemented');
+    canonicalize(x: unknown): Object {
+        throw new Error('SetFamily.canonicalize is not implemented');
     }
 
-    contains(aOrig: unknown, bOrig: unknown): boolean {
+    contains(a: unknown, b: unknown): boolean {
         throw new Error('SetFamily.contains is not implemented');
     }
 }
@@ -48,7 +48,7 @@ export class BoolSetFamily extends SetFamily {
         return new BoolSetFamily(obj.info);
     }
 
-    validateInput(x: unknown): boolean {
+    canonicalize(x: unknown): boolean {
         if(typeof x === 'undefined' || x === null) {
             return false;
         }
@@ -60,9 +60,7 @@ export class BoolSetFamily extends SetFamily {
         }
     }
 
-    contains(aOrig: unknown, bOrig: unknown): boolean {
-        const a = this.validateInput(aOrig);
-        const b = this.validateInput(bOrig);
+    contains(a: boolean, b: boolean): boolean {
         return (!a) || b;
     }
 }
@@ -90,7 +88,7 @@ export class DagSetFamily extends SetFamily {
         return new DagSetFamily(obj.info, obj.default, obj.values, obj.containments);
     }
 
-    validateInput(x: unknown): string {
+    canonicalize(x: unknown): string {
         if(typeof x === 'undefined' || x === null) {
             return this.defVal;
         }
@@ -107,9 +105,7 @@ export class DagSetFamily extends SetFamily {
         }
     }
 
-    contains(aOrig: unknown, bOrig: unknown): boolean {
-        const a = this.validateInput(aOrig);
-        const b = this.validateInput(bOrig);
+    contains(a: string, b: string): boolean {
         return a === b || this.containments.has(a + "," + b);
     }
 }
@@ -128,27 +124,23 @@ export class ProdSetFamily extends SetFamily {
         return new ProdSetFamily(obj.info, parts);
     }
 
-    validateInput(x: any): Object[] {
+    canonicalize(x: any): Object[] {
         if(Array.isArray(x)) {
             if(x.length != this.parts.length) {
                 throw new Error(`input to ProdSetFamily(${this.info.name}) has`
                     + ` length ${x.length} instead of ${this.parts.length}`);
             }
-            else {
-                return x;
-            }
+            return this.parts.map((part, i) => part.canonicalize(x[i]));
         }
         else if(x instanceof Object) {
-            return this.parts.map((part: SetFamily) => x[part.info.name]);
+            return this.parts.map((part: SetFamily) => part.canonicalize(x[part.info.name]));
         }
         else {
             throw new Error('incorrect type for ProdSetFamily');
         }
     }
 
-    contains(aOrig: unknown, bOrig: unknown): boolean {
-        const a = this.validateInput(aOrig);
-        const b = this.validateInput(bOrig);
+    contains(a: any, b: any): boolean {
         const n = this.parts.length;
         for(let i=0; i < n; ++i) {
             if(!this.parts[i].contains(a[i], b[i])) {

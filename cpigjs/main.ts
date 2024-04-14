@@ -1,17 +1,19 @@
 import { Edge, Graph } from "./graph.js";
 import { Info, SetFamily } from "./setFamily.js";
 
-interface Implication extends Edge<string> {
+//=[ Read and validate input ]==================================================
+
+export interface Implication extends Edge<string> {
     under: any;
 }
 
-interface CounterExample {
+export interface CounterExample {
     satisfies: string;
     butNot: string;
     under: any;
 }
 
-interface PredAttr {
+export interface PredAttr {
     name: string;
     under: any;
 }
@@ -26,21 +28,6 @@ export interface CpigInput {
     badnessName?: string;
 }
 
-interface ProcessedCpigInput {
-    preds: Map<string, Info>;
-    impG: Graph<string, Implication>;
-    cExs: CounterExample[];
-    goodPreds: Map<string, PredAttr[]>;
-    badPreds: Map<string, PredAttr[]>;
-    goodnessName: string;
-    badnessName: string;
-}
-
-export interface Ostream {
-    log: (...args: any[]) => undefined;
-    error: (...args: any[]) => undefined;
-}
-
 export function combineInputs(inputs: CpigInput[]): CpigInput {
     const preds = [], imps = [], cExs = [], goodPreds = [], badPreds = [];
     let goodnessName, badnessName;
@@ -50,122 +37,229 @@ export function combineInputs(inputs: CpigInput[]): CpigInput {
         cExs.push(...(input.counterExamples|| []));
         goodPreds.push(...(input.goodPredicates || []));
         badPreds.push(...(input.badPredicates || []));
-        goodnessName = input.goodnessName;
-        badnessName = input.badnessName;
+        if(input.goodnessName) {
+            goodnessName = input.goodnessName;
+        }
+        if(input.badnessName) {
+            badnessName = input.badnessName;
+        }
     }
     return {'predicates': preds, 'implications': imps, 'counterExamples': cExs,
         'goodPredicates': goodPreds, 'badPredicates': badPreds,
         'goodnessName': goodnessName, 'badnessName': badnessName};
 }
 
-export function filterByConstraint(inputs: CpigInput[], constraint: unknown, sf: SetFamily): ProcessedCpigInput {
-    const newConstr = sf.validateInput(constraint);
-    const preds = new Map<string, Info>(), imps = [], cExs = [];
-    const origGoodPreds = [], origBadPreds = [];
-    let goodnessName, badnessName;
-    for(const input of inputs) {
-        goodnessName = input.goodnessName;
-        badnessName = input.badnessName;
-        for(const pred of input.predicates || []) {
-            if(preds.has(pred.name)) {
-                throw new Error(`predicate ${pred.name} already exists.`);
-            }
-            else {
-                preds.set(pred.name, pred);
+function validateInput(input: CpigInput, sf: SetFamily): Map<string, Info> {
+    const predsMap = new Map<string, Info>();
+    for(const pred of input.predicates || []) {
+        if(predsMap.has(pred.name)) {
+            throw new Error(`predicate ${pred.name} already exists.`);
+        }
+        else {
+            predsMap.set(pred.name, pred);
+        }
+    }
+    for(const imp of input.implications || []) {
+        for(const predName of [imp.from, imp.to]) {
+            if (!predsMap.has(predName)) {
+                throw new Error(`unrecognized predicate ${predName} in implication ${imp}`);
             }
         }
-        for(const imp of input.implications || []) {
-            for(const predName of [imp.from, imp.to]) {
-                if (!preds.has(predName)) {
-                    throw new Error(`unrecognized predicate ${predName} in implication ${imp}`);
+        imp.under = sf.canonicalize(imp.under);
+    }
+    for(const cEx of input.counterExamples || []) {
+        for(const predName of [cEx.satisfies, cEx.butNot]) {
+            if (!predsMap.has(predName)) {
+                throw new Error(`unrecognized predicate ${predName} in counter-example ${cEx}`);
+            }
+        }
+        cEx.under = sf.canonicalize(cEx.under);
+    }
+    for(const predAttr of input.goodPredicates || []) {
+        if(!predsMap.has(predAttr.name)) {
+            throw new Error(`unrecognized predicate ${predAttr.name} in goodPredicates: ${predAttr}`);
+        }
+        predAttr.under = sf.canonicalize(predAttr.under);
+    }
+    for(const predAttr of input.badPredicates || []) {
+        if(!predsMap.has(predAttr.name)) {
+            throw new Error(`unrecognized predicate ${predAttr.name} in badPredicates: ${predAttr}`);
+        }
+        predAttr.under = sf.canonicalize(predAttr.under);
+    }
+    return predsMap;
+}
+
+//=[ Process input ]============================================================
+
+export class ImpGraphGen {
+    predNames: string[];
+    cache: Map<string, Graph<string, Implication>>;
+    constructor(predNames: Iterable<string>, public sf: SetFamily, public imps: Implication[]) {
+        this.predNames = Array.from(predNames);
+        this.cache = new Map();
+    }
+
+    get(constraint: any) {
+        const cJson = JSON.stringify(constraint);
+        let impG = this.cache.get(cJson);
+        if(impG !== undefined) {
+            return impG;
+        }
+        const newImps = this.imps.filter((imp) => this.sf.contains(imp.under, constraint));
+        impG = Graph.fromVE(this.predNames, newImps);
+        this.cache.set(cJson, impG);
+        return impG;
+    }
+}
+
+class MultiMap<K, V> {
+    map = new Map<K, V[]>;
+    constructor() {
+        this.map = new Map();
+    }
+
+    has(k: K): boolean {return this.map.has(k);}
+
+    getAll(k: K): V[] {
+        const vList = this.map.get(k);
+        if(vList === undefined) {
+            return [];
+        }
+        else {
+            return vList;
+        }
+    }
+
+    add(k: K, v: V): undefined {
+        const vList = this.map.get(k);
+        if(vList === undefined) {
+            this.map.set(k, [v]);
+        }
+        else {
+            vList.push(v);
+        }
+    }
+
+    resetAll(k: K, vList: V[]): undefined {
+        if(vList.length > 0) {
+            this.map.set(k, vList);
+        }
+        else {
+            this.map.delete(k);
+        }
+    }
+}
+
+
+export interface ProcessedCpigInput {
+    predsMap: Map<string, Info>;
+    impGGen: ImpGraphGen;
+    cExsMap: MultiMap<string, CounterExample>;
+    goodPreds: PredAttr[];
+    trBadPreds: MultiMap<string, PredAttr>;
+    goodnessName: string;
+    badnessName: string;
+}
+
+export function processInput(input: CpigInput, sf: SetFamily): ProcessedCpigInput {
+    const predsMap = validateInput(input, sf);
+    const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
+    const goodPreds = input.goodPredicates || [];
+
+    const cExsMap = new MultiMap<string, CounterExample>();
+    for(const cEx of input.counterExamples || []) {
+        const key = JSON.stringify([cEx.satisfies, cEx.butNot]);
+        cExsMap.add(key, cEx);
+    }
+    for(const cEx of input.counterExamples || []) {
+        const u = cEx.satisfies, v = cEx.butNot;
+        const impG = impGGen.get(cEx.under);
+        const uAll = [u, ...impG.getOutTree(u).keys()];
+        const vAll = [v, ...impG.getInTree(v).keys()];
+        for(const u2 of uAll) {
+            for(const v2 of vAll) {
+                if(u2 !== u || v2 !== v) {
+                    const key = JSON.stringify([u2, v2]);
+                    cExsMap.add(key, cEx);
                 }
             }
-            if (sf.contains(imp.under, newConstr)) {
-                imps.push(imp);
-            }
-        }
-        for(const cEx of input.counterExamples || []) {
-            for(const predName of [cEx.satisfies, cEx.butNot]) {
-                if (!preds.has(predName)) {
-                    throw new Error(`unrecognized predicate ${predName} in counter-example ${cEx}`);
-                }
-            }
-            if (sf.contains(newConstr, cEx.under)) {
-                cExs.push(cEx);
-            }
-        }
-        for(const predAttr of input.goodPredicates || []) {
-            if(!preds.has(predAttr.name)) {
-                throw new Error(`unrecognized predicate ${predAttr.name} in goodPredicates: ${predAttr}`);
-            }
-            if(sf.contains(predAttr.under, newConstr)) {
-                origGoodPreds.push(predAttr);
-            }
-        }
-        for(const predAttr of input.badPredicates || []) {
-            if(!preds.has(predAttr.name)) {
-                throw new Error(`unrecognized predicate ${predAttr.name} in badPredicates: ${predAttr}`);
-            }
-            if(sf.contains(newConstr, predAttr.under)) {
-                origBadPreds.push(predAttr);
-            }
         }
     }
-    const impG = Graph.fromVE(preds.keys(), imps);
-    const goodPreds = new Map<string, PredAttr[]>(), badPreds = new Map<string, PredAttr[]>();
-    for(const v of preds.keys()) {
-        const vAttrs: PredAttr[] = [];
-        for(const predAttr of origGoodPreds) {
-            const u = predAttr.name;
-            if(impG.hasPath(u, v)) {
-                vAttrs.push(predAttr);
-            }
-        }
-        if(vAttrs.length > 0) {
-            goodPreds.set(v, vAttrs);
+
+    const trBadPreds = new MultiMap<string, PredAttr>();
+    for(const badPred of input.badPredicates || []) {
+        trBadPreds.add(badPred.name, badPred);
+    }
+    for(const badPred of input.badPredicates || []) {
+        const impG = impGGen.get(badPred.under);
+        const allPredNames = impG.getInTree(badPred.name).keys();
+        for(const predName of allPredNames) {
+            trBadPreds.add(predName, badPred);
         }
     }
-    for(const u of preds.keys()) {
-        const uAttrs: PredAttr[] = [];
-        for(const predAttr of origBadPreds) {
-            const v = predAttr.name;
-            if(impG.hasPath(u, v)) {
-                uAttrs.push(predAttr);
-            }
-        }
-        if(uAttrs.length > 0) {
-            badPreds.set(u, uAttrs);
+    return {predsMap: predsMap, impGGen: impGGen, cExsMap: cExsMap,
+        goodPreds: goodPreds, trBadPreds: trBadPreds,
+        goodnessName: input.goodnessName || 'good', badnessName: input.badnessName || 'bad'};
+}
+
+//=[ answer queries ]===========================================================
+
+export interface Ostream {
+    log: (...args: any[]) => undefined;
+    error: (...args: any[]) => undefined;
+}
+
+export interface FilteredCpigInput {
+    predsMap: Map<string, Info>;
+    impG: Graph<string, Implication>;
+    cExsMap: MultiMap<string, CounterExample>;
+    trGoodPreds: MultiMap<string, PredAttr>;
+    trBadPreds: MultiMap<string, PredAttr>;
+    goodnessName: string;
+    badnessName: string;
+}
+
+export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstraint: any): FilteredCpigInput {
+    const constraint = sf.canonicalize(rawConstraint);
+    const impG = input.impGGen.get(constraint);
+
+    const trGoodPreds = new MultiMap<string, PredAttr>();
+    for(const predAttr of input.goodPreds) {
+        trGoodPreds.add(predAttr.name, predAttr);
+    }
+    for(const predAttr of input.goodPreds) {
+        for(const predName of impG.getOutTree(predAttr.name).keys()) {
+            trGoodPreds.add(predName, predAttr);
         }
     }
-    return {preds: preds, impG: impG, cExs: cExs, goodPreds: goodPreds, badPreds: badPreds,
-        goodnessName: goodnessName || 'good', badnessName: badnessName || 'bad'};
+
+    const cExsMap = new MultiMap<string, CounterExample>();
+    for(const [key, vList] of input.cExsMap.map.entries()) {
+        const vList2 = vList.filter((cEx) => sf.contains(constraint, cEx.under));
+        cExsMap.resetAll(key, vList2);
+    }
+
+    return {predsMap: input.predsMap, impG: impG, cExsMap: cExsMap,
+        trGoodPreds: trGoodPreds, trBadPreds: input.trBadPreds,
+        goodnessName: input.goodnessName || 'good', badnessName: input.badnessName || 'bad'};
 }
 
 function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
-        cExs: CounterExample[]): Edge<string>[] {
+        cExsMap: MultiMap<string, CounterExample>): Edge<string>[] {
     const maybeEdges = [];
     for(const u of scc.keys()) {
         for(const v of scc.keys()) {
-            if(!impG.hasPath(u, v)) {
-                let isMaybeEdge = true;
-                for(const cEx of cExs) {
-                    const uc = cEx.satisfies, vc = cEx.butNot;
-                    if(impG.hasPath(uc, u) && impG.hasPath(v, vc)) {
-                        isMaybeEdge = false;
-                    }
-                }
-                if(isMaybeEdge) {
-                    maybeEdges.push({'from': u, 'to': v});
-                }
+            if(!impG.hasPath(u, v) && !cExsMap.has(JSON.stringify([u, v]))) {
+                maybeEdges.push({'from': u, 'to': v});
             }
         }
     }
     return maybeEdges;
 }
 
-export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdout: Ostream): undefined {
-    const impG = input.impG, cExs = input.cExs;
-    const path = impG.getPath(u, v);
+export function outputPath(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): undefined {
+    const path = input.impG.getPath(u, v);
     if(path === undefined) {
         stdout.log(`no path from ${u} to ${v}`);
     }
@@ -176,21 +270,21 @@ export function outputPath(input: ProcessedCpigInput, u: string, v: string, stdo
         }
     }
 
-    for(const cEx of cExs) {
-        const uc = cEx.satisfies, vc = cEx.butNot;
-        if(impG.hasPath(uc, u) && impG.hasPath(v, vc)) {
-            stdout.log('counterexample:', JSON.stringify(cEx));
+    const ceList = input.cExsMap.getAll(JSON.stringify([u, v]));
+    if(ceList.length > 0) {
+        for(const ce of ceList) {
+            stdout.log('counterexample:', JSON.stringify(ce));
         }
     }
 }
 
-export function outputGoodBadReasons(input: ProcessedCpigInput, predNames: string[], stdout: Ostream) {
-    const mainList: [string, Map<string, PredAttr[]>][] =
-            [[input.goodnessName, input.goodPreds], [input.badnessName, input.badPreds]];
+export function outputGoodBadReasons(input: FilteredCpigInput, predNames: string[], stdout: Ostream) {
+    const mainList: [string, MultiMap<string, PredAttr>][] =
+            [[input.goodnessName, input.trGoodPreds], [input.badnessName, input.trBadPreds]];
     for(const [attrName, attrReasonsMap] of mainList) {
         for(const predName of predNames) {
-            const reasons = attrReasonsMap.get(predName);
-            if(reasons !== undefined) {
+            const reasons = attrReasonsMap.getAll(predName);
+            if(reasons.length > 0) {
                 stdout.log('');
                 stdout.log(`${predName} is ${attrName}:`);
                 for(const [i, reason] of reasons.entries()) {
@@ -237,12 +331,12 @@ function toDotAttrs(d: object): string {
     }
 }
 
-export function serializeGraph(input: ProcessedCpigInput, predNames: string[], showMaybeEdges: boolean,
+export function serializeGraph(input: FilteredCpigInput, predNames: string[], showMaybeEdges: boolean,
         format: string): string[] {
     if(format === 'txt') {
         const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
         const redDag = dag.trRed();
-        const maybeEdges = showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExs) : [];
+        const maybeEdges = showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExsMap) : [];
         return sccDagToStr(scc, dag, maybeEdges);
     }
     else if(format === 'dot') {
@@ -253,29 +347,29 @@ export function serializeGraph(input: ProcessedCpigInput, predNames: string[], s
     }
 }
 
-export function getDotGraph(input: ProcessedCpigInput, predNames: string[], showMaybeEdges: boolean): string[] {
+export function getDotGraph(input: FilteredCpigInput, predNames: string[], showMaybeEdges: boolean): string[] {
     const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
     const redDag = dag.trRed();
     const lines = ['digraph G {', 'rankdir=LR;', 'edge [arrowhead=vee];'];
     for(const u of redDag.adj.keys()) {
         const uAttrs: any = {'label': componentStr(scc.get(u)!, false)};
-        if(input.goodPreds.has(u)) {
+        if(input.trGoodPreds.has(u)) {
             uAttrs['fontcolor'] = 'green';
-            if(input.badPreds.has(u)) {
+            if(input.trBadPreds.has(u)) {
                 uAttrs.color = 'red';
             }
             else {
                 uAttrs.color = 'green';
             }
         }
-        else if(input.badPreds.has(u)) {
+        else if(input.trBadPreds.has(u)) {
             uAttrs.fontcolor = 'red';
             uAttrs.color = 'red';
         }
         lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
     }
     if(showMaybeEdges) {
-        const maybeEdges = getMaybeEdges(scc, input.impG, input.cExs);
+        const maybeEdges = getMaybeEdges(scc, input.impG, input.cExsMap);
         for(const e of maybeEdges) {
             const eAttrs = {'style': 'dashed', 'constraint': 'false', 'color': 'gray', 'penwidth': '0.6'};
             lines.push(`"${e.from}" -> "${e.to}"${toDotAttrs(eAttrs)};`);
