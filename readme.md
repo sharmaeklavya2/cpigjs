@@ -35,16 +35,11 @@ For the problem of fairly allocating indivisible items,
 `fairDiv/setFamily.json` describes the family $Σ$
 and `fairDiv/data.json` describes the predicates and implications.
 
-## Setup
-
-1.  Install the project's dependencies (`npm install`).
-2.  Install typescript (`npm install -g typescript`).
-3.  Run `npx tsc` to compile the typescript code in `cpigjs`.
-
 ## How to Run with node
 
 Install [Graphviz](https://graphviz.org/documentation/) and ensure that the
 `dot` command is available on your command line.
+Install the project's npm dependencies (`npm install`).
 
 To return all implications for additive valuations over goods when agents have equal entitlements
 (including open problems), and save the output to `goods.pdf`, run
@@ -59,7 +54,5 @@ To run unit tests, run `npx mocha scripts/test.js`.
 
 ## How to Run in the Browser
 
-First, generate an HTML file by running `npm run buildWeb`.
-
-Then serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
+Serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
 and open `fairDiv/index.html` in your web browser.

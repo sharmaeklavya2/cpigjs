@@ -6,5 +6,8 @@
 "dataFiles": ["data.json"],
 "prefixHTML": "<p>See <a href=\"https://arxiv.org/abs/2502.02815\">arXiv:2502.02815</a> for background. Source code at <a href=\"https://github.com/sharmaeklavya2/cpigjs\">github:sharmaeklavya2/cpigjs</a>.</p>",
 "suffixHTML": "",
-"config": {}
+"config": {
+    "texRefsUrl": "texRefs.json",
+    "defaultProofUrl": "https://arxiv.org/abs/2502.02815v1"
+}
 }
