@@ -26,12 +26,18 @@
         "proofText": "Consider 3 agents and goods {1, 2, 3}. Valuation matrix is [[4, 3, 2], [2, 4, 3], [3, 2, 4]]. Then the allocation ({2}, {3}, {1}) is PROP but not EF."}
 ],
 "goodPredicates": [
-    {"name": "ef1", "under": {}, "proofText": "Section 2 of <https://doi.org/10.1145/988772.988792>"}
+    {"name": "ef1", "under": {}, "proofText": "Section 2 of <https://doi.org/10.1145/988772.988792>"},
+    {"name": "efx", "under": {"identical": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
+    {"name": "efx", "under": {"twoAg": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
+    {"name": "mms", "under": {"identical": true}},
+    {"name": "mms", "under": {"twoAg": true}}
 ],
 "badPredicates": [
     {"name": "ef", "under": {"valuation": "add", "identical": true, "twoAg": true},
         "proofText": "Two identical agents and a single good."},
     {"name": "prop", "under": {"valuation": "add", "identical": true, "twoAg": true},
-        "proofText": "Two identical agents and a single good."}
+        "proofText": "Two identical agents and a single good."},
+    {"name": "mms", "under": {"valuation": "add"},
+        "proofLink": "https://doi.org/10.1007/978-3-030-94676-0_20"}
 ]
 }

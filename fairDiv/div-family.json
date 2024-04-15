@@ -30,6 +30,10 @@
         {
             "type": "bool",
             "info": {"name": "twoAg", "label": "only 2 agents"}
+        },
+        {
+            "type": "bool",
+            "info": {"name": "eqEnt", "label": "equal entitlements"}
         }
     ]
 }
