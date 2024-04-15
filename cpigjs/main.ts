@@ -226,11 +226,24 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
 
     const trGoodPreds = new MultiMap<string, PredAttr>();
     for(const predAttr of input.goodPreds) {
-        trGoodPreds.add(predAttr.name, predAttr);
+        if(sf.contains(predAttr.under, constraint)) {
+            trGoodPreds.add(predAttr.name, predAttr);
+        }
     }
     for(const predAttr of input.goodPreds) {
-        for(const predName of impG.getOutTree(predAttr.name).keys()) {
-            trGoodPreds.add(predName, predAttr);
+        if(sf.contains(predAttr.under, constraint)) {
+            for(const predName of impG.getOutTree(predAttr.name).keys()) {
+                trGoodPreds.add(predName, predAttr);
+            }
+        }
+    }
+
+    const trBadPreds = new MultiMap<string, PredAttr>();
+    for(const [predName, reasons] of input.trBadPreds.map.entries()) {
+        for(const reason of reasons) {
+            if(sf.contains(constraint, reason.under)) {
+                trBadPreds.add(predName, reason);
+            }
         }
     }
 
@@ -241,7 +254,7 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
     }
 
     return {predsMap: input.predsMap, impG: impG, cExsMap: cExsMap,
-        trGoodPreds: trGoodPreds, trBadPreds: input.trBadPreds,
+        trGoodPreds: trGoodPreds, trBadPreds: trBadPreds,
         goodnessName: input.goodnessName || 'good', badnessName: input.badnessName || 'bad'};
 }
 
