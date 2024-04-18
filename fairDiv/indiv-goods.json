@@ -59,6 +59,7 @@
     {"from": "mms", "to": "gmms", "under": {"twoAg": true}},
     {"from": "pmms", "to": "gmms", "under": {"twoAg": true}},
     {"from": "aps", "to": "gaps", "under": {"twoAg": true}},
+    {"from": "paps", "to": "gaps", "under": {"twoAg": true}},
     {"from": "prop", "to": "gprop", "under": {"twoAg": true}},
     {"from": "pprop", "to": "gprop", "under": {"twoAg": true}},
 
@@ -92,6 +93,8 @@
     {"from": "pmms", "to": "ef1", "under": {}, "proofLink":
         "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/mms-to-efx-n2-goods.html"},
 
+    {"from": "mnw", "to": "ef1", "under": {"valuation": "additive"}, "proofLink":
+        "https://doi.org/10.1145/3355902"},
     {"from": "mms", "to": "eefx", "under": {"marginal": "positive"},
         "proofText": "Theorem 15 of <https://arxiv.org/abs/2206.01710v2>"},
     {"from": "mms", "to": "eef1", "under": {},
@@ -159,6 +162,7 @@
 "badPredicates": [
     {"name": "prop", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "twoAg": true},
         "proofText": "Two identical agents and a single good."},
+    {"name": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true}, "proofText": "Let $n=2$ and $m=4$. Let $v(g \\mid S)$ be $1$ if $|S| ≤ 3$ and $5$ otherwise."},
 
     {"name": "aps", "under": {"valuation": "submod", "marginal": "positive", "identical": true, "twoAg": true},
         "proofText": "Remark 2 of <https://doi.org/10.1287/moor.2021.0199>. Can be extended to positive marginals by adding a small quantity to each bundle's value."},
