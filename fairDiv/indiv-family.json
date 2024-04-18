@@ -38,14 +38,17 @@
                 {"name": "positive"},
                 {"name": "binary"},
                 {"name": "bivalued"},
+                {"name": "positiveBivalued"},
                 {"name": "unit"}
             ],
             "containments": [
                 ["nonneg", "positive"],
                 ["nonneg", "bivalued"],
                 ["bivalued", "binary"],
+                ["bivalued", "positiveBivalued"],
                 ["binary", "unit"],
-                ["positive", "unit"]
+                ["positive", "unit"],
+                ["positive", "positiveBivalued"]
             ]
         },
         {
