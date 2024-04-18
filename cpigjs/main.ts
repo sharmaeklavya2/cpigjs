@@ -363,7 +363,7 @@ export function serializeGraph(input: FilteredCpigInput, predNames: string[], sh
 export function getDotGraph(input: FilteredCpigInput, predNames: string[], showMaybeEdges: boolean): string[] {
     const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
     const redDag = dag.trRed();
-    const lines = ['digraph G {', 'rankdir=LR;', 'edge [arrowhead=vee];'];
+    const lines = ['digraph G {', 'edge [arrowhead=vee];'];
     for(const u of redDag.adj.keys()) {
         const uAttrs: any = {'label': componentStr(scc.get(u)!, false)};
         if(input.trGoodPreds.has(u)) {
