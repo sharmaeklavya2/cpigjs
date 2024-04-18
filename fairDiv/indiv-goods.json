@@ -2,42 +2,117 @@
 "goodnessName": "feasible",
 "badnessName": "infeasible",
 "predicates": [
-    {"name": "ef", "label": "EF"},
-    {"name": "prop"},
-    {"name": "efx", "label": "EFx"},
-    {"name": "ef1", "label": "EF1"},
-    {"name": "mms", "label": "MMS"},
-    {"name": "prop1"}
+    {"name": "aps", "link": "https://doi.org/10.1287/moor.2021.0199"},
+    {"name": "ceei"},
+    {"name": "eef",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/epistemic.html"},
+    {"name": "eefx",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/epistemic.html"},
+    {"name": "eef1",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/epistemic.html"},
+    {"name": "ef",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/ef.html"},
+    {"name": "efx",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/ef1x-goods.html"},
+    {"name": "ef1",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/ef1x-goods.html"},
+    {"name": "gmms", "link": "https://doi.org/10.1609/aaai.v32i1.11463"},
+    {"name": "mms",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/mms.html"},
+    {"name": "mnw"},
+    {"name": "mxs"},
+    {"name": "pmms"},
+    {"name": "prop",
+        "link": "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/notions/prop.html"},
+    {"name": "propm"},
+    {"name": "propx"},
+    {"name": "prop1"},
+    {"name": "tps", "link": "https://doi.org/10.1007/978-3-031-22832-2_14"}
 ],
 "implications": [
+    {"from": "ceei", "to": "ef", "under": {}},
+    {"from": "ef", "to": "eef", "under": {}},
     {"from": "ef", "to": "efx", "under": {}},
     {"from": "efx", "to": "ef1", "under": {}},
-    {"from": "ef1", "to": "prop1", "under": {"valuation": "add"},
-        "proofText": "Adding the most valuable outside item makes the agent's bundle's value ≥ every other bundle's value, and so its value is also more than the average."},
+    {"from": "efx", "to": "eefx", "under": {}},
+    {"from": "ef1", "to": "eef1", "under": {}},
+    {"from": "eef", "to": "eefx", "under": {}},
+    {"from": "eefx", "to": "eef1", "under": {}},
+    {"from": "prop", "to": "propx", "under": {}},
+    {"from": "propx", "to": "propm", "under": {}},
+    {"from": "propm", "to": "prop1", "under": {}},
+    {"from": "gmms", "to": "pmms", "under": {}},
+    {"from": "gmms", "to": "mms", "under": {}},
 
-    {"from": "ef", "to": "prop", "under": {"valuation": "subadd"}},
-    {"from": "prop", "to": "mms", "under": {"valuation": "superadd"}},
-    {"from": "mms", "to": "prop1", "under": {"valuation": "add"},
-        "proofLink": "https://doi.org/10.24963/ijcai.2023/284"},
-    {"from": "prop", "to": "prop1", "under": {}}
+    {"from": "eef", "to": "ef", "under": {"twoAg": true}},
+    {"from": "eefx", "to": "efx", "under": {"twoAg": true}},
+    {"from": "eef1", "to": "ef1", "under": {"twoAg": true}},
+    {"from": "mms", "to": "gmms", "under": {"twoAg": true}},
+    {"from": "pmms", "to": "gmms", "under": {"twoAg": true}},
+
+    {"from": "aps", "to": "mms", "under": {},
+        "proofText": "Proposition 2 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"from": "ceei", "to": "aps", "under": {},
+        "proofText": "Observation 3 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"from": "prop", "to": "aps", "under": {"valuation": "additive"},
+        "proofText": "Proposition 4 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"from": "mms", "to": "aps", "under": {"valuation": "additive", "twoAg": true},
+        "proofText": "Proposition 5 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"from": "prop", "to": "tps", "under": {"valuation": "additive"},
+        "proofText": "Follows from Definition 1 in <https://doi.org/10.1287/moor.2021.0199>"},
+    {"from": "tps", "to": "aps", "under": {"valuation": "additive"},
+        "proofText": "Proposition 8 of <https://doi.org/10.1287/moor.2021.0199>"},
+
+    {"from": "prop", "to": "ef", "under": {"valuation": "superadd", "identical": true}, "proofLink":
+        "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/prop-impl-ef-superadd-id.html"},
+    {"from": "eef", "to": "prop", "under": {"valuation": "subadd"}, "proofLink":
+        "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/eef-impl-prop-subadd.html"}
 ],
 "counterExamples": [
-    {"satisfies": "prop", "butNot": "ef", "under": {"valuation": "add"},
-        "proofText": "Consider 3 agents and goods {1, 2, 3}. Valuation matrix is [[4, 3, 2], [2, 4, 3], [3, 2, 4]]. Then the allocation ({2}, {3}, {1}) is PROP but not EF."}
+    {"satisfies": "eef", "butNot": "ef1", "under": {"valuation": "additive"}, "proofLink":
+        "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/non-impl/eef-nimpl-ef-additive.html"},
+    {"satisfies": "tps", "butNot": "prop", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "twoAg": true}, "proofText": "Two identical agents and a single good."},
+    {"satisfies": "propx", "butNot": "prop", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "twoAg": true}, "proofText": "Two identical agents and a single good."},
+    {"satisfies": "efx", "butNot": "prop", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "twoAg": true}, "proofText": "Two identical agents and a single good."},
+
+    {"satisfies": "mms", "butNot": "aps", "under": {"valuation": "additive", "identical": true},
+        "proofText": "Lemma C.1 of <https://doi.org/10.1287/moor.2021.0199>"},
+
+    {"satisfies": "eefx", "butNot": "ef1", "under": {"valuation": "additive", "marginal": "unit", "identical": true},
+        "proofText": "$m = 2n-1$. Give $n$ goods to one agent and one good each to the remaining agents."},
+    {"satisfies": "aps", "butNot": "ef1", "under": {"valuation": "additive", "marginal": "unit", "identical": true},
+        "proofText": "$m = 2n-1$. Give $n$ goods to one agent and one good each to the remaining agents."},
+    {"satisfies": "propx", "butNot": "ef1", "under": {"valuation": "additive", "marginal": "unit", "identical": true},
+        "proofText": "$m = 2n-1$. Give $n$ goods to one agent and one good each to the remaining agents."}
 ],
 "goodPredicates": [
     {"name": "ef1", "under": {}, "proofText": "Section 2 of <https://doi.org/10.1145/988772.988792>"},
     {"name": "efx", "under": {"identical": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
     {"name": "efx", "under": {"twoAg": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
-    {"name": "mms", "under": {"identical": true}},
-    {"name": "mms", "under": {"twoAg": true}}
+    {"name": "mms", "under": {"twoAg": true}},
+
+    {"name": "aps", "under": {"valuation": "unitDemand"},
+        "proofText": "Section 3.1.1 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"name": "aps", "under": {"valuation": "additive", "twoAg": true},
+        "proofText": "Proposition 6 of <https://doi.org/10.1287/moor.2021.0199>"},
+
+    {"name": "gmms", "under": {"valuation": "additive", "marginal": "binary"}, "proofText":
+        "Theorem 2 of <https://doi.org/10.1609/aaai.v32i1.11463>"},
+    {"name": "gmms", "under": {"identical": true}, "proofText":
+        "Theorem 2 of <https://doi.org/10.1609/aaai.v32i1.11463>"},
+
+    {"name": "mnw", "under": {}}
 ],
 "badPredicates": [
-    {"name": "ef", "under": {"valuation": "add", "identical": true, "twoAg": true},
+    {"name": "prop", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "twoAg": true},
         "proofText": "Two identical agents and a single good."},
-    {"name": "prop", "under": {"valuation": "add", "identical": true, "twoAg": true},
-        "proofText": "Two identical agents and a single good."},
-    {"name": "mms", "under": {"valuation": "add"},
+
+    {"name": "aps", "under": {"valuation": "submod", "identical": true, "twoAg": true},
+        "proofText": "Remark 2 of <https://doi.org/10.1287/moor.2021.0199>"},
+    {"name": "aps", "under": {"valuation": "additive", "identical": true},
+        "proofText": "Lemma C.1 of <https://doi.org/10.1287/moor.2021.0199>"},
+
+    {"name": "mms", "under": {"valuation": "additive"},
         "proofLink": "https://doi.org/10.1007/978-3-030-94676-0_20"}
 ]
 }

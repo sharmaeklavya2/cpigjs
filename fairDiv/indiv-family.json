@@ -8,15 +8,44 @@
             "default": "general",
             "values": [
                 {"name": "general"},
-                {"name": "add", "label": "additive", "text": "A function $v$ is additive iff for any disjoint sets $S$ and $T$, we have $v(S ∪ T) = v(S) + v(T)$."},
-                {"name": "subadd", "label": "sub-additive", "text": "A function $v$ is sub-additive iff for any disjoint sets $S$ and $T$, we have $v(S ∪ T) ≤ v(S) + v(T)$."},
-                {"name": "superadd", "label": "super-additive", "text": "A function $v$ is super-additive iff for any disjoint sets $S$ and $T$, we have $v(S ∪ T) ≥ v(S) + v(T)$."}
+                {"name": "additive", "label": "additive"},
+                {"name": "subadd", "label": "subadditive"},
+                {"name": "superadd", "label": "superadditive"},
+                {"name": "submod", "label": "submodular"},
+                {"name": "supermod", "label": "supermodular"},
+                {"name": "cancelable"},
+                {"name": "unitDemand"}
             ],
             "containments": [
                 ["general", "subadd"],
                 ["general", "superadd"],
-                ["subadd", "add"],
-                ["superadd", "add"]
+                ["general", "cancelable"],
+                ["subadd", "submod"],
+                ["superadd", "supermod"],
+                ["submod", "additive"],
+                ["supermod", "additive"],
+                ["cancelable", "additive"],
+                ["submod", "unitDemand"],
+                ["cancelable", "unitDemand"]
+            ]
+        },
+        {
+            "type": "dag",
+            "info": {"name": "marginal", "label": "marginal values"},
+            "default": "nonneg",
+            "values": [
+                {"name": "nonneg"},
+                {"name": "positive"},
+                {"name": "binary"},
+                {"name": "bivalued"},
+                {"name": "unit"}
+            ],
+            "containments": [
+                ["nonneg", "positive"],
+                ["nonneg", "bivalued"],
+                ["bivalued", "binary"],
+                ["binary", "unit"],
+                ["positive", "unit"]
             ]
         },
         {
