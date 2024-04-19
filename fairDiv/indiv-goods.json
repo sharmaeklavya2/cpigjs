@@ -90,14 +90,14 @@
         "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/mms-to-efx-n2-goods.html"},
     {"from": "pmms", "to": "efx", "under": {"marginal": "positive"}, "proofLink":
         "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/mms-to-efx-n2-goods.html"},
-    {"from": "pmms", "to": "ef1", "under": {}, "proofLink":
+    {"from": "pmms", "to": "ef1", "under": {"valuation": "additive"}, "proofLink":
         "https://sharmaeklavya2.github.io/theoremdep/nodes/fair-division/impl/mms-to-efx-n2-goods.html"},
 
     {"from": "mnw", "to": "ef1", "under": {"valuation": "additive"}, "proofLink":
         "https://doi.org/10.1145/3355902"},
     {"from": "mms", "to": "eefx", "under": {"marginal": "positive"},
         "proofText": "Theorem 15 of <https://arxiv.org/abs/2206.01710v2>"},
-    {"from": "mms", "to": "eef1", "under": {},
+    {"from": "mms", "to": "eef1", "under": {"valuation": "additive"},
         "proofText": "Theorem 15 of <https://arxiv.org/abs/2206.01710v2>"},
     {"from": "eefx", "to": "mxs", "under": {},
         "proofText": "Theorem 1 of <https://doi.org/10.24963/ijcai.2023/284>"},
@@ -143,7 +143,7 @@
     {"name": "ef1", "under": {}, "proofText": "Section 2 of <https://doi.org/10.1145/988772.988792>"},
     {"name": "efx", "under": {"identical": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
     {"name": "efx", "under": {"twoAg": true}, "proofLink": "https://doi.org/10.1137/19M124397X"},
-    {"name": "eefx", "under": {"valuation": "additive"},
+    {"name": "eefx", "under": {"valuation": "cancelable"},
         "proofLink": "https://arxiv.org/abs/2206.01710v2"},
     {"name": "mms", "under": {"twoAg": true}},
 
