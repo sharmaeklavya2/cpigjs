@@ -32,23 +32,44 @@
         {
             "type": "dag",
             "info": {"name": "marginal", "label": "marginal values"},
-            "default": "nonneg",
+            "default": "general",
             "values": [
+                {"name": "general"},
+                {"name": "dblmono"},
+
                 {"name": "nonneg"},
                 {"name": "positive"},
-                {"name": "binary"},
-                {"name": "bivalued"},
+                {"name": "nonpos"},
+                {"name": "negative"},
+
+                {"name": "nonnegBivalued"},
                 {"name": "positiveBivalued"},
-                {"name": "unit"}
+                {"name": "nonposBivalued"},
+                {"name": "negativeBivalued"},
+
+                {"name": "binary"},
+                {"name": "negBinary"},
+                {"name": "unit"},
+                {"name": "negUnit"}
             ],
             "containments": [
+                ["general", "dblmono"],
+                ["dblmono", "nonneg"],
+                ["dblmono", "nonpos"],
                 ["nonneg", "positive"],
-                ["nonneg", "bivalued"],
-                ["bivalued", "binary"],
-                ["bivalued", "positiveBivalued"],
+                ["nonpos", "negative"],
+
+                ["nonneg", "nonnegBivalued"],
+                ["nonpos", "nonposBivalued"],
+                ["positive", "positiveBivalued"],
+                ["negative", "negativeBivalued"],
+
+                ["nonnegBivalued", "binary"],
+                ["nonposBivalued", "negBinary"],
                 ["binary", "unit"],
-                ["positive", "unit"],
-                ["positive", "positiveBivalued"]
+                ["positiveBivalued", "unit"],
+                ["negBinary", "negUnit"],
+                ["negativeBivalued", "negUnit"]
             ]
         },
         {
@@ -58,6 +79,10 @@
         {
             "type": "bool",
             "info": {"name": "twoAg", "label": "only 2 agents"}
+        },
+        {
+            "type": "bool",
+            "info": {"name": "eqEnt", "label": "equal entitlements"}
         }
     ]
 }
