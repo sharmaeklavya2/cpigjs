@@ -35,7 +35,8 @@
             "default": "general",
             "values": [
                 {"name": "general"},
-                {"name": "dblmono"},
+                {"name": "dblMono"},
+                {"name": "posOrNeg", "text": "either all marginals are positive or all are negative"},
 
                 {"name": "nonneg"},
                 {"name": "positive"},
@@ -53,11 +54,14 @@
                 {"name": "negUnit"}
             ],
             "containments": [
-                ["general", "dblmono"],
-                ["dblmono", "nonneg"],
-                ["dblmono", "nonpos"],
+                ["general", "dblMono"],
+                ["dblMono", "posOrNeg"],
+                ["dblMono", "nonneg"],
+                ["dblMono", "nonpos"],
                 ["nonneg", "positive"],
                 ["nonpos", "negative"],
+                ["posOrNeg", "positive"],
+                ["posOrNeg", "negative"],
 
                 ["nonneg", "nonnegBivalued"],
                 ["nonpos", "nonposBivalued"],
