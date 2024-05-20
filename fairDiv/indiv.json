@@ -26,9 +26,11 @@
 "implications": [
     {"from": "ef", "to": "eef", "under": {}},
     {"from": "ef", "to": "efx", "under": {}},
+    {"from": "ef", "to": "ef1", "under": {}},
     {"from": "efx", "to": "eefx", "under": {}},
     {"from": "ef1", "to": "eef1", "under": {}},
     {"from": "eef", "to": "eefx", "under": {}},
+    {"from": "eef", "to": "eef1", "under": {}},
     {"from": "eefx", "to": "mxs", "under": {}},
     {"from": "eef1", "to": "m1s", "under": {}},
     {"from": "gaps", "to": "aps", "under": {}},
@@ -193,11 +195,22 @@
         "thmdep": "/fair-division/non-impl/share-vs-envy-chores"},
 
     {"satisfies": "eef", "butNot": "ef1",
-        "under": {"valuation": "additive", "marginal": "positive", "eqEnt": true},
+        "under": {"valuation": "additive", "marginal": "positiveBivalued", "eqEnt": true},
         "link": "/fair-division/non-impl/eef-nimpl-ef1"},
     {"satisfies": "eef", "butNot": "ef1",
-        "under": {"valuation": "additive", "marginal": "negative", "eqEnt": true},
+        "under": {"valuation": "additive", "marginal": "binary", "eqEnt": true},
         "link": "/fair-division/non-impl/eef-nimpl-ef1"},
+    {"satisfies": "eef", "butNot": "ef1",
+        "under": {"valuation": "additive", "marginal": "negativeBivalued", "eqEnt": true},
+        "link": "/fair-division/non-impl/eef-nimpl-ef1"},
+    {"satisfies": "eef", "butNot": "ef1",
+        "under": {"valuation": "additive", "marginal": "negBinary", "eqEnt": true},
+        "link": "/fair-division/non-impl/eef-nimpl-ef1"},
+
+    {"satisfies": "ef", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"satisfies": "aps", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"satisfies": "ef", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"satisfies": "aps", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
 
     {"satisfies": "mms", "butNot": "aps",
         "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true},
@@ -227,7 +240,8 @@
     {"name": "prop", "under":
         {"valuation": "additive", "marginal": "negUnit", "identical": true, "twoAg": true, "eqEnt": true},
         "text": "Two identical agents and a single chore."},
-    {"name": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true}, "text": "Let $n=2$ and $m=4$. Let $v(g \\mid S)$ be $1$ if $|S| ≤ 3$ and $5$ otherwise."},
+    {"name": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"name": "prop1", "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
 
     {"name": "aps", "under": {"valuation": "submod", "marginal": "positive", "identical": true, "twoAg": true, "eqEnt": true}, "text": "Remark 2 of <https://doi.org/10.1287/moor.2021.0199>. Can be extended to positive marginals by adding a small quantity to each bundle's value."},
     {"name": "aps", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true},
