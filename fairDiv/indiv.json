@@ -90,6 +90,8 @@
         "thmdep": "/fair-division/impl/efx-implies-ef1"},
     {"from": "mxs", "to": "m1s", "under": {"valuation": "submod", "marginal": "nonpos"},
         "thmdep": "/fair-division/impl/efx-implies-ef1"},
+    {"from": "mxs", "to": "prop1", "under": {"valuation": "additive", "marginal": "nonneg", "eqEnt": true},
+        "text": "Theorem 3 of <https://doi.org/10.24963/ijcai.2023/284>"},
 
     {"from": "eef1", "to": "prop1", "under": {"valuation": "subadd", "marginal": "nonpos"},
         "thmdep": "/fair-division/impl/ef1-implies-prop1"},
@@ -206,15 +208,41 @@
     {"satisfies": "eef", "butNot": "ef1",
         "under": {"valuation": "additive", "marginal": "negBinary", "eqEnt": true},
         "link": "/fair-division/non-impl/eef-nimpl-ef1"},
+    {"satisfies": "prop", "butNot": "eef",
+        "under": {"valuation": "additive", "marginal": "positive", "eqEnt": true},
+        "link": "/fair-division/non-existence/prop-but-not-eef"},
+    {"satisfies": "prop", "butNot": "eef",
+        "under": {"valuation": "additive", "marginal": "negative", "eqEnt": true},
+        "link": "/fair-division/non-existence/prop-but-not-eef"},
 
     {"satisfies": "ef", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
     {"satisfies": "aps", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
     {"satisfies": "ef", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
     {"satisfies": "aps", "butNot": "prop1", "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
 
-    {"satisfies": "mms", "butNot": "aps",
+    {"satisfies": "m1s", "butNot": "prop1", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/m1s-nimpl-prop1"},
+    {"satisfies": "m1s", "butNot": "prop1", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/m1s-nimpl-prop1"},
+    {"satisfies": "propx", "butNot": "m1s", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/propx-nimpl-m1s"},
+    {"satisfies": "propx", "butNot": "m1s", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/propx-nimpl-m1s"},
+
+    {"satisfies": "efx", "butNot": "mms", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/efx-nimpl-mms"},
+    {"satisfies": "efx", "butNot": "mms", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/efx-nimpl-mms"},
+
+    {"satisfies": "ef1", "butNot": "mxs", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef1-nimpl-propx-mxs"},
+    {"satisfies": "ef1", "butNot": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef1-nimpl-propx-mxs"},
+    {"satisfies": "ef1", "butNot": "mxs", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef1-nimpl-propx-mxs"},
+    {"satisfies": "ef1", "butNot": "propx", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef1-nimpl-propx-mxs"},
+
+    {"satisfies": "gaps", "butNot": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-existence/propx"},
+    {"satisfies": "pmms", "butNot": "mms", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true}, "text": "Example 4.4 in <https://doi.org/10.1145/3355902>."},
+    {"satisfies": "pmms", "butNot": "mms", "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true}, "text": "Example 4.4 in <https://doi.org/10.1145/3355902>."},
+    {"satisfies": "mxs", "butNot": "eefx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "text": "Example 3 in <https://doi.org/10.24963/ijcai.2023/284>."},
+    {"satisfies": "aps", "butNot": "propm", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-existence/propx"},
+    {"satisfies": "mms", "butNot": "eefx", "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mms-nimpl-eefx-chores"},
+    {"satisfies": "efx", "butNot": "prop1", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "eqEnt": false}, "thmdep": "/fair-division/non-impl/wefx-nimipl-wprop1"},
+    {"satisfies": "gmms", "butNot": "aps",
         "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true},
-        "text": "Lemma C.2 of <https://doi.org/10.1287/moor.2021.0199>"}
+        "text": "Lemma C.2 of <https://doi.org/10.1287/moor.2021.0199> gives an instance where APS allocations don't exist. Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463> shows that for identical valuations, GMMS allocations always exist."}
 ],
 "goodPredicates": [
     {"name": "ef1", "under": {"marginal": "dblMono", "eqEnt": true},
@@ -231,7 +259,9 @@
     {"name": "eefx", "under": {"valuation": "cancelable", "marginal": "nonneg", "eqEnt": true},
         "link": "https://arxiv.org/abs/2206.01710"},
     {"name": "eefx", "under": {"valuation": "cancelable", "marginal": "nonpos", "eqEnt": true},
-        "link": "https://arxiv.org/abs/2206.01710"}
+        "link": "https://arxiv.org/abs/2206.01710"},
+    {"name": "gmms", "under": {"marginal": "nonneg", "identical": true, "eqEnt": true},
+        "text": "Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463>."}
 ],
 "badPredicates": [
     {"name": "prop", "under":
@@ -251,6 +281,6 @@
         "link": "https://doi.org/10.1007/978-3-030-94676-0_20"},
     {"name": "mms", "under": {"valuation": "additive", "marginal": "negative", "eqEnt": true},
         "link": "https://doi.org/10.1007/978-3-030-94676-0_20"},
-    {"name": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "link": "3 agents and 2 goods of values 10 and 1, respectively."}
+    {"name": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-existence/propx"}
 ]
 }
