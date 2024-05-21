@@ -67,6 +67,8 @@
                 ["nonpos", "nonposBivalued"],
                 ["positive", "positiveBivalued"],
                 ["negative", "negativeBivalued"],
+                ["nonnegBivalued", "positiveBivalued"],
+                ["nonposBivalued", "negativeBivalued"],
 
                 ["nonnegBivalued", "binary"],
                 ["nonposBivalued", "negBinary"],
