@@ -261,6 +261,12 @@
         "link": "https://arxiv.org/abs/2206.01710"},
     {"name": "eefx", "under": {"valuation": "cancelable", "marginal": "nonpos", "eqEnt": true},
         "link": "https://arxiv.org/abs/2206.01710"},
+    {"name": "efx", "under": {"valuation": "additive", "marginal": "nonnegBivalued", "eqEnt": true},
+        "link": "https://doi.org/10.1016/j.tcs.2021.02.020"},
+    {"name": "mms", "under": {"valuation": "additive", "marginal": "nonnegBivalued", "eqEnt": true},
+        "link": "https://www.wisdom.weizmann.ac.il/~feige/mypapers/MMSab.pdf"},
+    {"name": "mms", "under": {"valuation": "additive", "marginal": "nonposBivalued", "eqEnt": true},
+        "link": "https://www.wisdom.weizmann.ac.il/~feige/mypapers/MMSab.pdf"},
     {"name": "gmms", "under": {"marginal": "nonneg", "identical": true, "eqEnt": true},
         "text": "Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463>."}
 ],
