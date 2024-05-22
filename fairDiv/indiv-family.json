@@ -14,7 +14,8 @@
                 {"name": "submod", "label": "submodular"},
                 {"name": "supermod", "label": "supermodular"},
                 {"name": "cancelable"},
-                {"name": "unitDemand"}
+                {"name": "unitDemand"},
+                {"name": "singleItem"}
             ],
             "containments": [
                 ["general", "subadd"],
@@ -26,7 +27,10 @@
                 ["supermod", "additive"],
                 ["cancelable", "additive"],
                 ["submod", "unitDemand"],
-                ["cancelable", "unitDemand"]
+                ["cancelable", "unitDemand"],
+                ["cancelable", "singleItem"],
+                ["additive", "singleItem"],
+                ["unitDemand", "singleItem"]
             ]
         },
         {
