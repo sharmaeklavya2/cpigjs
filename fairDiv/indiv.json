@@ -145,9 +145,9 @@
         "thmdep": "/fair-division/impl/aps-implies-pess"},
     {"from": "gaps", "to": "gwmms", "under": {"eqEnt": true},
         "thmdep": "/fair-division/impl/aps-implies-pess"},
-    {"from": "wmms", "to": "aps", "under": {"valuation": "additive", "twoAg": true, "eqEnt": true},
+    {"from": "wmms", "to": "aps", "under": {"valuation": "additive", "twoAg": true},
         "thmdep": "/fair-division/impl/mms-implies-aps-n2"},
-    {"from": "pwmms", "to": "paps", "under": {"valuation": "additive", "eqEnt": true},
+    {"from": "pwmms", "to": "paps", "under": {"valuation": "additive"},
         "thmdep": "/fair-division/impl/mms-implies-aps-n2"},
 
     {"from": "ef1", "to": "efx", "under": {"valuation": "additive", "marginal": "binary"}},
