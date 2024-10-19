@@ -131,7 +131,7 @@ class MultiMap<K, V> {
         }
     }
 
-    add(k: K, v: V): undefined {
+    add(k: K, v: V): void {
         const vList = this.map.get(k);
         if(vList === undefined) {
             this.map.set(k, [v]);
@@ -141,7 +141,7 @@ class MultiMap<K, V> {
         }
     }
 
-    resetAll(k: K, vList: V[]): undefined {
+    resetAll(k: K, vList: V[]): void {
         if(vList.length > 0) {
             this.map.set(k, vList);
         }
@@ -271,7 +271,7 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     return maybeEdges;
 }
 
-export function outputPath(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): undefined {
+export function outputPath(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): void {
     const path = input.impG.getPath(u, v);
     if(path === undefined) {
         stdout.log(`no path from ${u} to ${v}`);
