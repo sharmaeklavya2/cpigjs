@@ -3,7 +3,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
-import { combineInputs, processInput, filterInput, outputPath, outputGoodBadReasons, serializeGraph } from "./cpigjs/main.js";
+import { combineInputs, processInput, filterInput, serializeGraph } from "./cpigjs/main.js";
+import { outputPath, outputGoodBadReasons } from "./cpigjs/cli.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 

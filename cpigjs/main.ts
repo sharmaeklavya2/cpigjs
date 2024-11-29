@@ -1,3 +1,4 @@
+import { MultiMap } from "./multiMap.js";
 import { Edge, Graph } from "./graph.js";
 import { Info, SetFamily } from "./setFamily.js";
 
@@ -113,45 +114,6 @@ export class ImpGraphGen {
     }
 }
 
-class MultiMap<K, V> {
-    map = new Map<K, V[]>;
-    constructor() {
-        this.map = new Map();
-    }
-
-    has(k: K): boolean {return this.map.has(k);}
-
-    getAll(k: K): V[] {
-        const vList = this.map.get(k);
-        if(vList === undefined) {
-            return [];
-        }
-        else {
-            return vList;
-        }
-    }
-
-    add(k: K, v: V): void {
-        const vList = this.map.get(k);
-        if(vList === undefined) {
-            this.map.set(k, [v]);
-        }
-        else {
-            vList.push(v);
-        }
-    }
-
-    resetAll(k: K, vList: V[]): void {
-        if(vList.length > 0) {
-            this.map.set(k, vList);
-        }
-        else {
-            this.map.delete(k);
-        }
-    }
-}
-
-
 export interface ProcessedCpigInput {
     predsMap: Map<string, Info>;
     impGGen: ImpGraphGen;
@@ -205,11 +167,6 @@ export function processInput(input: CpigInput, sf: SetFamily): ProcessedCpigInpu
 
 //=[ answer queries ]===========================================================
 
-export interface Ostream {
-    log: (...args: any[]) => undefined;
-    error: (...args: any[]) => undefined;
-}
-
 export interface FilteredCpigInput {
     predsMap: Map<string, Info>;
     impG: Graph<string, Implication>;
@@ -250,7 +207,7 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
     const cExsMap = new MultiMap<string, CounterExample>();
     for(const [key, vList] of input.cExsMap.map.entries()) {
         const vList2 = vList.filter((cEx) => sf.contains(constraint, cEx.under));
-        cExsMap.resetAll(key, vList2);
+        cExsMap.replace(key, vList2);
     }
 
     return {predsMap: input.predsMap, impG: impG, cExsMap: cExsMap,
@@ -269,43 +226,6 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
         }
     }
     return maybeEdges;
-}
-
-export function outputPath(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): void {
-    const path = input.impG.getPath(u, v);
-    if(path === undefined) {
-        stdout.log(`no path from ${u} to ${v}`);
-    }
-    else {
-        stdout.log(`path of length ${path.length} from ${u} to ${v}`);
-        for(const [i, e] of path.entries()) {
-            stdout.log((i+1) + ':', JSON.stringify(e));
-        }
-    }
-
-    const ceList = input.cExsMap.getAll(JSON.stringify([u, v]));
-    if(ceList.length > 0) {
-        for(const ce of ceList) {
-            stdout.log('counterexample:', JSON.stringify(ce));
-        }
-    }
-}
-
-export function outputGoodBadReasons(input: FilteredCpigInput, predNames: string[], stdout: Ostream) {
-    const mainList: [string, MultiMap<string, PredAttr>][] =
-            [[input.goodnessName, input.trGoodPreds], [input.badnessName, input.trBadPreds]];
-    for(const [attrName, attrReasonsMap] of mainList) {
-        for(const predName of predNames) {
-            const reasons = attrReasonsMap.getAll(predName);
-            if(reasons.length > 0) {
-                stdout.log('');
-                stdout.log(`${predName} is ${attrName}:`);
-                for(const [i, reason] of reasons.entries()) {
-                    stdout.log(`${i+1}: ${JSON.stringify(reason)}`);
-                }
-            }
-        }
-    }
 }
 
 function componentStr(S: string[], parens: boolean) {

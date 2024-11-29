@@ -1,7 +1,8 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { Ostream, CpigInput, ProcessedCpigInput } from "./main.js";
-import { combineInputs, processInput, filterInput, outputPath, getDotGraph, outputGoodBadReasons } from "./main.js";
+import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, CounterExample } from "./main.js";
+import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
+import { Ostream, outputPath, outputGoodBadReasons } from "./cli.js";
 import { Edge, Graph } from "./graph.js";
 
 declare class Param {
