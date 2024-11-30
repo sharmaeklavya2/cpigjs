@@ -5,19 +5,8 @@ import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js
 import { Ostream } from "./cli.js";
 import { Edge, Graph } from "./graph.js";
 import { MultiMap } from "./multiMap.js";
+import * as f2f from "https://sharmaeklavya2.github.io/funcToForm/v2.js";
 
-declare class Param {
-    constructor(name: string, widget: any, label?: string, description?: string);
-}
-declare class ParamGroup {
-    constructor(name: string, paramList: Param[], converter?: any, label?: string,
-        description?: string, compact?: boolean);
-}
-declare var CheckBoxWidget: any;
-declare var SelectWidget: any;
-declare var SelectOption: any;
-declare function createForm(wrapperId: string, paramGroup: ParamGroup,
-    func: (input: string, stdout: Ostream) => any, clearOutput?: boolean): any;
 type visualizeDotT = (x: string) => undefined;
 
 function createElement(tagName: string, attrs?: Object, innerText?: string): HTMLElement {
@@ -49,16 +38,18 @@ export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: vi
     const {sf, input} = await fetchInput(sfUrl, inputUrls);
     const procInput = processInput(input, sf);
 
-    const sfParams: Param[] = [];
+    const sfParams: f2f.Param[] = [];
     addSfParams(sfParams, sf);
-    const sfParamGroup = new ParamGroup('sf', sfParams, null, sf.info.label);
-    const predParams: Param[] = [];
+    const sfParamGroup = new f2f.ParamGroup('sf', sfParams, {converter: undefined, label: sf.info.label});
+    const predParams: f2f.Param[] = [];
     addPredParams(predParams, input.predicates!);
-    const predParamGroup = new ParamGroup('pred', predParams, boolMapToList, 'predicates', undefined, true);
-    const maybeParam = new Param('maybe', new CheckBoxWidget(true), 'show speculative edges');
+    const predParamGroup = new f2f.ParamGroup('pred', predParams,
+        {converter: boolMapToList, label: 'predicates', description: undefined, compact: true});
+    const maybeParam = new f2f.Param('maybe', new f2f.CheckBoxWidget({defVal: true}),
+        {label: 'show speculative edges'});
 
-    const paramGroup = new ParamGroup('myForm', [sfParamGroup, predParamGroup, maybeParam]);
-    createForm('form-container', paramGroup, function (f2fInput, stdout) {
+    const paramGroup = new f2f.ParamGroup(undefined, [sfParamGroup, predParamGroup, maybeParam]);
+    f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
         run(sf, procInput, f2fInput, visualizeDot);
     });
 }
@@ -87,15 +78,16 @@ function boolMapToList(obj: Object): string[] {
     return a;
 }
 
-function addSfParams(output: Param[], setFamily: SetFamily) {
+function addSfParams(output: f2f.Param[], setFamily: SetFamily) {
     const name = setFamily.info.name;
     const label = setFamily.info.label || name;
     if(setFamily instanceof BoolSetFamily) {
-        output.push(new Param(name, new CheckBoxWidget(), label));
+        output.push(new f2f.Param(name, new f2f.CheckBoxWidget(), {label: label}));
     }
     else if(setFamily instanceof DagSetFamily) {
-        output.push(new Param(name, new SelectWidget(setFamily.values.map( vInfo => new SelectOption(
-            vInfo.name, vInfo.name, vInfo.label || vInfo.name)), setFamily.defVal), label));
+        output.push(new f2f.Param(name, new f2f.SelectWidget(setFamily.values.map(
+                vInfo => new f2f.SelectOption({name: vInfo.name, value: vInfo.name, text: vInfo.label || vInfo.name})),
+            setFamily.defVal), {label: label}));
     }
     else if(setFamily instanceof ProdSetFamily) {
         for(const part of setFamily.parts) {
@@ -104,9 +96,10 @@ function addSfParams(output: Param[], setFamily: SetFamily) {
     }
 }
 
-function addPredParams(output: Param[], preds: Info[]) {
+function addPredParams(output: f2f.Param[], preds: Info[]) {
     for(const pred of preds) {
-        output.push(new Param(pred.name, new CheckBoxWidget(true), pred.label || pred.name));
+        output.push(new f2f.Param(pred.name, new f2f.CheckBoxWidget({defVal: true}),
+            {label: pred.label || pred.name}));
     }
 }
 
