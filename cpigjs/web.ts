@@ -2,7 +2,6 @@
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
 import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, CounterExample, PredAttr } from "./main.js";
 import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
-import { Ostream } from "./cli.js";
 import { Edge, Graph } from "./graph.js";
 import { MultiMap } from "./multiMap.js";
 import * as f2f from "https://sharmaeklavya2.github.io/funcToForm/v2.js";
