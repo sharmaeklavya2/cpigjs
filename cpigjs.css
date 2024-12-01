@@ -2,10 +2,33 @@
     color: var(--text-secondary);
 }
 li {
-    margin-bottom: 0.25em;
+    margin-bottom: 0.3em;
 }
 @media (prefers-color-scheme: dark) {
     #graph {
         filter: brightness(.85) invert(1) brightness(.75) hue-rotate(180deg);
     }
+}
+
+.implies {
+    color: var(--text-success);
+}
+.not-implies {
+    position: relative;
+    color: var(--text-danger);
+}
+
+.not-implies::before {
+    content: " ⟹ ";
+}
+
+.not-implies::after {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: 18%;
+    width: 50%;
+    border-top: 2px solid;
+    transform: rotate(-45deg);
+    transform-origin: 50% 0;
 }
