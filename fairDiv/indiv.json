@@ -93,7 +93,7 @@
     {"from": "mxs", "to": "m1s", "under": {"valuation": "submod", "marginal": "nonpos"},
         "thmdep": "/fair-division/impl/efx-implies-ef1"},
     {"from": "mxs", "to": "prop1", "under": {"valuation": "additive", "marginal": "nonneg", "eqEnt": true},
-        "text": "Theorem 3 of <https://doi.org/10.24963/ijcai.2023/284>"},
+        "part": "Theorem 3", "link": "https://doi.org/10.24963/ijcai.2023/284"},
     {"from": "mxs", "to": "ef1", "under": {"valuation": "additive", "twoAg": true},
         "thmdep": "/fair-division/impl/mxs-implies-ef1-n2"},
 
@@ -244,8 +244,8 @@
     {"satisfies": "ef1", "butNot": "propx", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/ef1-nimpl-propx-mxs"},
 
     {"satisfies": "gaps", "butNot": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-existence/propx"},
-    {"satisfies": "pwmms", "butNot": "wmms", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true}, "text": "Example 4.4 in <https://doi.org/10.1145/3355902>."},
-    {"satisfies": "pwmms", "butNot": "wmms", "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true}, "text": "Example 4.4 in <https://doi.org/10.1145/3355902>."},
+    {"satisfies": "pwmms", "butNot": "wmms", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true}, "part": "Example 4.4", "link": "https://doi.org/10.1145/3355902"},
+    {"satisfies": "pwmms", "butNot": "wmms", "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true}, "part": "Example 4.4", "link": "https://doi.org/10.1145/3355902"},
     {"satisfies": "mxs", "butNot": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mxs-nimpl-propx"},
     {"satisfies": "mxs", "butNot": "propx", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mxs-nimpl-propx"},
     {"satisfies": "mxs", "butNot": "prop1", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": false, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mxs-nimpl-prop1-chores"},
@@ -298,7 +298,7 @@
     {"name": "wmms", "under": {"valuation": "additive", "marginal": "nonposBivalued", "eqEnt": true},
         "link": "https://www.wisdom.weizmann.ac.il/~feige/mypapers/MMSab.pdf"},
     {"name": "gwmms", "under": {"marginal": "nonneg", "identical": true, "eqEnt": true},
-        "text": "Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463>."}
+        "part": "Theorem 3", "link": "https://doi.org/10.1609/aaai.v32i1.11463"}
 ],
 "infeasible": [
     {"name": "prop", "under":
@@ -312,7 +312,7 @@
 
     {"name": "aps", "under": {"valuation": "submod", "marginal": "positive", "identical": true, "twoAg": true, "eqEnt": true}, "text": "Remark 2 of <https://doi.org/10.1287/moor.2021.0199>. Can be extended to positive marginals by adding a small quantity to each bundle's value."},
     {"name": "aps", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true},
-        "text": "Lemma C.1 of <https://doi.org/10.1287/moor.2021.0199>"},
+        "part": "Lemma C.1", "link": "https://doi.org/10.1287/moor.2021.0199"},
 
     {"name": "wmms", "under": {"valuation": "additive", "marginal": "positive", "eqEnt": true},
         "link": "https://doi.org/10.1007/978-3-030-94676-0_20"},
