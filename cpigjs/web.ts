@@ -183,7 +183,6 @@ function getImplPathHtml(path: Implication[], sf: SetFamily): HTMLElement {
         headElem.appendChild(createElement('span', {'class': 'implies'}, ' ⟹ '));
         headElem.appendChild(createElement('span', {}, e.to));
         liElem.appendChild(headElem);
-        liElem.appendChild(createElement('div', {'class': 'proof-step-under under-cond'}, `under: ${e.under}`));
         liElem.appendChild(getUnderHtml(e.under, sf, 'proof-step-under'));
         liElem.appendChild(getProofHtml(e, 'proof-step-proof'));
         olElem.appendChild(liElem);
