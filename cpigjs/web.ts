@@ -1,6 +1,7 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, CounterExample, PredCond } from "./main.js";
+import { CpigInput, ProcessedCpigInput, FilteredCpigInput } from "./main.js";
+import { Implication, CounterExample, PredCond, Proof } from "./main.js";
 import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 import { MultiMap } from "./multiMap.js";
@@ -102,10 +103,48 @@ function addPredParams(output: f2f.Param[], preds: Info[]) {
     }
 }
 
+function getProofHtml(proof: Proof, className?: string): HTMLElement {
+    const div = createElement('div', {'class': 'proof-info'});
+    if(className !== undefined) {
+        div.classList.add(className);
+    }
+    div.appendChild(createElement('span', {}, 'proof: '));
+    if(proof.text) {
+        div.appendChild(createElement('span', {'class': 'proof-text'}, proof.text));
+    }
+    else {
+        if(proof.part) {
+            div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
+            div.appendChild(createElement('span', {}, ' of '));
+        }
+        if(proof.link) {
+            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proof.link}, proof.link));
+        }
+        else if(proof.thmdep) {
+            div.appendChild(createElement('span', {}, 'thmdep: '));
+            div.appendChild(createElement('span', {'class': 'proof-thmdep '}, proof.thmdep));
+        }
+        else if(proof.part) {
+            div.appendChild(createElement('span', {}, '?'));
+        }
+        else {
+            div.replaceChildren();
+        }
+    }
+    return div;
+}
+
 function getImplPathHtml(path: Implication[]): HTMLElement {
     const olElem = createElement('ol', {'class': 'implPath'});
     for(const e of path) {
-        const liElem = createElement('li', {}, JSON.stringify(e));
+        const liElem = createElement('li', {'class': 'proof-step'});
+        const headElem = createElement('div', {'class': 'ce-reason-head'})
+        headElem.appendChild(createElement('span', {}, e.from));
+        headElem.appendChild(createElement('span', {'class': 'implies'}, ' ⟹ '));
+        headElem.appendChild(createElement('span', {}, e.to));
+        liElem.appendChild(headElem);
+        liElem.appendChild(createElement('div', {'class': 'proof-step-under under-cond'}, `under: ${e.under}`));
+        liElem.appendChild(getProofHtml(e, 'proof-step-proof'));
         olElem.appendChild(liElem);
     }
     return olElem;
@@ -114,7 +153,14 @@ function getImplPathHtml(path: Implication[]): HTMLElement {
 function getCeListHtml(ceList: CounterExample[]): HTMLElement {
     const olElem = createElement('ol', {'class': 'ceList'});
     for(const ce of ceList) {
-        const liElem = createElement('li', {}, JSON.stringify(ce));
+        const liElem = createElement('li', {'class': 'ce-reason'});
+        const headElem = createElement('div', {'class': 'ce-reason-head'})
+        headElem.appendChild(createElement('span', {}, ce.satisfies));
+        headElem.appendChild(createElement('span', {'class': 'not-implies'}, " doesn't imply "));
+        headElem.appendChild(createElement('span', {}, ce.butNot));
+        liElem.appendChild(headElem);
+        liElem.appendChild(createElement('div', {'class': 'ce-reason-under under-cond'}, `under: ${ce.under}`));
+        liElem.appendChild(getProofHtml(ce, 'ce-reason-proof'));
         olElem.appendChild(liElem);
     }
     return olElem;
@@ -142,6 +188,15 @@ function showImplProofHtml(input: FilteredCpigInput, u: string, v: string, divId
     }
 }
 
+function getAttrReasonHtml(attrName: string, reason: PredCond): HTMLElement {
+    const liElem = createElement('li', {'class': 'attr-reason'});
+    const headElem = createElement('div', {'class': 'attr-reason-head'}, `${reason.name} is ${attrName}`)
+    liElem.appendChild(headElem);
+    liElem.appendChild(createElement('div', {'class': 'attr-reason-under under-cond'}, `under: ${reason.under}`));
+    liElem.appendChild(getProofHtml(reason, 'attr-reason-proof'));
+    return liElem;
+}
+
 function showExistenceProofHtml(input: FilteredCpigInput, predNames: string[]) {
     const verticesElem = document.getElementById('vertices')!;
     verticesElem.replaceChildren();
@@ -154,7 +209,7 @@ function showExistenceProofHtml(input: FilteredCpigInput, predNames: string[]) {
                 rContainer.appendChild(createElement('p', {}, `${predName} is ${attrName}. Reasons:`));
                 const olElem = createElement('ol', {});
                 for(const reason of reasons) {
-                    olElem.appendChild(createElement('li', {}, JSON.stringify(reason)));
+                    olElem.appendChild(getAttrReasonHtml(attrName, reason));
                 }
                 rContainer.appendChild(olElem);
                 vContainer.appendChild(rContainer);

@@ -4,17 +4,24 @@ import { Info, SetFamily } from "./setFamily.js";
 
 //=[ Read and validate input ]==================================================
 
-export interface Implication extends Edge<string> {
+export interface Proof {
+    text?: string;
+    part?: string;
+    link?: string;
+    thmdep?: string;
+}
+
+export interface Implication extends Edge<string>, Proof {
     under: any;
 }
 
-export interface CounterExample {
+export interface CounterExample extends Proof {
     satisfies: string;
     butNot: string;
     under: any;
 }
 
-export interface PredCond {
+export interface PredCond extends Proof {
     name: string;
     under: any;
 }
