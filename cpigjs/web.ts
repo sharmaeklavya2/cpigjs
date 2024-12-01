@@ -146,7 +146,7 @@ function getImplPathHtml(path: Implication[], sf: SetFamily): HTMLElement {
     const olElem = createElement('ol', {'class': 'implPath'});
     for(const e of path) {
         const liElem = createElement('li', {'class': 'proof-step'});
-        const headElem = createElement('div', {'class': 'ce-reason-head'})
+        const headElem = createElement('div', {'class': 'proof-step-head'})
         headElem.appendChild(createElement('span', {}, e.from));
         headElem.appendChild(createElement('span', {'class': 'implies'}, ' ⟹ '));
         headElem.appendChild(createElement('span', {}, e.to));
