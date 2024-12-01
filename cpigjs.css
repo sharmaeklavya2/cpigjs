@@ -1,0 +1,11 @@
+.under-cond-info {
+    color: var(--text-secondary);
+}
+li {
+    margin-bottom: 0.25em;
+}
+@media (prefers-color-scheme: dark) {
+    #graph {
+        filter: brightness(.85) invert(1) brightness(.75) hue-rotate(180deg);
+    }
+}
