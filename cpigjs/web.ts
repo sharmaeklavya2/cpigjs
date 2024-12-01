@@ -1,6 +1,6 @@
 'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, CounterExample, PredAttr } from "./main.js";
+import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, CounterExample, PredCond } from "./main.js";
 import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 import { MultiMap } from "./multiMap.js";
@@ -143,13 +143,11 @@ function showImplProofHtml(input: FilteredCpigInput, u: string, v: string, divId
 }
 
 function showExistenceProofHtml(input: FilteredCpigInput, predNames: string[]) {
-    const mainList: [string, MultiMap<string, PredAttr>][] =
-            [[input.goodnessName, input.trGoodPreds], [input.badnessName, input.trBadPreds]];
     const verticesElem = document.getElementById('vertices')!;
     verticesElem.replaceChildren();
     for(const predName of predNames) {
         const vContainer = createElement('div', {});
-        for(const [attrName, attrReasonsMap] of mainList) {
+        for(const [attrName, attrReasonsMap] of input.predAttrs.entries()) {
             const reasons = attrReasonsMap.getAll(predName);
             if(reasons.length > 0) {
                 const rContainer = createElement('div', {});

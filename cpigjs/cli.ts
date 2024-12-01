@@ -1,5 +1,5 @@
 import { MultiMap } from "./multiMap.js";
-import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, PredAttr, CounterExample } from "./main.js";
+import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, PredCond, CounterExample } from "./main.js";
 
 export interface Ostream {
     log: (...args: any[]) => undefined;
@@ -26,10 +26,8 @@ export function outputPath(input: FilteredCpigInput, u: string, v: string, stdou
     }
 }
 
-export function outputGoodBadReasons(input: FilteredCpigInput, predNames: string[], stdout: Ostream) {
-    const mainList: [string, MultiMap<string, PredAttr>][] =
-            [[input.goodnessName, input.trGoodPreds], [input.badnessName, input.trBadPreds]];
-    for(const [attrName, attrReasonsMap] of mainList) {
+export function outputAttrReasons(input: FilteredCpigInput, predNames: string[], stdout: Ostream) {
+    for(const [attrName, attrReasonsMap] of input.predAttrs.entries()) {
         for(const predName of predNames) {
             const reasons = attrReasonsMap.getAll(predName);
             if(reasons.length > 0) {

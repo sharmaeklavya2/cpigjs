@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "./cpigjs/setFamily.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "./cpigjs/main.js";
-import { outputPath, outputGoodBadReasons } from "./cpigjs/cli.js";
+import { outputPath, outputAttrReasons } from "./cpigjs/cli.js";
 import { Graph } from "./cpigjs/graph.js";
 import yargs from 'yargs';
 
@@ -45,7 +45,7 @@ async function main() {
         outputPath(filteredInput, v, u, console);
     }
     if(predNames.length <= 2 && predNames.length >= 1) {
-        outputGoodBadReasons(filteredInput, predNames, console);
+        outputAttrReasons(filteredInput, predNames, console);
     }
     console.log();
     if(args.output) {

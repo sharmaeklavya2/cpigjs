@@ -1,6 +1,8 @@
 {
-"goodnessName": "feasible",
-"badnessName": "infeasible",
+"attrs": [
+    {"name": "feasible", "propgDir": "fwd", "color": "green"},
+    {"name": "infeasible", "propgDir": "rev", "color": "red"}
+],
 "predicates": [
     {"name": "aps", "thmdep": "/fair-division/notions/aps"},
     {"name": "eef", "text": "Epistemic envy-free"},
@@ -271,7 +273,8 @@
         "thmdep": "/fair-division/non-impl/prop-nimpl-m1s-ud"}
 
 ],
-"goodPredicates": [
+"predAttrs": {
+"feasible": [
     {"name": "ef1", "under": {"marginal": "dblMono", "eqEnt": true},
         "link": "https://doi.org/10.4230/LIPIcs.APPROX/RANDOM.2021.1"},
     {"name": "ef1", "under": {"valuation": "additive", "marginal": "nonneg"},
@@ -297,7 +300,7 @@
     {"name": "gwmms", "under": {"marginal": "nonneg", "identical": true, "eqEnt": true},
         "text": "Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463>."}
 ],
-"badPredicates": [
+"infeasible": [
     {"name": "prop", "under":
         {"valuation": "singleItem", "marginal": "unit", "identical": true, "twoAg": true, "eqEnt": true},
         "text": "Two identical agents and a single good."},
@@ -317,4 +320,5 @@
         "link": "https://doi.org/10.1007/978-3-030-94676-0_20"},
     {"name": "propx", "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-existence/propx"}
 ]
+}
 }

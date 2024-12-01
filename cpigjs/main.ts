@@ -14,44 +14,48 @@ export interface CounterExample {
     under: any;
 }
 
-export interface PredAttr {
+export interface PredCond {
     name: string;
     under: any;
+}
+
+export interface AttrInfo extends Info {
+    color?: string;
+    propgDir?: "fwd" | "rev";  // propagation direction
 }
 
 export interface CpigInput {
     predicates?: Info[];
     implications?: Implication[];
     counterExamples?: CounterExample[];
-    goodPredicates?: PredAttr[];
-    badPredicates?: PredAttr[];
-    goodnessName?: string;
-    badnessName?: string;
+    attrs?: AttrInfo[];
+    predAttrs?: Record<string, PredCond[]>;
 }
 
 export function combineInputs(inputs: CpigInput[]): CpigInput {
-    const preds = [], imps = [], cExs = [], goodPreds = [], badPreds = [];
-    let goodnessName, badnessName;
+    const preds = [], imps = [], cExs = [], attrs = [];
+    const predAttrs: Record<string, PredCond[]> = {};
     for(const input of inputs) {
         preds.push(...(input.predicates || []));
         imps.push(...(input.implications || []));
-        cExs.push(...(input.counterExamples|| []));
-        goodPreds.push(...(input.goodPredicates || []));
-        badPreds.push(...(input.badPredicates || []));
-        if(input.goodnessName) {
-            goodnessName = input.goodnessName;
-        }
-        if(input.badnessName) {
-            badnessName = input.badnessName;
+        cExs.push(...(input.counterExamples || []));
+        attrs.push(...(input.attrs || []));
+        for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
+            if(predAttrs.hasOwnProperty(attrName)) {
+                predAttrs[attrName].push(...predConds);
+            }
+            else {
+                predAttrs[attrName] = predConds;
+            }
         }
     }
     return {'predicates': preds, 'implications': imps, 'counterExamples': cExs,
-        'goodPredicates': goodPreds, 'badPredicates': badPreds,
-        'goodnessName': goodnessName, 'badnessName': badnessName};
+        'attrs': attrs, 'predAttrs': predAttrs};
 }
 
-function validateInput(input: CpigInput, sf: SetFamily): Map<string, Info> {
+function validateInput(input: CpigInput, sf: SetFamily): {'predsMap': Map<string, Info>, 'attrsMap': Map<string, AttrInfo>} {
     const predsMap = new Map<string, Info>();
+    const attrsMap = new Map<string, AttrInfo>();
     for(const pred of input.predicates || []) {
         if(predsMap.has(pred.name)) {
             throw new Error(`predicate ${pred.name} already exists.`);
@@ -76,19 +80,26 @@ function validateInput(input: CpigInput, sf: SetFamily): Map<string, Info> {
         }
         cEx.under = sf.canonicalize(cEx.under);
     }
-    for(const predAttr of input.goodPredicates || []) {
-        if(!predsMap.has(predAttr.name)) {
-            throw new Error(`unrecognized predicate ${predAttr.name} in goodPredicates: ${predAttr}`);
+    for(const attrInfo of input.attrs || []) {
+        if(attrsMap.has(attrInfo.name)) {
+            throw new Error(`attribute ${attrInfo.name} already exists.`);
         }
-        predAttr.under = sf.canonicalize(predAttr.under);
-    }
-    for(const predAttr of input.badPredicates || []) {
-        if(!predsMap.has(predAttr.name)) {
-            throw new Error(`unrecognized predicate ${predAttr.name} in badPredicates: ${predAttr}`);
+        else {
+            attrsMap.set(attrInfo.name, attrInfo);
         }
-        predAttr.under = sf.canonicalize(predAttr.under);
     }
-    return predsMap;
+    for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
+        if(!attrsMap.has(attrName)) {
+            throw new Error(`unrecognized attribute ${attrName} in attrs`);
+        }
+        for(const predCond of predConds) {
+            if(!predsMap.has(predCond.name)) {
+                throw new Error(`unrecognized predicate ${predCond.name} in attrs[${attrName}]: ${JSON.stringify(predCond)}`);
+            }
+            predCond.under = sf.canonicalize(predCond.under);
+        }
+    }
+    return {'predsMap': predsMap, 'attrsMap': attrsMap};
 }
 
 //=[ Process input ]============================================================
@@ -116,18 +127,27 @@ export class ImpGraphGen {
 
 export interface ProcessedCpigInput {
     predsMap: Map<string, Info>;
+    attrsMap: Map<string, AttrInfo>;
     impGGen: ImpGraphGen;
     cExsMap: MultiMap<string, CounterExample>;
-    goodPreds: PredAttr[];
-    trBadPreds: MultiMap<string, PredAttr>;
-    goodnessName: string;
-    badnessName: string;
+    fwdPredAttrs: Map<string, PredCond[]>;
+    trRevPredAttrs: Map<string, MultiMap<string, PredCond>>;
 }
 
 export function processInput(input: CpigInput, sf: SetFamily): ProcessedCpigInput {
-    const predsMap = validateInput(input, sf);
+    const {predsMap, attrsMap} = validateInput(input, sf);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
-    const goodPreds = input.goodPredicates || [];
+
+    const fwdPredAttrs = new Map<string, PredCond[]>();
+    const trRevPredAttrs = new Map<string, MultiMap<string, PredCond>>();
+    for(const attrInfo of input.attrs || []) {
+        if(attrInfo.propgDir === 'fwd') {
+            fwdPredAttrs.set(attrInfo.name, []);
+        }
+        else if(attrInfo.propgDir === 'rev') {
+            trRevPredAttrs.set(attrInfo.name, new MultiMap<string, PredCond>());
+        }
+    }
 
     const cExsMap = new MultiMap<string, CounterExample>();
     for(const cEx of input.counterExamples || []) {
@@ -149,60 +169,43 @@ export function processInput(input: CpigInput, sf: SetFamily): ProcessedCpigInpu
         }
     }
 
-    const trBadPreds = new MultiMap<string, PredAttr>();
-    for(const badPred of input.badPredicates || []) {
-        trBadPreds.add(badPred.name, badPred);
-    }
-    for(const badPred of input.badPredicates || []) {
-        const impG = impGGen.get(badPred.under);
-        const allPredNames = impG.getInTree(badPred.name).keys();
-        for(const predName of allPredNames) {
-            trBadPreds.add(predName, badPred);
+    for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
+        const attrInfo = attrsMap.get(attrName)!;
+        if(attrInfo.propgDir === 'fwd') {
+            fwdPredAttrs.set(attrInfo.name, predConds);
+        }
+        else if(attrInfo.propgDir === 'rev') {
+            const trPredConds = trRevPredAttrs.get(attrInfo.name)!;
+            for(const predCond of predConds) {
+                trPredConds.add(predCond.name, predCond);
+            }
+            for(const predCond of predConds) {
+                const impG = impGGen.get(predCond.under);
+                const allPredNames = impG.getInTree(predCond.name).keys();
+                for(const predName of allPredNames) {
+                    trPredConds.add(predName, predCond);
+                }
+            }
         }
     }
-    return {predsMap: predsMap, impGGen: impGGen, cExsMap: cExsMap,
-        goodPreds: goodPreds, trBadPreds: trBadPreds,
-        goodnessName: input.goodnessName || 'good', badnessName: input.badnessName || 'bad'};
+    return {predsMap: predsMap, attrsMap: attrsMap, impGGen: impGGen, cExsMap: cExsMap,
+        fwdPredAttrs: fwdPredAttrs, trRevPredAttrs: trRevPredAttrs};
 }
 
 //=[ answer queries ]===========================================================
 
 export interface FilteredCpigInput {
     predsMap: Map<string, Info>;
+    attrsMap: Map<string, AttrInfo>;
     impG: Graph<string, Implication>;
     cExsMap: MultiMap<string, CounterExample>;
-    trGoodPreds: MultiMap<string, PredAttr>;
-    trBadPreds: MultiMap<string, PredAttr>;
-    goodnessName: string;
-    badnessName: string;
+    predAttrs: Map<string, MultiMap<string, PredCond>>;  // outer key is attribute, inner key is predicate
+    predAttrsSummary: MultiMap<string, string>;  // key is predicate, value is attribute
 }
 
 export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstraint: any): FilteredCpigInput {
     const constraint = sf.canonicalize(rawConstraint);
     const impG = input.impGGen.get(constraint);
-
-    const trGoodPreds = new MultiMap<string, PredAttr>();
-    for(const predAttr of input.goodPreds) {
-        if(sf.contains(predAttr.under, constraint)) {
-            trGoodPreds.add(predAttr.name, predAttr);
-        }
-    }
-    for(const predAttr of input.goodPreds) {
-        if(sf.contains(predAttr.under, constraint)) {
-            for(const predName of impG.getOutTree(predAttr.name).keys()) {
-                trGoodPreds.add(predName, predAttr);
-            }
-        }
-    }
-
-    const trBadPreds = new MultiMap<string, PredAttr>();
-    for(const [predName, reasons] of input.trBadPreds.map.entries()) {
-        for(const reason of reasons) {
-            if(sf.contains(constraint, reason.under)) {
-                trBadPreds.add(predName, reason);
-            }
-        }
-    }
 
     const cExsMap = new MultiMap<string, CounterExample>();
     for(const [key, vList] of input.cExsMap.map.entries()) {
@@ -210,9 +213,49 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
         cExsMap.replace(key, vList2);
     }
 
-    return {predsMap: input.predsMap, impG: impG, cExsMap: cExsMap,
-        trGoodPreds: trGoodPreds, trBadPreds: trBadPreds,
-        goodnessName: input.goodnessName || 'good', badnessName: input.badnessName || 'bad'};
+    const predAttrs = new Map<string, MultiMap<string, PredCond>>();
+    for(const [attrName, attrInfo] of input.attrsMap.entries()) {
+        if(attrInfo.propgDir === 'fwd') {
+            const oldPredConds = input.fwdPredAttrs.get(attrName)!;
+            const newPredConds = new MultiMap<string, PredCond>();
+            for(const predCond of oldPredConds) {
+                if(sf.contains(predCond.under, constraint)) {
+                    newPredConds.add(predCond.name, predCond);
+                }
+            }
+            for(const predCond of oldPredConds) {
+                if(sf.contains(predCond.under, constraint)) {
+                    for(const predName of impG.getOutTree(predCond.name).keys()) {
+                        newPredConds.add(predName, predCond);
+                    }
+                }
+            }
+            predAttrs.set(attrName, newPredConds);
+        }
+        else if(attrInfo.propgDir === 'rev') {
+            const oldPredConds = input.trRevPredAttrs.get(attrName)!;
+            const newPredConds = new MultiMap<string, PredCond>();
+            for(const [predName, reasons] of oldPredConds.map.entries()) {
+                for(const reason of reasons) {
+                    if(sf.contains(constraint, reason.under)) {
+                        newPredConds.add(predName, reason);
+                    }
+                }
+            }
+            predAttrs.set(attrName, newPredConds);
+        }
+    }
+
+    const predAttrsSummary = new MultiMap<string, string>();
+    for(const [attrName, predCondMap] of predAttrs.entries()) {
+        for(const predName of predCondMap.map.keys()) {
+            predAttrsSummary.add(predName, attrName);
+        }
+    }
+    console.log(predAttrsSummary);
+
+    return {predsMap: input.predsMap, attrsMap: input.attrsMap, impG: impG, cExsMap: cExsMap,
+        predAttrs: predAttrs, predAttrsSummary: predAttrsSummary};
 }
 
 function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implication>,
@@ -286,18 +329,10 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], showM
     const lines = ['digraph G {', 'edge [arrowhead=vee];'];
     for(const u of redDag.adj.keys()) {
         const uAttrs: any = {'label': componentStr(scc.get(u)!, false)};
-        if(input.trGoodPreds.has(u)) {
-            uAttrs['fontcolor'] = 'green';
-            if(input.trBadPreds.has(u)) {
-                uAttrs.color = 'red';
-            }
-            else {
-                uAttrs.color = 'green';
-            }
-        }
-        else if(input.trBadPreds.has(u)) {
-            uAttrs.fontcolor = 'red';
-            uAttrs.color = 'red';
+        for(const attrName of input.predAttrsSummary.getAll(u)) {
+            const attrInfo = input.attrsMap.get(attrName)!;
+            uAttrs.fontcolor = attrInfo.color;
+            uAttrs.color = attrInfo.color;
         }
         lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
     }
