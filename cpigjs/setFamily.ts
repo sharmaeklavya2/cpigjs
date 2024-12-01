@@ -34,6 +34,10 @@ export class SetFamily {
         throw new Error('SetFamily.canonicalize is not implemented');
     }
 
+    prettify(x: unknown): unknown {
+        return x;
+    }
+
     contains(a: unknown, b: unknown): boolean {
         throw new Error('SetFamily.contains is not implemented');
     }
@@ -138,6 +142,15 @@ export class ProdSetFamily extends SetFamily {
         else {
             throw new Error('incorrect type for ProdSetFamily');
         }
+    }
+
+    prettify(x: Array<unknown>): Object {
+        const d: Record<string, unknown> = {};
+        const n = this.parts.length;
+        for(let i=0; i < n; ++i) {
+            d[this.parts[i].info.name] = x[i];
+        }
+        return d;
     }
 
     contains(a: any, b: any): boolean {

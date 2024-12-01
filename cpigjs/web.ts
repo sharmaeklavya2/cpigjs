@@ -134,8 +134,40 @@ function getProofHtml(proof: Proof, className?: string): HTMLElement {
     return div;
 }
 
+function myJsonStringify(value: unknown): string {
+    if (value === null) {
+        return "null";
+    }
+    else if (typeof value === "string") {
+        return value;
+    }
+    else if (typeof value === "number") {
+        return String(value);
+    }
+    else if (typeof value === "boolean") {
+        return value? '✓': '✗';
+    }
+    else if (Array.isArray(value)) {
+        const items = value.map((item) => myJsonStringify(item)).join(", ");
+        return `[${items}]`;
+    }
+    else if (typeof value === "object") {
+        const entries = Object.entries(value).map(([key, val]) => {
+            const keyValue = myJsonStringify(val);
+            return `${key}: ${keyValue}`;
+            });
+        return `{${entries.join(", ")}}`;
+    }
+    else {
+        throw new Error('unrecognized type in JSON serialization');
+    }
+}
+
 function getUnderHtml(under: any, sf: SetFamily, className?: string): HTMLElement {
-    const elem = createElement('div', {'class': 'under-cond'}, `under: ${JSON.stringify(under)}`);
+    const underString = myJsonStringify(sf.prettify(under));
+    const elem = createElement('div', {'class': 'under-cond'});
+    elem.appendChild(createElement('span', {'class': 'under-cond-head'}, 'under: '));
+    elem.appendChild(createElement('span', {'class': 'under-cond-info'}, underString));
     if(className !== undefined) {
         elem.classList.add(className);
     }
