@@ -259,7 +259,6 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
             predAttrsSummary.add(predName, attrName);
         }
     }
-    console.log(predAttrsSummary);
 
     return {predsMap: input.predsMap, attrsMap: input.attrsMap, impG: impG, cExsMap: cExsMap,
         predAttrs: predAttrs, predAttrsSummary: predAttrsSummary};
