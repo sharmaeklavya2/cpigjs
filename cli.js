@@ -50,14 +50,14 @@ async function main() {
     console.log();
     if(args.output) {
         const ext = getExt(args.output);
-        if(ext === 'dot' || ext === 'svg') {
+        if(ext === 'dot' || ext === 'svg' || ext === 'pdf') {
             const lines = serializeGraph(filteredInput, predNames, args.maybe, 'dot');
             if(ext === 'dot') {
                 await writeFile(args.output, lines.join('\n'));
             }
             else {
                 await writeFile(args.output + '.dot', lines.join('\n'));
-                child_process.spawn('dot', ['-Tsvg', args.output + '.dot', '-o', args.output]);
+                child_process.spawn('dot', ['-T' + ext, args.output + '.dot', '-o', args.output]);
             }
         }
         else if(ext === 'txt') {
