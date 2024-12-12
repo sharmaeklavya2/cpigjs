@@ -9,6 +9,15 @@ export interface Proof {
     part?: string;
     link?: string;
     thmdep?: string;
+    texRef?: string;
+}
+
+export interface RawTexRef {
+    type: string;
+    texLabel: string;
+    outputId: string;
+    anchor: string
+    page: string
 }
 
 export interface Implication extends Edge<string>, Proof {
@@ -140,10 +149,41 @@ export interface ProcessedCpigInput {
     fwdPredAttrs: Map<string, PredCond[]>;
     trRevPredAttrs: Map<string, MultiMap<string, PredCond>>;
 }
+function capitalize(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
-export function processInput(input: CpigInput, sf: SetFamily): ProcessedCpigInput {
+export function processTexRefs(texRefs: RawTexRef[]): Map<string, string> {
+    const refMap = new Map<string, string>();
+    for(const texRef of texRefs) {
+        if(refMap.has(texRef.texLabel)) {
+            throw new Error(`duplicate texLabel ${texRef.texLabel} found`);
+        }
+        refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId} (page ${texRef.page})`);
+    }
+    return refMap;
+}
+
+export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[]): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
+    const texRefMap = processTexRefs(texRefs);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
+
+    // replace texRef by part
+    const proofs: Proof[] = [];
+    proofs.push(...(input.implications || []));
+    proofs.push(...(input.counterExamples || []));
+    for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
+        proofs.push(...predConds);
+    }
+    for(const proof of proofs) {
+        if(proof.part === undefined && proof.texRef !== undefined) {
+            const newPart = texRefMap.get(proof.texRef);
+            if(newPart !== undefined) {
+                proof.part = newPart;
+            }
+        }
+    }
 
     const fwdPredAttrs = new Map<string, PredCond[]>();
     const trRevPredAttrs = new Map<string, MultiMap<string, PredCond>>();

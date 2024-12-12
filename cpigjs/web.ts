@@ -34,9 +34,10 @@ function setupOutput(): void {
     outputContainer.appendChild(createElement('div', {'id': 'graph'}));
 }
 
-export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: visualizeDotT) {
-    const {sf, input} = await fetchInput(sfUrl, inputUrls);
-    const procInput = processInput(input, sf);
+export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: string | undefined,
+        visualizeDot: visualizeDotT) {
+    const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, texRefsUrl);
+    const procInput = processInput(input, sf, texRefs);
 
     const sfParams: f2f.Param[] = [];
     addSfParams(sfParams, sf);
@@ -54,7 +55,7 @@ export async function setup(sfUrl: string, inputUrls: string[], visualizeDot: vi
     });
 }
 
-export async function fetchInput(sfUrl: string, inputUrls: string[]) {
+export async function fetchInput(sfUrl: string, inputUrls: string[], texRefsUrl?: string) {
     const pageLoadPromise = new Promise(function(resolve, reject) {
         window.addEventListener('DomContentLoaded', resolve);
     });
@@ -63,9 +64,17 @@ export async function fetchInput(sfUrl: string, inputUrls: string[]) {
         .then(json => SetFamily.fromJson(json));
     const inputsPromise = Promise.all(inputUrls.map(
         inputUrl => window.fetch(inputUrl).then(response => response.json())));
+    let texRefsPromise;
+    if(texRefsUrl !== undefined) {
+        texRefsPromise = window.fetch(texRefsUrl).then(response => response.json());
+    }
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);
-    return {sf: sf, input: input};
+    let texRefs = [];
+    if(texRefsPromise !== undefined) {
+        texRefs = await texRefsPromise;
+    }
+    return {sf: sf, input: input, texRefs: texRefs};
 }
 
 function boolMapToList(obj: Object): string[] {
@@ -125,7 +134,7 @@ function getProofHtml(proof: Proof, className?: string): HTMLElement {
             div.appendChild(createElement('span', {'class': 'proof-thmdep '}, proof.thmdep));
         }
         else if(proof.part) {
-            div.appendChild(createElement('span', {}, '?'));
+            div.removeChild(div.lastChild!);
         }
         else {
             div.replaceChildren();
