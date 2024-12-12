@@ -9,7 +9,7 @@ export interface Proof {
     part?: string;
     link?: string;
     thmdep?: string;
-    texRef?: string;
+    texRef?: string | string[];
 }
 
 export interface RawTexRef {
@@ -178,9 +178,15 @@ export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef
     }
     for(const proof of proofs) {
         if(proof.part === undefined && proof.texRef !== undefined) {
-            const newPart = texRefMap.get(proof.texRef);
-            if(newPart !== undefined) {
-                proof.part = newPart;
+            if(Array.isArray(proof.texRef)) {
+                const parts = proof.texRef.map(texLabel => texRefMap.get(texLabel) || texLabel);
+                proof.part = parts.join(', ');
+            }
+            else {
+                const newPart = texRefMap.get(proof.texRef);
+                if(newPart !== undefined) {
+                    proof.part = newPart;
+                }
             }
         }
     }
