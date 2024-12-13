@@ -14,8 +14,8 @@
                 {"name": "submod", "label": "submodular"},
                 {"name": "supermod", "label": "supermodular"},
                 {"name": "cancelable"},
-                {"name": "unitDemand"},
-                {"name": "singleItem"}
+                {"name": "unitDemand", "label": "unit demand"},
+                {"name": "singleItem", "label": "single item"}
             ],
             "containments": [
                 ["general", "subadd"],
@@ -39,23 +39,23 @@
             "default": "general",
             "values": [
                 {"name": "general"},
-                {"name": "dblMono"},
+                {"name": "dblMono", "label": "doubly monotone"},
                 {"name": "posOrNeg", "text": "either all marginals are positive or all are negative"},
 
-                {"name": "nonneg"},
+                {"name": "nonneg", "label": "non-negative"},
                 {"name": "positive"},
-                {"name": "nonpos"},
+                {"name": "nonpos", "label": "non-positive"},
                 {"name": "negative"},
 
-                {"name": "nonnegBivalued"},
-                {"name": "positiveBivalued"},
-                {"name": "nonposBivalued"},
-                {"name": "negativeBivalued"},
+                {"name": "nonnegBivalued", "label": "non-negative bivalued"},
+                {"name": "positiveBivalued", "label": "positive bivalued"},
+                {"name": "nonposBivalued", "label": "non-positive bivalued"},
+                {"name": "negativeBivalued", "label": "negative bivalued"},
 
                 {"name": "binary"},
-                {"name": "negBinary"},
+                {"name": "negBinary", "label": "negative binary"},
                 {"name": "unit"},
-                {"name": "negUnit"}
+                {"name": "negUnit", "label": "negative unit"}
             ],
             "containments": [
                 ["general", "dblMono"],
