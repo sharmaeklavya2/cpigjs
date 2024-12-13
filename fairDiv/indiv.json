@@ -117,6 +117,8 @@
         "thmdep": "/fair-division/impl/mms-to-efx-n2"},
     {"from": "MMS", "to": "EEFX", "under": {"marginal": "nonneg"},
         "thmdep": "/fair-division/impl/mms-implies-eefx-goods"},
+    {"from": "MMS", "to": "MXS", "under": {"valuation": "additive", "eqEnt": true},
+        "thmdep": "/fair-division/impl/mms-implies-mxs"},
 
     {"from": "EFX", "to": "PROPm", "under": {"valuation": "subadd", "marginal": "nonpos"},
         "thmdep": "/fair-division/impl/efx-implies-propm"},
@@ -259,7 +261,7 @@
     {"satisfies": "MXS", "butNot": "PROPx", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mxs-nimpl-propx"},
     {"satisfies": "MXS", "butNot": "PROP1", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "twoAg": false, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mxs-nimpl-prop1-chores"},
     {"satisfies": "APS", "butNot": "PROPm", "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/aps-nimpl-propm"},
-    {"satisfies": "APS", "butNot": "EEFX", "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mms-nimpl-eefx-chores"},
+    {"satisfies": "APS", "butNot": "PROP1", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": true, "eqEnt": true}, "thmdep": "/fair-division/non-impl/mms-nimpl-prop1-chores"},
     {"satisfies": "PROP", "butNot": "EEFX", "under": {"valuation": "additive", "marginal": "negativeBivalued", "identical": false, "twoAg": false, "eqEnt": true}, "thmdep": "/fair-division/non-impl/prop-nimpl-eefx-chores"},
 
     {"satisfies": "GMMS", "butNot": "PROP1", "under": {"valuation": "additive", "marginal": "unit", "identical": true, "eqEnt": false}, "thmdep": "/fair-division/non-existence/prop1-plus-m1s"},
