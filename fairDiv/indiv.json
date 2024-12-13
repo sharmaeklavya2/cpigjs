@@ -306,6 +306,8 @@
         "link": "https://www.wisdom.weizmann.ac.il/~feige/mypapers/MMSab.pdf"},
     {"name": "MMS", "under": {"valuation": "additive", "marginal": "nonposBivalued", "eqEnt": true},
         "link": "https://www.wisdom.weizmann.ac.il/~feige/mypapers/MMSab.pdf"},
+    {"name": "GMMS", "under": {"identical": true, "eqEnt": true},
+        "proof": "A leximin partition is GMMS. This is because restricting to a subset of agents preserves leximinness, and leximinness implies MMS-fairness."},
     {"name": "GMMS", "under": {"marginal": "nonneg", "identical": true, "eqEnt": true},
         "part": "Theorem 3", "link": "https://doi.org/10.1609/aaai.v32i1.11463"}
 ],
