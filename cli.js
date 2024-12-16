@@ -34,7 +34,7 @@ async function main() {
     const inputs = await inputsPromise;
 
     const input = combineInputs(inputs);
-    const procInput = processInput(input, sf);
+    const procInput = processInput(input, sf, []);
     const filteredInput = filterInput(procInput, sf, constraint);
 
     const predNames = args.pred || []
@@ -50,7 +50,7 @@ async function main() {
     console.log();
     if(args.output) {
         const ext = getExt(args.output);
-        if(ext === 'dot' || ext === 'svg' || ext === 'pdf') {
+        if(ext === 'dot' || ext === 'svg' || ext === 'pdf' || ext === 'png') {
             const lines = serializeGraph(filteredInput, predNames, args.maybe, 'dot');
             if(ext === 'dot') {
                 await writeFile(args.output, lines.join('\n'));
