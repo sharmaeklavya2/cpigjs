@@ -275,7 +275,10 @@
 
     {"satisfies": "GMMS", "butNot": "APS",
         "under": {"valuation": "additive", "marginal": "positive", "identical": true, "eqEnt": true},
-        "text": "Lemma C.2 of <https://doi.org/10.1287/moor.2021.0199> gives an instance where APS allocations don't exist. Theorem 3 of <https://doi.org/10.1609/aaai.v32i1.11463> shows that for identical valuations, GMMS allocations always exist."},
+        "thmdep": "/fair-division/misc/gmms-nimpl-aps"},
+    {"satisfies": "GMMS", "butNot": "APS",
+        "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true},
+        "thmdep": "/fair-division/misc/gmms-nimpl-aps"},
 
     {"satisfies": "PROP", "butNot": "M1S",
         "under": {"valuation": "unitDemand", "marginal": "nonneg", "identical": true, "twoAg": true, "eqEnt": true},
