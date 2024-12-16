@@ -115,11 +115,11 @@
         "thmdep": "/fair-division/impl/mxs-implies-ef1-n2"},
 
     {"from": "EEF1", "to": "PROP1", "under": {"valuation": "subadd", "marginal": "nonpos"},
-        "thmdep": "/fair-division/impl/ef1-implies-prop1"},
+        "texRef": "thm:impl:eef1-to-prop1", "thmdep": "/fair-division/impl/ef1-implies-prop1"},
     {"from": "EEF1", "to": "PROP1", "under": {"valuation": "additive", "eqEnt": true},
-        "thmdep": "/fair-division/impl/ef1-implies-prop1"},
+        "texRef": "thm:impl:eef1-to-prop1", "thmdep": "/fair-division/impl/ef1-implies-prop1"},
     {"from": "EEF1", "to": "PROP1", "under": {"valuation": "additive", "twoAg": true},
-        "thmdep": "/fair-division/impl/ef1-implies-prop1"},
+        "texRef": "thm:impl:eef1-to-prop1", "thmdep": "/fair-division/impl/ef1-implies-prop1"},
 
     {"from": "MMS", "to": "EFX", "under": {"marginal": "nonneg", "twoAg": true},
         "thmdep": "/fair-division/impl/mms-to-efx-n2"},
