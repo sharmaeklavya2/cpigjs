@@ -52,6 +52,7 @@
                 {"name": "nonposBivalued", "label": "non-positive bivalued"},
                 {"name": "negativeBivalued", "label": "negative bivalued"},
 
+                {"name": "tribool", "label": "{-1, 0, 1}"},
                 {"name": "binary"},
                 {"name": "negBinary", "label": "negative binary"},
                 {"name": "unit"},
@@ -74,6 +75,9 @@
                 ["nonnegBivalued", "positiveBivalued"],
                 ["nonposBivalued", "negativeBivalued"],
 
+                ["general", "tribool"],
+                ["tribool", "binary"],
+                ["tribool", "negBinary"],
                 ["nonnegBivalued", "binary"],
                 ["nonposBivalued", "negBinary"],
                 ["binary", "unit"],

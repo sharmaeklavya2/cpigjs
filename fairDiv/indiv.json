@@ -169,9 +169,10 @@
     {"from": "PMMS", "to": "PAPS", "under": {"valuation": "additive"},
         "texRef": "thm:impl:mms-to-aps-n2", "thmdep": "/fair-division/impl/mms-implies-aps-n2"},
 
-    {"from": "EF1", "to": "EFX", "under": {"valuation": "additive", "marginal": "binary"}},
-    {"from": "EEF1", "to": "EEFX", "under": {"valuation": "additive", "marginal": "binary"}},
-    {"from": "M1S", "to": "MXS", "under": {"valuation": "additive", "marginal": "binary"}},
+    {"from": "EF1", "to": "EFX", "under": {"valuation": "additive", "marginal": "tribool"}},
+    {"from": "EEF1", "to": "EEFX", "under": {"valuation": "additive", "marginal": "tribool"}},
+    {"from": "M1S", "to": "MXS", "under": {"valuation": "additive", "marginal": "tribool"}},
+    {"from": "PROP1", "to": "PROPx", "under": {"valuation": "additive", "marginal": "tribool"}},
     {"from": "APS", "to": "PROPx", "under": {"valuation": "additive", "marginal": "binary"},
         "thmdep": "/fair-division/misc/binary-additive"},
     {"from": "PROP1", "to": "APS", "under": {"valuation": "additive", "marginal": "binary"},
@@ -182,9 +183,6 @@
         "thmdep": "/fair-division/misc/binary-additive"},
     {"from": "M1S", "to": "APS", "under": {"valuation": "additive", "marginal": "binary", "eqEnt": true},
         "thmdep": "/fair-division/misc/binary-additive"},
-    {"from": "EF1", "to": "EFX", "under": {"valuation": "additive", "marginal": "negBinary"}},
-    {"from": "EEF1", "to": "EEFX", "under": {"valuation": "additive", "marginal": "negBinary"}},
-    {"from": "M1S", "to": "MXS", "under": {"valuation": "additive", "marginal": "negBinary"}},
     {"from": "PROP1", "to": "APS", "under": {"valuation": "additive", "marginal": "negBinary"},
         "thmdep": "/fair-division/misc/binary-additive-chores"},
     {"from": "APS", "to": "PROPx", "under": {"valuation": "additive", "marginal": "negBinary"},
@@ -302,6 +300,8 @@
 "predAttrs": {
 "feasible": [
     {"name": "EF1", "under": {"marginal": "dblMono", "eqEnt": true},
+        "link": "https://doi.org/10.4230/LIPIcs.APPROX/RANDOM.2021.1"},
+    {"name": "EF1", "under": {"valuation": "additive", "eqEnt": true},
         "link": "https://doi.org/10.4230/LIPIcs.APPROX/RANDOM.2021.1"},
     {"name": "EF1", "under": {"valuation": "additive", "marginal": "nonneg"},
         "link": "https://doi.org/10.1145/3457166"},
