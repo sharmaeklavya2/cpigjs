@@ -350,6 +350,16 @@ function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>
     return lines;
 }
 
+const textColors: Record<string, string> = {
+    'red': '#660a0a',
+    'green': '#0d400d',
+};
+
+const bgColors: Record<string, string> = {
+    'red': '#ffe8e8',
+    'green': '#e8ffe8',
+};
+
 function toDotAttrs(d: object): string {
     const parts = [];
     for(const [k, v] of Object.entries(d)) {
@@ -383,13 +393,21 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], showM
     const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
     const redDag = dag.trRed();
     const lines = ['digraph G {', 'edge [arrowhead=vee];',
-        'node [shape=box, margin="0.1,0.03", width=0, height=0];'];
+        'node [shape=box, margin="0.1,0.03", width=0, height=0, style=filled];'];
     for(const u of redDag.adj.keys()) {
-        const uAttrs: any = {'label': componentStr(scc.get(u)!, false, input.predsMap)};
+        const uAttrs: Record<string, string> = {'label': componentStr(scc.get(u)!, false, input.predsMap)};
         for(const attrName of input.predAttrsSummary.getAll(u)) {
             const attrInfo = input.attrsMap.get(attrName)!;
-            uAttrs.fontcolor = attrInfo.color;
-            uAttrs.color = attrInfo.color;
+            if(attrInfo.color !== undefined) {
+                uAttrs.fontcolor = textColors[attrInfo.color] ?? attrInfo.color;
+                uAttrs.color = textColors[attrInfo.color] ?? attrInfo.color;
+                if(bgColors.hasOwnProperty(attrInfo.color)) {
+                    uAttrs.fillcolor = bgColors[attrInfo.color];
+                }
+            }
+        }
+        if(uAttrs.fillcolor === undefined) {
+            uAttrs.fillcolor = '#eeeeee';
         }
         lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
     }
