@@ -416,7 +416,8 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], showM
     if(showMaybeEdges) {
         const maybeEdges = getMaybeEdges(scc, input.impG, input.cExsMap);
         for(const e of maybeEdges) {
-            const eAttrs = {'style': 'dashed', 'constraint': 'false', 'color': 'gray', 'penwidth': '0.6'};
+            const eAttrs = {'style': 'dashed', 'constraint': 'false', 'color': 'gray',
+                'penwidth': '0.6', 'arrowsize': '0.5'};
             lines.push(`"${e.from}" -> "${e.to}"${toDotAttrs(eAttrs)};`);
         }
     }
