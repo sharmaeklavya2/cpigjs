@@ -323,10 +323,14 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     return maybeEdges;
 }
 
-function componentStr(S: string[], parens: boolean) {
+function componentStr(S: string[], parens: boolean, predsMap?: Map<string, Info>) {
     const begDelim = parens ? '( ' : '';
     const endDelim = parens ? ' )' : '';
-    return S.length === 1 ? S[0] : begDelim + S.join(' = ') + endDelim;
+    let labels = S;
+    if(predsMap !== undefined) {
+        labels = S.map((x: string) => (predsMap.get(x)!.label ?? x));
+    }
+    return S.length === 1 ? labels[0] : begDelim + labels.join(' = ') + endDelim;
 }
 
 function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>>, maybeEdges: Edge<string>[]): string[] {
@@ -381,7 +385,7 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], showM
     const lines = ['digraph G {', 'edge [arrowhead=vee];',
         'node [shape=box, margin="0.1,0.03", width=0, height=0];'];
     for(const u of redDag.adj.keys()) {
-        const uAttrs: any = {'label': componentStr(scc.get(u)!, false)};
+        const uAttrs: any = {'label': componentStr(scc.get(u)!, false, input.predsMap)};
         for(const attrName of input.predAttrsSummary.getAll(u)) {
             const attrInfo = input.attrsMap.get(attrName)!;
             uAttrs.fontcolor = attrInfo.color;
