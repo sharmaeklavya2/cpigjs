@@ -290,7 +290,7 @@
         "texRef": ["thm:impl:binary:aps", "thm:impl:tribool:prop1"]},
     {"from": "M1S", "to": "APS",
         "under": {"valuation": "additive", "marginal": "tribool", "eqEnt": true},
-        "texRef": "thm:impl:tribool:m1s"},
+        "texRef": ["thm:impl:tribool:m1s", "thm:impl:tribool:aps"]},
     {"from": "EF1", "to": "GAPS",
         "under": {"valuation": "additive", "marginal": "tribool", "eqEnt": true},
         "texRef": "thm:impl:tribool:ef1-gaps"},
