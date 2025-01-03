@@ -51,6 +51,7 @@
                 {"name": "positiveBivalued", "label": "positive bivalued"},
                 {"name": "nonposBivalued", "label": "non-positive bivalued"},
                 {"name": "negativeBivalued", "label": "negative bivalued"},
+                {"name": "mixedBivalued", "label": "mixed bivalued"},
 
                 {"name": "tribool", "label": "{-1, 0, 1}"},
                 {"name": "binary"},
@@ -68,6 +69,7 @@
                 ["posOrNeg", "positive"],
                 ["posOrNeg", "negative"],
 
+                ["general", "mixedBivalued"],
                 ["nonneg", "nonnegBivalued"],
                 ["nonpos", "nonposBivalued"],
                 ["positive", "positiveBivalued"],
