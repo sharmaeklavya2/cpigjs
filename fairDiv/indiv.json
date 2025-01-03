@@ -606,11 +606,13 @@
         "texRef": "cex:propm-mixed-manna",
         "under": {"valuation": "additive", "marginal": "mixedBivalued", "identical": true, "eqEnt": true},
         "thmdep": "/fair-division/non-existence/propm-mixed-manna"},
-    {"name": "EFX",
-        "under": {"valuation": "additive", "marginal": "nonneg", "twoAg": true},
+    {"name": "MXS",
+        "texRef": "cex:wmxs-goods",
+        "under": {"valuation": "additive", "marginal": "positive", "twoAg": true},
         "part": "Theorem 8", "link": "https://doi.org/10.1609/aaai.v38i9.28851"},
-    {"name": "EFX",
-        "under": {"valuation": "additive", "marginal": "nonpos", "twoAg": true},
+    {"name": "MXS",
+        "texRef": "cex:wmxs-chores",
+        "under": {"valuation": "additive", "marginal": "negative", "twoAg": true},
         "part": "Theorem 17", "link": "https://doi.org/10.1609/aaai.v38i9.28851"}
 ]
 }
