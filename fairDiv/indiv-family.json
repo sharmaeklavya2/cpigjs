@@ -13,6 +13,7 @@
                 {"name": "superadd", "label": "superadditive"},
                 {"name": "submod", "label": "submodular"},
                 {"name": "supermod", "label": "supermodular"},
+                {"name": "xos", "label": "XOS", "text": "fractionally subadditive"},
                 {"name": "cancelable"},
                 {"name": "unitDemand", "label": "unit demand"},
                 {"name": "singleItem", "label": "single item"}
@@ -21,7 +22,8 @@
                 ["general", "subadd"],
                 ["general", "superadd"],
                 ["general", "cancelable"],
-                ["subadd", "submod"],
+                ["subadd", "xos"],
+                ["xos", "submod"],
                 ["superadd", "supermod"],
                 ["submod", "additive"],
                 ["supermod", "additive"],
