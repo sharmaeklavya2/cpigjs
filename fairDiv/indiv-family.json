@@ -1,6 +1,6 @@
 {
     "type": "prod",
-    "info": {"name": "root", "label": "valuation functions"},
+    "info": {"name": "root", "label": "fair division setting"},
     "parts": [
         {
             "type": "dag",

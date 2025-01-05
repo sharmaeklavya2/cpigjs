@@ -47,7 +47,7 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
     const predParamGroup = new f2f.ParamGroup('pred', predParams,
         {converter: boolMapToList, label: 'predicates', description: undefined, compact: true});
     const maybeParam = new f2f.Param('maybe', new f2f.CheckBoxWidget({defVal: true}),
-        {label: 'show speculative edges'});
+        {label: 'show open problems'});
 
     const paramGroup = new f2f.ParamGroup(undefined, [sfParamGroup, predParamGroup, maybeParam]);
     f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
