@@ -34,6 +34,8 @@ function setupOutput(): void {
     outputContainer.appendChild(createElement('div', {'id': 'graph'}));
 }
 
+const predsDescription = 'Pick predicates to show. If none are selected, all are shown. If two are selected, proofs of (non-)implcation are shown. If at most two are selected, proofs of (in)feasibility are shown.';
+
 export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: string | undefined,
         visualizeDot: visualizeDotT) {
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, texRefsUrl);
@@ -45,7 +47,7 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
     const predParams: f2f.Param[] = [];
     addPredParams(predParams, input.predicates!);
     const predParamGroup = new f2f.ParamGroup('pred', predParams,
-        {converter: boolMapToList, label: 'predicates', description: undefined, compact: true});
+        {converter: boolMapToList, label: 'predicates', description: predsDescription, compact: true});
     const maybeParam = new f2f.Param('maybe', new f2f.CheckBoxWidget({defVal: true}),
         {label: 'show open problems'});
 
