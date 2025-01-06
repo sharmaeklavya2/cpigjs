@@ -278,7 +278,7 @@
     {"from": "M1S", "to": "MXS",
         "under": {"valuation": "additive", "marginal": "tribool"}},
     {"from": "PROP1", "to": "PROPx",
-        "under": {"valuation": "additive", "marginal": "tribool"}},
+        "under": {"marginal": "tribool"}},
     {"from": "PROP", "to": "EEF",
         "under": {"valuation": "additive", "marginal": "tribool", "eqEnt": true},
         "texRef": "thm:impl:tribool:prop"},
@@ -507,7 +507,10 @@
     {"satisfies": "PROP", "butNot": "M1S",
         "texRef": ["cex:ud-submod-canc", "cex:prop-not-m1s-submod"],
         "under": {"valuation": "cancelable", "marginal": "positive", "identical": true, "twoAg": true, "eqEnt": true},
-        "thmdep": "/fair-division/non-impl/prop-nimpl-m1s-ud"}
+        "thmdep": "/fair-division/non-impl/prop-nimpl-m1s-ud"},
+    {"satisfies": "EF1", "butNot": "EFX",
+        "texRef": "cex:ef1-not-mxs-submod-binary",
+        "under": {"valuation": "submod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}}
 
 ],
 "predAttrs": {
