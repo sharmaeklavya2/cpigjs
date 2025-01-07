@@ -11,7 +11,7 @@ function drawDotGraph(dotInput: string): void {
     const graphElem = document.getElementById("graph");
     if(graphElem) {
         graphElem.innerText = '';
-        loadViz().then((viz: any) => {
+        loadViz().then(viz => {
             const svg = viz.renderSVGElement(dotInput);
             graphElem.appendChild(svg);
         });
