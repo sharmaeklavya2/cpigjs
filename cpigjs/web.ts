@@ -120,27 +120,32 @@ function getProofHtml(proof: Proof, className?: string): HTMLElement {
         div.classList.add(className);
     }
     div.appendChild(createElement('span', {}, 'proof: '));
+    let hasProof = false;
     if(proof.text) {
         div.appendChild(createElement('span', {'class': 'proof-text'}, proof.text));
+        hasProof = true;
     }
     else {
         if(proof.part) {
+            hasProof = true;
             div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
-            div.appendChild(createElement('span', {}, ' of '));
+            if(proof.link) {
+                div.appendChild(createElement('span', {}, ' of '));
+            }
         }
         if(proof.link) {
+            hasProof = true;
             div.appendChild(createElement('a', {'class': 'proof-link', 'href': proof.link}, proof.link));
         }
+        /*
         else if(proof.thmdep) {
             div.appendChild(createElement('span', {}, 'thmdep: '));
             div.appendChild(createElement('span', {'class': 'proof-thmdep '}, proof.thmdep));
         }
-        else if(proof.part) {
-            div.removeChild(div.lastChild!);
-        }
-        else {
-            div.replaceChildren();
-        }
+        */
+    }
+    if(!hasProof) {
+        div.replaceChildren();
     }
     return div;
 }
