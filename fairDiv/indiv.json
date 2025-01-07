@@ -633,6 +633,7 @@
         "texRef": "cex:mms-supmod-chores",
         "under": {"valuation": "supermod", "marginal": "negativeBivalued", "eqEnt": true}},
     {"name": "PROPx",
+        "texRef": "cex:propx",
         "under": {"valuation": "additive", "marginal": "positiveBivalued", "identical": true, "eqEnt": true},
         "thmdep": "/fair-division/non-existence/propx"},
     {"name": "PROPm",
