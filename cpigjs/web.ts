@@ -1,13 +1,22 @@
-'use strict';
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
 import { CpigInput, ProcessedCpigInput, FilteredCpigInput } from "./main.js";
 import { Implication, CounterExample, PredCond, Proof } from "./main.js";
 import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
 import { Edge, Graph } from "./graph.js";
 import { MultiMap } from "./multiMap.js";
-import * as f2f from "https://sharmaeklavya2.github.io/funcToForm/v2.js";
+import * as f2f from 'funcToForm';
+import { instance as loadViz } from 'dotviz';
 
-type visualizeDotT = (x: string) => undefined;
+function drawDotGraph(dotInput: string): void {
+    const graphElem = document.getElementById("graph");
+    if(graphElem) {
+        graphElem.innerText = '';
+        loadViz().then((viz: any) => {
+            const svg = viz.renderSVGElement(dotInput);
+            graphElem.appendChild(svg);
+        });
+    }
+}
 
 function createElement(tagName: string, attrs?: Object, innerText?: string): HTMLElement {
     const elem = document.createElement(tagName);
@@ -36,8 +45,7 @@ function setupOutput(): void {
 
 const predsDescription = 'Pick predicates to show. If none are selected, all are shown. If two are selected, proofs of (non-)implcation are shown. If at most two are selected, proofs of (in)feasibility are shown.';
 
-export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: string | undefined,
-        visualizeDot: visualizeDotT) {
+export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: string | undefined) {
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, texRefsUrl);
     const procInput = processInput(input, sf, texRefs);
 
@@ -54,7 +62,7 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
 
     const paramGroup = new f2f.ParamGroup(undefined, [sfeParamGroup, predParamGroup, maybeParam]);
     f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
-        run(sf, procInput, f2fInput, visualizeDot);
+        run(sf, procInput, f2fInput);
     });
 }
 
@@ -303,7 +311,7 @@ function showExistenceProofHtml(input: FilteredCpigInput, sf: SetFamily, predNam
     }
 }
 
-function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, visualizeDot: visualizeDotT) {
+function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any) {
     const predNames = f2fInput.pred;
     const filteredInput = filterInput(input, sf, f2fInput.sfe);
     setupOutput();
@@ -316,5 +324,5 @@ function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, visualizeD
         showExistenceProofHtml(filteredInput, sf, predNames);
     }
     const dotLines = getDotGraph(filteredInput, predNames, f2fInput.maybe);
-    visualizeDot(dotLines.join('\n'));
+    drawDotGraph(dotLines.join('\n'));
 }

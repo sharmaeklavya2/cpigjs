@@ -1,4 +1,4 @@
-declare module "https://sharmaeklavya2.github.io/funcToForm/v2.js" {
+declare module "funcToForm" {
     type converterT = (input: string) => any;
     type runT = (input: any, stdout: Ostream) => any;
     export class CheckBoxWidget {
