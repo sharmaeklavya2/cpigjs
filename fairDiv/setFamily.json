@@ -49,11 +49,11 @@
                 {"name": "nonpos", "label": "non-positive"},
                 {"name": "negative"},
 
-                {"name": "nonnegBivalued", "label": "non-negative bivalued"},
-                {"name": "positiveBivalued", "label": "positive bivalued"},
-                {"name": "nonposBivalued", "label": "non-positive bivalued"},
-                {"name": "negativeBivalued", "label": "negative bivalued"},
-                {"name": "mixedBivalued", "label": "mixed bivalued"},
+                {"name": "nonnegBival", "label": "non-negative bivalued"},
+                {"name": "positiveBival", "label": "positive bivalued"},
+                {"name": "nonposBival", "label": "non-positive bivalued"},
+                {"name": "negativeBival", "label": "negative bivalued"},
+                {"name": "mixedBival", "label": "mixed bivalued"},
 
                 {"name": "tribool", "label": "{-1, 0, 1}"},
                 {"name": "binary"},
@@ -71,23 +71,23 @@
                 ["posOrNeg", "positive"],
                 ["posOrNeg", "negative"],
 
-                ["general", "mixedBivalued"],
-                ["nonneg", "nonnegBivalued"],
-                ["nonpos", "nonposBivalued"],
-                ["positive", "positiveBivalued"],
-                ["negative", "negativeBivalued"],
-                ["nonnegBivalued", "positiveBivalued"],
-                ["nonposBivalued", "negativeBivalued"],
+                ["general", "mixedBival"],
+                ["nonneg", "nonnegBival"],
+                ["nonpos", "nonposBival"],
+                ["positive", "positiveBival"],
+                ["negative", "negativeBival"],
+                ["nonnegBival", "positiveBival"],
+                ["nonposBival", "negativeBival"],
 
                 ["general", "tribool"],
                 ["tribool", "binary"],
                 ["tribool", "negBinary"],
-                ["nonnegBivalued", "binary"],
-                ["nonposBivalued", "negBinary"],
+                ["nonnegBival", "binary"],
+                ["nonposBival", "negBinary"],
                 ["binary", "unit"],
-                ["positiveBivalued", "unit"],
+                ["positiveBival", "unit"],
                 ["negBinary", "negUnit"],
-                ["negativeBivalued", "negUnit"]
+                ["negativeBival", "negUnit"]
             ]
         },
         {
