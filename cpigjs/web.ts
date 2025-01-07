@@ -41,9 +41,10 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, texRefsUrl);
     const procInput = processInput(input, sf, texRefs);
 
-    const sfParams: f2f.Param[] = [];
-    addSfParams(sfParams, sf);
-    const sfParamGroup = new f2f.ParamGroup('sf', sfParams, {converter: undefined, label: sf.info.label});
+    const sfeParams: f2f.Param[] = [];
+    addSfeParams(sfeParams, sf);
+    const sfeParamGroup = new f2f.ParamGroup('sfe', sfeParams, {converter: undefined, label: sf.info.label});
+    // sfe means 'set family element'
     const predParams: f2f.Param[] = [];
     addPredParams(predParams, input.predicates!);
     const predParamGroup = new f2f.ParamGroup('pred', predParams,
@@ -51,7 +52,7 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
     const maybeParam = new f2f.Param('maybe', new f2f.CheckBoxWidget({defVal: true}),
         {label: 'show open problems'});
 
-    const paramGroup = new f2f.ParamGroup(undefined, [sfParamGroup, predParamGroup, maybeParam]);
+    const paramGroup = new f2f.ParamGroup(undefined, [sfeParamGroup, predParamGroup, maybeParam]);
     f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
         run(sf, procInput, f2fInput, visualizeDot);
     });
@@ -89,7 +90,7 @@ function boolMapToList(obj: Object): string[] {
     return a;
 }
 
-function addSfParams(output: f2f.Param[], setFamily: SetFamily) {
+function addSfeParams(output: f2f.Param[], setFamily: SetFamily) {
     const name = setFamily.info.name;
     const label = setFamily.info.label || name;
     if(setFamily instanceof BoolSetFamily) {
@@ -102,7 +103,7 @@ function addSfParams(output: f2f.Param[], setFamily: SetFamily) {
     }
     else if(setFamily instanceof ProdSetFamily) {
         for(const part of setFamily.parts) {
-            addSfParams(output, part);
+            addSfeParams(output, part);
         }
     }
 }
@@ -304,7 +305,7 @@ function showExistenceProofHtml(input: FilteredCpigInput, sf: SetFamily, predNam
 
 function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, visualizeDot: visualizeDotT) {
     const predNames = f2fInput.pred;
-    const filteredInput = filterInput(input, sf, f2fInput.sf);
+    const filteredInput = filterInput(input, sf, f2fInput.sfe);
     setupOutput();
     if(predNames.length === 2) {
         const [u, v] = predNames;
