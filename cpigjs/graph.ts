@@ -24,14 +24,14 @@ export class Graph<T, ET extends Edge<T>> {
         for(const edge of edges) {
             const u = edge.from, v = edge.to;
             const uEdges = adj.get(u);
-            if(typeof uEdges === 'undefined') {
+            if(uEdges === undefined) {
                 throw new Error(`unknown vertex ${u} in edge ${edge}`);
             }
             else {
                 uEdges.push(edge);
             }
             const vEdges = radj.get(v);
-            if(typeof vEdges === 'undefined') {
+            if(vEdges === undefined) {
                 throw new Error(`unknown vertex ${v} in edge ${edge}`);
             }
             else {
@@ -53,7 +53,7 @@ export class Graph<T, ET extends Edge<T>> {
         while(queue.size > 0) {
             const u = queue.pop();
             const uEdges = this.adj.get(u);
-            if(typeof uEdges !== 'undefined') {
+            if(uEdges !== undefined) {
                 for(const edge of uEdges) {
                     const v = edge.to;
                     if(v !== root && !pred.has(v)) {
