@@ -1,4 +1,4 @@
-import { Graph } from "./cpigjs/graph.js";
+import { Graph } from "../cpigjs/graph.js";
 import assert from 'assert';
 
 function pairsToEdges(pairs) {

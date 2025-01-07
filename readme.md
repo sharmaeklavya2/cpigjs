@@ -28,13 +28,17 @@ and given a set $S ∈ Σ$, display all predicate implications conditional on $S
 For the fair allocation problem, `fairDiv/indiv-family.json` describes the family $Σ$
 and `fairDiv/indiv-goods.json` describes the predicates and implications.
 
-To return all implications for additive valuations, run
+To return all implications for additive valuations over goods when agents have equal entitlements
+(including open problems), and save the output to `goods.pdf`, run
 
-    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv.json -c '{"valuation": "additive"}'
+    node scripts/cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv.json -c '{"valuation": "additive", "marginal": "nonneg", "eqEnt": true}' --maybe -o goods.pdf
 
 To output the sequence of implications from ef (envy freeness) to ef1 for general valuations, run
 
-    node cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv.json -c '{}' --pred ef ef1
+    node scrpts/cli.js --sf fairDiv/indiv-family.json -i fairDiv/indiv.json -c '{}' --pred ef ef1
 
-To be able to run this command, you must first install typescript (`npm install -g typescript`)
+To be able to run this command, you must first install typescript (`npm install -g typescript`),
+install the project's dependencies (`npm install`),
 and then run `npx tsc` to compile the typescript code in `cpigjs`.
+
+To run tests, run `npx mocha scripts/test.js`.
