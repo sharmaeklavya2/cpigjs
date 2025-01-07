@@ -1,0 +1,258 @@
+/* colors */
+body {
+    --bg-color: white;
+    --text-color: #202020;
+    --emph-color: #101010;
+    --link-color: #1a0dab;
+    --vlink-color: #681da8;
+    --text-secondary: #888;
+    --text-danger: #dc3545;
+    --text-warning: #ff9705;
+    --text-success: #198754;
+    --text-blue: #0d6efd;
+
+    --vlight-tint: rgba(0, 0, 0, 0.02);
+    --light-tint: rgba(0, 0, 0, 0.05);
+    --medium-tint: rgba(0, 0, 0, 0.1);
+    --heavy-tint: rgba(0, 0, 0, 0.2);
+    --vheavy-tint: rgba(0, 0, 0, 0.3);
+    --danger-tint: rgba(255, 0, 0, 0.1);
+    --warning-tint: rgba(255, 150, 0, 0.1);
+    --success-tint: rgba(0, 255, 0, 0.1);
+}
+@media (prefers-color-scheme: dark) {
+    body {
+        --text-color: #c8c8c8;
+        --emph-color: #e4e4e4;
+        --link-color: #8ab4f8;
+        --vlink-color: #c58af9;
+        --text-danger: #e74c3c;
+        --text-warning: #f39c12;
+        --text-success: #00bc8c;
+        --text-blue: #3498db;
+
+        --bg-color: #1b1e20;
+        --vlight-tint: rgba(255, 255, 255, 0.02);
+        --light-tint: rgba(255, 255, 255, 0.05);
+        --medium-tint: rgba(255, 255, 255, 0.1);
+        --heavy-tint: rgba(255, 255, 255, 0.2);
+        --vheavy-tint: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* small-screen */
+@media (max-width: 820px) {
+    body {margin: 1em;}
+    ul {padding-left: 1em;}
+    ol {padding-left: 1.2em;}
+}
+@media (min-width: 821px) {
+    body {margin: 1em 2em;}
+}
+
+/* generic */
+body {
+    font-family: BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Open Sans", "Helvetica Neue", sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    line-height: 1.4;
+    font-size: 1.1em;
+}
+a {color: var(--link-color);}
+a:visited {color: var(--vlink-color);}
+a:not(:hover) {
+    text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: initial;
+    color: var(--emph-color);
+}
+strong, em {
+    color: var(--emph-color);
+}
+table {
+    border-collapse: collapse;
+}
+td, th {
+    border: 1px solid var(--text-color);
+    padding: 0.1em 0.5em;
+}
+div.math, .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.danger {
+    color: var(--text-danger);
+}
+.success {
+    color: var(--text-success);
+}
+
+/* form */
+form, .inputOwrap {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    align-self: stretch;
+    font-family: monospace;
+}
+form {
+    background-color: var(--light-tint);
+    padding: 1em;
+    align-items: stretch;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+}
+fieldset {
+    margin: 0.2em 0;
+    border: 1px solid var(--heavy-tint);
+    border-radius: 0.25em;
+}
+fieldset > legend {
+    padding: 0.1em 0.3em;
+}
+.inputIwrap, .inputOwrap.compact {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    align-self: stretch;
+    flex-wrap: wrap;
+    margin: 0.2em 0;
+}
+.inputOwrap.compact > .inputOwrap {
+    margin-right: 1.5em;
+}
+.f2f-errors {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding-left: 1em;
+}
+.f2f-error:not(:empty) {
+    margin: 0.2em 0;
+    padding: 0.2em 0.3em;
+    background-color: var(--danger-tint);
+    color: var(--text-danger);
+    white-space: pre-wrap;
+    border-radius: 0.25em;
+}
+.inputIwrap > input:not([type="checkbox"]), .inputIwrap > select, .inputIwrap > textarea {
+    margin-left: 1em;
+}
+.inputIwrap > input:not([type="checkbox"]), .inputIwrap > textarea {
+    flex: 1;
+}
+.inputIwrap > input[type="checkbox"] {
+    margin-right: 1em;
+    align-self: stretch;
+}
+input[type="text"], select, textarea {
+    border: none;
+    border-radius: 0.25em;
+    font-size: 1em;
+    font-family: monospace;
+    color: var(--text-color);
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-secondary);
+}
+input, select, textarea {
+    background-color: var(--bg-color);
+}
+input[type="text"], textarea {
+    padding: 0.35em 0.7em;
+}
+select {
+    padding: 0.3em 0.6em;
+}
+button[type="submit"] {
+    margin-top: 0.25em;
+    align-self: center;
+    padding: 0.25em 1em;
+    font-size: 1em;
+}
+button {
+    background-color: var(--medium-tint);
+    color: var(--text-color);
+    border-radius: 0.3em;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: var(--heavy-tint);
+}
+button:active {
+    background-color: var(--vheavy-tint);
+}
+.hidden {
+    display: none;
+}
+.f2f-help-btn {
+    color: var(--text-secondary);
+    border: 1px solid var(--text-secondary);
+    margin-left: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1em;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+.f2f-help-btn.inline {
+    display: inline-flex;
+}
+.f2f-help-btn:hover {
+    background-color: var(--medium-tint);
+}
+.f2f-help-btn:active {
+    background-color: var(--heavy-tint);
+}
+.f2f-help-btn::after {
+    content: "?";
+}
+.f2f-help-str {
+    padding: 0.2em 0.3em;
+    border-radius: 0.25em;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+}
+
+/* output */
+.f2f-ostream, .f2f-lane-log {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.f2f-lane-log {
+    padding: 1em;
+    background-color: var(--vlight-tint);
+    font-family: monospace;
+}
+.f2f-lane-break:not(:last-child) {
+    border-top: 1px solid var(--medium-tint);
+}
+.f2f-log-line {
+    white-space: pre-wrap;
+    min-height: 1.4em;
+}
+.f2f-log-line.success {
+    background-color: var(--success-tint);
+    color: var(--text-success);
+}
+.f2f-log-line.danger, .f2f-log-line.error {
+    background-color: var(--danger-tint);
+    color: var(--text-danger);
+}
+.f2f-log-line.warning, .f2f-log-line.warn {
+    background-color: var(--warning-tint);
+    color: var(--text-warning);
+}
+.f2f-log-line.secondary, .f2f-log-line.debug {
+    color: var(--text-secondary);
+}
+.f2f-ostream > svg {
+    margin: 1em;
+}

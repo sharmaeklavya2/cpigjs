@@ -8,7 +8,7 @@
     "buildWeb": "npx tsc && node scripts/templateFill.js -t template.html -c fairDiv/htmlContext.json -o fairDiv/index.html",
     "clean": "rm -f cpigjs/*.js cpigjs/*.js.map fairDiv/index.html"
   },
-  "author": "Eklavya Sharma",
+  "author": "Anonymous",
   "license": "MIT",
   "dependencies": {
     "yargs": "^17.7.2"
