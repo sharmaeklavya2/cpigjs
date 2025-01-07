@@ -1,0 +1,8 @@
+{
+"title": "Implications in Fair Division of Indivisible Items",
+"funcToFormUrl": "https://sharmaeklavya2.github.io/funcToForm",
+"dotvizUrl": "https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs",
+"familyFile": "'setFamily.json'",
+"dataFiles": "['data.json']",
+"texRefsFile": "'texRefs.json'"
+}

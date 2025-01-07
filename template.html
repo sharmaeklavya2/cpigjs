@@ -4,17 +4,17 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="dark light" />
-<title>Implications in Fair Division of Indivisible Items</title>
+<title>{{title}}</title>
 <script type="importmap">
 {"imports": {
-    "funcToForm": "https://sharmaeklavya2.github.io/funcToForm/v2.js",
-    "dotviz": "https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs"
+    "funcToForm": "{{funcToFormUrl}}/v2.js",
+    "dotviz": "{{dotvizUrl}}"
 }}
 </script>
-<link rel="stylesheet" href="https://sharmaeklavya2.github.io/funcToForm/funcToForm.css" />
+<link rel="stylesheet" href="{{funcToFormUrl}}/funcToForm.css" />
 <link rel="stylesheet" href="../cpigjs/cpigjs.css" />
-<link rel="modulepreload" href="https://sharmaeklavya2.github.io/funcToForm/v2.js" />
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs" />
+<link rel="modulepreload" href="{{funcToFormUrl}}/v2.js" />
+<link rel="modulepreload" href="{{dotvizUrl}}" />
 <link rel="modulepreload" href="../cpigjs/web.js" />
 <link rel="modulepreload" href="../cpigjs/main.js" />
 <link rel="modulepreload" href="../cpigjs/setFamily.js" />
@@ -23,11 +23,11 @@
 <link rel="modulepreload" href="../cpigjs/queue.js" />
 <script type="module">
 import { setup } from '../cpigjs/web.js';
-await setup('indiv-family.json', ['indiv.json'], 'indivRefs.json');
+await setup({{familyFile}}, {{dataFiles}}, {{texRefsFile}});
 </script>
 </head>
 <body>
-<h1>Implications in Fair Division of Indivisible Items</h1>
+<h1>{{title}}</h1>
 <div id="form-container"></div>
 <div id="output-container"></div>
 </body>
