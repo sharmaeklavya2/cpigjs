@@ -43,6 +43,9 @@ and `fairDiv/data.json` describes the predicates and implications.
 
 ## How to Run with node
 
+Install [Graphviz](https://graphviz.org/documentation/) and ensure that the
+`dot` command is available on your command line.
+
 To return all implications for additive valuations over goods when agents have equal entitlements
 (including open problems), and save the output to `goods.pdf`, run
 
