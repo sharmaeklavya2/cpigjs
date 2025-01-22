@@ -63,5 +63,5 @@ First generate an HTML file using this command:
 
     node scripts/templateFill.js -t template.html -c fairDiv/htmlContext.json -o fairDiv/index.html
 
-Then serve the directories `cpigjs` and `fairDiv` using an HTTP server,
+Then serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
 and open `fairDiv/index.html` in your web browser.
