@@ -303,7 +303,18 @@
     {"from": "MMS", "to": "EEFX",
         "under": {"valuation": "additive", "marginal": "tribool", "eqEnt": true},
         "texRef": "thm:impl:tribool:mms-to-eefx",
-        "thmdep": "/fair-division/misc/binary-additive-chores"}
+        "thmdep": "/fair-division/misc/binary-additive-chores"},
+
+    {"from": "PROP1", "to": "GMMS",
+        "under": {"valuation": "singleItem"}},
+    {"from": "MMS", "to": "GAPS",
+        "under": {"valuation": "singleItem"}},
+    {"from": "PAPS", "to": "EFX",
+        "under": {"valuation": "singleItem"}},
+    {"from": "APS", "to": "EFX",
+        "under": {"valuation": "singleItem"}},
+    {"from": "M1S", "to": "PROPx",
+        "under": {"valuation": "singleItem"}}
 ],
 "counterExamples": [
     {"satisfies": "APS", "butNot": "PROP",
