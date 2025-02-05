@@ -54,6 +54,7 @@
                 {"name": "nonposBival", "label": "non-positive bivalued"},
                 {"name": "negativeBival", "label": "negative bivalued"},
                 {"name": "mixedBival", "label": "mixed bivalued"},
+                {"name": "mixedBivalDblMono", "label": "mixed bivalued dblMono"},
 
                 {"name": "tribool", "label": "{-1, 0, 1}"},
                 {"name": "binary"},
@@ -70,8 +71,10 @@
                 ["nonpos", "negative"],
                 ["dblStrMono", "positive"],
                 ["dblStrMono", "negative"],
+                ["dblStrMono", "mixedBivalDblMono"],
 
                 ["general", "mixedBival"],
+                ["mixedBival", "mixedBivalDblMono"],
                 ["nonneg", "nonnegBival"],
                 ["nonpos", "nonposBival"],
                 ["positive", "positiveBival"],
