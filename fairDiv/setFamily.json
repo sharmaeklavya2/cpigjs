@@ -42,7 +42,7 @@
             "values": [
                 {"name": "general"},
                 {"name": "dblMono", "label": "doubly monotone"},
-                {"name": "posOrNeg", "text": "either all marginals are positive or all are negative"},
+                {"name": "dblStrMono", "label": "doubly strictly monotone"},
 
                 {"name": "nonneg", "label": "non-negative"},
                 {"name": "positive"},
@@ -63,13 +63,13 @@
             ],
             "containments": [
                 ["general", "dblMono"],
-                ["dblMono", "posOrNeg"],
+                ["dblMono", "dblStrMono"],
                 ["dblMono", "nonneg"],
                 ["dblMono", "nonpos"],
                 ["nonneg", "positive"],
                 ["nonpos", "negative"],
-                ["posOrNeg", "positive"],
-                ["posOrNeg", "negative"],
+                ["dblStrMono", "positive"],
+                ["dblStrMono", "negative"],
 
                 ["general", "mixedBival"],
                 ["nonneg", "nonnegBival"],
