@@ -9,7 +9,7 @@ import { instance as loadViz } from 'dotviz';
 
 export interface Config {
     texRefsUrl?: string;
-    defaultProofLink?: string;
+    defaultProofUrl?: string;
 }
 
 function drawDotGraph(dotInput: string): void {
@@ -128,7 +128,7 @@ function addPredParams(output: f2f.Param[], preds: Info[]) {
     }
 }
 
-function getProofHtml(proof: Proof, className?: string): HTMLElement {
+function getProofHtml(proof: Proof, config: Config, className?: string): HTMLElement {
     const div = createElement('div', {'class': 'proof-info'});
     if(className !== undefined) {
         div.classList.add(className);
@@ -143,13 +143,20 @@ function getProofHtml(proof: Proof, className?: string): HTMLElement {
         if(proof.part) {
             hasProof = true;
             div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
-            if(proof.link) {
+            if(proof.link || config.defaultProofUrl) {
                 div.appendChild(createElement('span', {}, ' of '));
             }
         }
+        let proofLink;
         if(proof.link) {
+            proofLink = proof.link;
+        }
+        else if(proof.part) {
+            proofLink = config.defaultProofUrl;
+        }
+        if(proofLink) {
             hasProof = true;
-            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proof.link}, proof.link));
+            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proofLink}, proofLink));
         }
         /*
         else if(proof.thmdep) {
@@ -204,7 +211,7 @@ function getUnderHtml(under: any, sf: SetFamily, className?: string): HTMLElemen
     return elem;
 }
 
-function getImplPathHtml(path: Implication[], sf: SetFamily): HTMLElement {
+function getImplPathHtml(path: Implication[], sf: SetFamily, config: Config): HTMLElement {
     const olElem = createElement('ol', {'class': 'implPath'});
     for(const e of path) {
         const liElem = createElement('li', {'class': 'proof-step'});
@@ -214,13 +221,13 @@ function getImplPathHtml(path: Implication[], sf: SetFamily): HTMLElement {
         headElem.appendChild(createElement('span', {}, e.to));
         liElem.appendChild(headElem);
         liElem.appendChild(getUnderHtml(e.under, sf, 'proof-step-under'));
-        liElem.appendChild(getProofHtml(e, 'proof-step-proof'));
+        liElem.appendChild(getProofHtml(e, config, 'proof-step-proof'));
         olElem.appendChild(liElem);
     }
     return olElem;
 }
 
-function getCeListHtml(ceList: CounterExample[], sf: SetFamily): HTMLElement {
+function getCeListHtml(ceList: CounterExample[], sf: SetFamily, config: Config): HTMLElement {
     const olElem = createElement('ol', {'class': 'ceList'});
     for(const ce of ceList) {
         const liElem = createElement('li', {'class': 'ce-reason'});
@@ -230,13 +237,14 @@ function getCeListHtml(ceList: CounterExample[], sf: SetFamily): HTMLElement {
         headElem.appendChild(createElement('span', {}, ce.butNot));
         liElem.appendChild(headElem);
         liElem.appendChild(getUnderHtml(ce.under, sf, 'ce-reason-under'));
-        liElem.appendChild(getProofHtml(ce, 'ce-reason-proof'));
+        liElem.appendChild(getProofHtml(ce, config, 'ce-reason-proof'));
         olElem.appendChild(liElem);
     }
     return olElem;
 }
 
-function showImplProofHtml(input: FilteredCpigInput, sf: SetFamily, u: string, v: string, divId: string): void {
+function showImplProofHtml(u: string, v: string, divId: string,
+        input: FilteredCpigInput, sf: SetFamily, config: Config): void {
     const path = input.impG.getPath(u, v);
     const ceList = input.cExsMap.getAll(JSON.stringify([u, v]));
     const container = document.getElementById(divId)!;
@@ -254,7 +262,7 @@ function showImplProofHtml(input: FilteredCpigInput, sf: SetFamily, u: string, v
         pElem.appendChild(createElement('span', {}, v));
         pElem.appendChild(createElement('span', {}, '. Proof:'));
         container.appendChild(pElem);
-        container.appendChild(getImplPathHtml(path, sf));
+        container.appendChild(getImplPathHtml(path, sf, config));
     }
     if(ceList.length !== 0) {
         const pElem = createElement('p', {'class': 'edgeHead'});
@@ -263,16 +271,16 @@ function showImplProofHtml(input: FilteredCpigInput, sf: SetFamily, u: string, v
         pElem.appendChild(createElement('span', {}, v));
         pElem.appendChild(createElement('span', {}, '. Counterexmaples:'));
         container.appendChild(pElem);
-        container.appendChild(getCeListHtml(ceList, sf));
+        container.appendChild(getCeListHtml(ceList, sf, config));
     }
 }
 
-function getAttrReasonHtml(attrName: string, sf: SetFamily, reason: PredCond): HTMLElement {
+function getAttrReasonHtml(attrName: string, sf: SetFamily, reason: PredCond, config: Config): HTMLElement {
     const liElem = createElement('li', {'class': 'attr-reason'});
     const headElem = createElement('div', {'class': 'attr-reason-head'}, `${reason.name} is ${attrName}`)
     liElem.appendChild(headElem);
     liElem.appendChild(getUnderHtml(reason.under, sf, 'attr-reason-under'));
-    liElem.appendChild(getProofHtml(reason, 'attr-reason-proof'));
+    liElem.appendChild(getProofHtml(reason, config, 'attr-reason-proof'));
     return liElem;
 }
 
@@ -281,7 +289,7 @@ let colorToCssClass: Record<string, string> = {
     'red': 'danger',
 };
 
-function showExistenceProofHtml(input: FilteredCpigInput, sf: SetFamily, predNames: string[]) {
+function showExistenceProofHtml(predNames: string[], input: FilteredCpigInput, sf: SetFamily, config: Config) {
     const verticesElem = document.getElementById('vertices')!;
     verticesElem.replaceChildren();
     for(const predName of predNames) {
@@ -306,7 +314,7 @@ function showExistenceProofHtml(input: FilteredCpigInput, sf: SetFamily, predNam
                 rContainer.appendChild(pElem);
                 const olElem = createElement('ol', {});
                 for(const reason of reasons) {
-                    olElem.appendChild(getAttrReasonHtml(attrName, sf, reason));
+                    olElem.appendChild(getAttrReasonHtml(attrName, sf, reason, config));
                 }
                 rContainer.appendChild(olElem);
                 vContainer.appendChild(rContainer);
@@ -322,11 +330,11 @@ function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, config: Co
     setupOutput();
     if(predNames.length === 2) {
         const [u, v] = predNames;
-        showImplProofHtml(filteredInput, sf, u, v, 'fedge');
-        showImplProofHtml(filteredInput, sf, v, u, 'redge');
+        showImplProofHtml(u, v, 'fedge', filteredInput, sf, config);
+        showImplProofHtml(v, u, 'redge', filteredInput, sf, config);
     }
     if(predNames.length <= 2 && predNames.length >= 1) {
-        showExistenceProofHtml(filteredInput, sf, predNames);
+        showExistenceProofHtml(predNames, filteredInput, sf, config);
     }
     const dotLines = getDotGraph(filteredInput, predNames, f2fInput.maybe);
     drawDotGraph(dotLines.join('\n'));

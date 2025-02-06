@@ -159,8 +159,8 @@ export function processTexRefs(texRefs: RawTexRef[]): Map<string, string> {
         if(refMap.has(texRef.texLabel)) {
             throw new Error(`duplicate texLabel ${texRef.texLabel} found`);
         }
-        // refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId} (page ${texRef.page})`);
-        refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId}`);
+        refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId} (page ${texRef.page})`);
+        // refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId}`);
     }
     return refMap;
 }
