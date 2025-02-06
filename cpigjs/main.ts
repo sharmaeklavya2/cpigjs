@@ -374,27 +374,33 @@ function toDotAttrs(d: object): string {
     }
 }
 
-export function serializeGraph(input: FilteredCpigInput, predNames: string[], showMaybeEdges: boolean,
+export function serializeGraph(input: FilteredCpigInput, predNames: string[], drawOptions: DrawOptions,
         format: string): string[] {
     if(format === 'txt') {
         const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
         const redDag = dag.trRed();
-        const maybeEdges = showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExsMap) : [];
+        const maybeEdges = drawOptions.showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExsMap) : [];
         return sccDagToStr(scc, dag, maybeEdges);
     }
     else if(format === 'dot') {
-        return getDotGraph(input, predNames, showMaybeEdges);
+        return getDotGraph(input, predNames, drawOptions);
     }
     else {
         throw new Error('unknown format ' + format);
     }
 }
 
-export function getDotGraph(input: FilteredCpigInput, predNames: string[], showMaybeEdges: boolean): string[] {
+interface DrawOptions {
+    showMaybeEdges?: boolean;
+    drawL2R: boolean;
+}
+
+export function getDotGraph(input: FilteredCpigInput, predNames: string[], drawOptions: DrawOptions): string[] {
     const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
     const redDag = dag.trRed();
+    const rankdir = drawOptions.drawL2R ? 'LR' : 'TB';
     const lines = ['digraph G {',
-        'graph [margin=0];',
+        `graph [margin=0, rankdir="${rankdir}"];`,
         'edge [arrowhead=vee, arrowsize=0.75];',
         'node [shape=box, margin="0.1,0.03", width=0, height=0, style=filled];'];
     for(const u of redDag.adj.keys()) {
@@ -414,7 +420,7 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], showM
         }
         lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
     }
-    if(showMaybeEdges) {
+    if(drawOptions.showMaybeEdges) {
         const maybeEdges = getMaybeEdges(scc, input.impG, input.cExsMap);
         for(const e of maybeEdges) {
             const eAttrs = {'style': 'dashed', 'constraint': 'false', 'color': 'gray',

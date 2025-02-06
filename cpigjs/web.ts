@@ -64,8 +64,10 @@ export async function setup(sfUrl: string, inputUrls: string[], config: Config) 
         {converter: boolMapToList, label: 'predicates', description: predsDescription, compact: true});
     const maybeParam = new f2f.Param('maybe', new f2f.CheckBoxWidget({defVal: true}),
         {label: 'show open problems'});
+    const l2rParam = new f2f.Param('drawL2R', new f2f.CheckBoxWidget({defVal: false}),
+        {label: 'draw left-to-right'});
 
-    const paramGroup = new f2f.ParamGroup(undefined, [sfeParamGroup, predParamGroup, maybeParam]);
+    const paramGroup = new f2f.ParamGroup(undefined, [sfeParamGroup, predParamGroup, maybeParam, l2rParam]);
     f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
         run(sf, procInput, f2fInput, config);
     });
@@ -336,6 +338,7 @@ function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, config: Co
     if(predNames.length <= 2 && predNames.length >= 1) {
         showExistenceProofHtml(predNames, filteredInput, sf, config);
     }
-    const dotLines = getDotGraph(filteredInput, predNames, f2fInput.maybe);
+    const drawOptions = {showMaybeEdges: f2fInput.maybe, drawL2R: f2fInput.drawL2R};
+    const dotLines = getDotGraph(filteredInput, predNames, drawOptions);
     drawDotGraph(dotLines.join('\n'));
 }

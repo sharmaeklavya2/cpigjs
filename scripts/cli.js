@@ -48,10 +48,11 @@ async function main() {
         outputAttrReasons(filteredInput, predNames, console);
     }
     console.log();
+    const drawOptions = {showMaybeEdges: args.maybe};
     if(args.output) {
         const ext = getExt(args.output);
         if(ext === 'dot' || ext === 'svg' || ext === 'pdf' || ext === 'png') {
-            const lines = serializeGraph(filteredInput, predNames, args.maybe, 'dot');
+            const lines = serializeGraph(filteredInput, predNames, drawOptions, 'dot');
             if(ext === 'dot') {
                 await writeFile(args.output, lines.join('\n'));
             }
@@ -61,7 +62,7 @@ async function main() {
             }
         }
         else if(ext === 'txt') {
-            const lines = serializeGraph(filteredInput, predNames, args.maybe, 'txt');
+            const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
             await writeFile(args.output, lines.join('\n'));
         }
         else {
@@ -69,7 +70,7 @@ async function main() {
         }
     }
     else {
-        const lines = serializeGraph(filteredInput, predNames, args.maybe, 'txt');
+        const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
         console.log(lines.join('\n'));
     }
 }
