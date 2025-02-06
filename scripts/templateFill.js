@@ -3,6 +3,23 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import yargs from 'yargs';
 
+function applyContext(context, keyInfo) {
+    const [key, ...filters] = keyInfo.split('|');
+    let value = context[key];
+    if(value === undefined) {
+        throw new Error(`key '${key}' is absent from context.`);
+    }
+    for(const filter of filters) {
+        if(filter === 'json') {
+            value = JSON.stringify(value);
+        }
+        else {
+            throw new Error(`unknown filter '${filter}' applied to key '${key}'.`);
+        }
+    }
+    return value;
+}
+
 function templateFill(template, context, openDelim, closeDelim) {
     const n = template.length;
     let insideVar = false;
@@ -14,12 +31,9 @@ function templateFill(template, context, openDelim, closeDelim) {
             if(j === -1) {
                 throw new Error("can't find end of context variable.");
             }
-            const contextVarName = template.slice(i, j);
-            const contextVarValue = context[contextVarName];
-            if(contextVarValue === undefined) {
-                throw new Error(`variable ${contextVarName} is absent from context.`)
-            }
-            parts.push(contextVarValue);
+            const keyInfo = template.slice(i, j);
+            const value = applyContext(context, keyInfo);
+            parts.push(value);
             insideVar = false;
             i = j + 2;
         }

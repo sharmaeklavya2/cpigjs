@@ -7,6 +7,11 @@ import { MultiMap } from "./multiMap.js";
 import * as f2f from 'funcToForm';
 import { instance as loadViz } from 'dotviz';
 
+export interface Config {
+    texRefsUrl?: string;
+    defaultProofLink?: string;
+}
+
 function drawDotGraph(dotInput: string): void {
     const graphElem = document.getElementById("graph");
     if(graphElem) {
@@ -45,8 +50,8 @@ function setupOutput(): void {
 
 const predsDescription = 'Pick predicates to show. If none are selected, all are shown. If two are selected, proofs of (non-)implcation are shown. If at most two are selected, proofs of (in)feasibility are shown.';
 
-export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: string | undefined) {
-    const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, texRefsUrl);
+export async function setup(sfUrl: string, inputUrls: string[], config: Config) {
+    const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, config);
     const procInput = processInput(input, sf, texRefs);
 
     const sfeParams: f2f.Param[] = [];
@@ -62,11 +67,11 @@ export async function setup(sfUrl: string, inputUrls: string[], texRefsUrl: stri
 
     const paramGroup = new f2f.ParamGroup(undefined, [sfeParamGroup, predParamGroup, maybeParam]);
     f2f.createForm('form-container', paramGroup, function(f2fInput, stdout) {
-        run(sf, procInput, f2fInput);
+        run(sf, procInput, f2fInput, config);
     });
 }
 
-export async function fetchInput(sfUrl: string, inputUrls: string[], texRefsUrl?: string) {
+export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config) {
     const pageLoadPromise = new Promise(function(resolve, reject) {
         window.addEventListener('DomContentLoaded', resolve);
     });
@@ -76,13 +81,13 @@ export async function fetchInput(sfUrl: string, inputUrls: string[], texRefsUrl?
     const inputsPromise = Promise.all(inputUrls.map(
         inputUrl => window.fetch(inputUrl).then(response => response.json())));
     let texRefsPromise;
-    if(texRefsUrl !== undefined) {
-        texRefsPromise = window.fetch(texRefsUrl).then(response => response.json());
+    if(config.texRefsUrl !== undefined) {
+        texRefsPromise = window.fetch(config.texRefsUrl).then(response => response.json());
     }
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);
     let texRefs = [];
-    if(texRefsPromise !== undefined) {
+    if(config.texRefsUrl !== undefined) {
         texRefs = await texRefsPromise;
     }
     return {sf: sf, input: input, texRefs: texRefs};
@@ -311,7 +316,7 @@ function showExistenceProofHtml(input: FilteredCpigInput, sf: SetFamily, predNam
     }
 }
 
-function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any) {
+function run(sf: SetFamily, input: ProcessedCpigInput, f2fInput: any, config: Config) {
     const predNames = f2fInput.pred;
     const filteredInput = filterInput(input, sf, f2fInput.sfe);
     setupOutput();

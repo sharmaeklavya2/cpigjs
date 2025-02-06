@@ -23,7 +23,8 @@
 <link rel="modulepreload" href="../cpigjs/queue.js" />
 <script type="module">
 import { setup } from '../cpigjs/web.js';
-await setup({{familyFile}}, {{dataFiles}}, {{texRefsFile}});
+const config = {{config|json}};
+await setup({{familyFile|json}}, {{dataFiles|json}}, config);
 </script>
 </head>
 <body>
