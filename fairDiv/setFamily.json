@@ -41,12 +41,12 @@
             "default": "general",
             "values": [
                 {"name": "general"},
+                {"name": "nonneg", "label": "non-negative (goods)"},
+                {"name": "nonpos", "label": "non-positive (chores)"},
+
                 {"name": "dblMono", "label": "doubly monotone"},
                 {"name": "dblStrMono", "label": "doubly strictly monotone"},
-
-                {"name": "nonneg", "label": "non-negative"},
                 {"name": "positive"},
-                {"name": "nonpos", "label": "non-positive"},
                 {"name": "negative"},
 
                 {"name": "nonnegBival", "label": "non-negative bivalued"},
@@ -56,11 +56,11 @@
                 {"name": "mixedBival", "label": "mixed bivalued"},
                 {"name": "mixedBivalDblMono", "label": "mixed bivalued dblMono"},
 
-                {"name": "tribool", "label": "{-1, 0, 1}"},
-                {"name": "binary"},
-                {"name": "negBinary", "label": "negative binary"},
-                {"name": "unit"},
-                {"name": "negUnit", "label": "negative unit"}
+                {"name": "tribool", "label": "{−1, 0, 1}"},
+                {"name": "binary", "label": "{0, 1}"},
+                {"name": "negBinary", "label": "{−1, 0}"},
+                {"name": "unit", "label": "{1}"},
+                {"name": "negUnit", "label": "{−1}"}
             ],
             "containments": [
                 ["general", "dblMono"],
