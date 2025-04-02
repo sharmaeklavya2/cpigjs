@@ -20,6 +20,7 @@ async function main() {
             describe: "predicates to consider (default: all)"})
         .option('output', {alias: 'o', type: 'string'})
         .option('maybe', {boolean: true, describe: "show speculative implications"})
+        .option('l2r', {boolean: true, describe: "draw left to right"})
         .help()
         .parse();
 
@@ -48,7 +49,7 @@ async function main() {
         outputAttrReasons(filteredInput, predNames, console);
     }
     console.log();
-    const drawOptions = {showMaybeEdges: args.maybe};
+    const drawOptions = {showMaybeEdges: args.maybe, drawL2R: args.l2r};
     if(args.output) {
         const ext = getExt(args.output);
         if(ext === 'dot' || ext === 'svg' || ext === 'pdf' || ext === 'png') {
