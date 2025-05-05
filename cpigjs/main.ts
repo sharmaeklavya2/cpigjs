@@ -37,6 +37,9 @@ export interface PredCond extends Proof {
 
 export interface AttrInfo extends Info {
     color?: string;
+    bgColor?: string;
+    shape?: string;
+    style?: string;
     propgDir?: "fwd" | "rev";  // propagation direction
 }
 
@@ -413,6 +416,15 @@ export function getDotGraph(input: FilteredCpigInput, predNames: string[], drawO
                 if(bgColors.hasOwnProperty(attrInfo.color)) {
                     uAttrs.fillcolor = bgColors[attrInfo.color];
                 }
+            }
+            if(attrInfo.bgColor !== undefined) {
+                uAttrs.fillcolor = attrInfo.bgColor;
+            }
+            if(attrInfo.shape !== undefined) {
+                uAttrs.shape = attrInfo.shape;
+            }
+            if(attrInfo.style !== undefined) {
+                uAttrs.style = attrInfo.style;
             }
         }
         if(uAttrs.fillcolor === undefined) {
