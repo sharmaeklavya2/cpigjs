@@ -4,7 +4,9 @@
   "description": "Conditional Predicate Implication Graph",
   "type": "module",
   "scripts": {
-    "test": "npx tsc && npx mocha test.js"
+    "test": "npx tsc && npx mocha scripts/test.js",
+    "buildWeb": "npx tsc && node scripts/templateFill.js -t template.html -c fairDiv/htmlContext.json -o fairDiv/index.html",
+    "clean": "rm -f cpigjs/*.js cpigjs/*.js.map fairDiv/index.html"
   },
   "author": "Eklavya Sharma",
   "license": "MIT",

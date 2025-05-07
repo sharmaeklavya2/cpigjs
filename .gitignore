@@ -17,5 +17,6 @@ __pycache__
 *~
 *.sw[po]
 *.db
+*.zip
 Desktop.ini
 .DS_Store

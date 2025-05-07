@@ -59,9 +59,7 @@ To run unit tests, run `npx mocha scripts/test.js`.
 
 ## How to Run in the Browser
 
-First generate an HTML file using this command:
-
-    node scripts/templateFill.js -t template.html -c fairDiv/htmlContext.json -o fairDiv/index.html
+First, generate an HTML file by running `npm run buildWeb`.
 
 Then serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
 and open `fairDiv/index.html` in your web browser.
