@@ -137,8 +137,8 @@ function getProofHtml(proof: Proof, config: Config, className?: string): HTMLEle
     }
     div.appendChild(createElement('span', {}, 'proof: '));
     let hasProof = false;
-    if(proof.text) {
-        div.appendChild(createElement('span', {'class': 'proof-text'}, proof.text));
+    if(proof.proof) {
+        div.appendChild(createElement('span', {'class': 'proof-text'}, proof.proof));
         hasProof = true;
     }
     else {

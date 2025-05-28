@@ -5,7 +5,7 @@ import { Info, SetFamily } from "./setFamily.js";
 //=[ Read and validate input ]==================================================
 
 export interface Proof {
-    text?: string;
+    proof?: string;
     part?: string;
     link?: string;
     thmdep?: string;
