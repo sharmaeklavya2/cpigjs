@@ -554,7 +554,7 @@
         "polytime": "true",
         "part": "Theorem 19", "link": "https://doi.org/10.1609/aaai.v38i9.28851"},
     {"name": "MMS",
-        "under": {"twoAg": true, "eqEnt": true},
+        "under": {"valuation": "additive", "twoAg": true, "eqEnt": true},
         "proof": "Use cut-and-choose"},
     {"name": "MMS",
         "under": {"identical": true}},
