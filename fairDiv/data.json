@@ -593,6 +593,13 @@
         "texRef": "cex:ud:propm-not-propavg",
         "under": {"valuation": "submod", "marginal": "positive", "identical": true, "eqEnt": true}},
 
+    {"satisfies": "EF", "butNot": "MMS",
+        "texRef": "cex:ef-not-mms-pmrf",
+        "under": {"valuation": "submod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}},
+    {"satisfies": "EF", "butNot": "MMS",
+        "texRef": "cex:ef-not-mms-pmrf",
+        "under": {"valuation": "submod", "marginal": "positiveBival", "identical": true, "twoAg": true, "eqEnt": true}},
+
     {"satisfies": "GAPS", "butNot": "PROPx",
         "under": {"valuation": "unitDemand", "marginal": "nonneg", "identical": true, "eqEnt": true},
         "proof": "GAPS is feasible by Section 3.1.1 of <https://doi.org/10.1287/moor.2021.0199>, but PROPx is infeasible when there are two goods of values 10 and 1, respectively."},
