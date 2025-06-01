@@ -113,6 +113,9 @@
         "under": {"valuation": "superadd"},
         "texRef": "thm:impl:prop-to-ef-n2",
         "thmdep": "/fair-division/impl/prop-implies-ef-n2"},
+    {"from": "PPROP", "to": "PROP",
+        "under": {"valuation": "submod"},
+        "texRef": "thm:impl:pprop-to-prop"},
 
     {"from": "EFX", "to": "EF1",
         "under": {"valuation": "additive"},
