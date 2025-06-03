@@ -609,8 +609,12 @@
         "texRef": "cex:mefs-not-ef1-pmrf",
         "under": {"valuation": "submod", "marginal": "positiveBival", "identical": true, "twoAg": true, "eqEnt": true}},
     {"satisfies": "PROP", "butNot": "M1S",
-        "texRef": ["cex:prop-not-m1s-uniform-matroid"],
+        "texRef": "cex:prop-not-m1s-uniform-matroid",
         "under": {"valuation": "submod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}},
+    {"satisfies": "MMS", "butNot": "APS",
+        "texRef": "cex:mms-not-aps-n2-submod",
+        "under": {"valuation": "submod", "marginal": "positive", "identical": true, "twoAg": true, "eqEnt": true}},
+
 
     {"satisfies": "GAPS", "butNot": "PROPx",
         "under": {"valuation": "unitDemand", "marginal": "nonneg", "identical": true, "eqEnt": true},
