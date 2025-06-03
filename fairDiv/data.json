@@ -732,7 +732,7 @@
         "under": {"valuation": "supermod", "marginal": "negativeBival", "twoAg": true, "eqEnt": true}},
     {"name": "MMS",
         "texRef": "cex:mms-submod-goods",
-        "under": {"valuation": "submod", "marginal": "binary", "twoAg": true, "eqEnt": true},
+        "under": {"valuation": "submod", "marginal": "positive", "twoAg": true, "eqEnt": true},
         "part": "Theorem 4.1", "link": "https://doi.org/10.1145/3219166.3219238"},
     {"name": "MMS",
         "texRef": "cex:mms-submod-goods",
