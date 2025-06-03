@@ -183,6 +183,9 @@
     {"from": "EF1", "to": "PROP1",
         "under": {"valuation": "submod", "twoAg": true},
         "texRef": "thm:impl:ef1-to-prop1-n2"},
+    {"from": "M1S", "to": "PROP1",
+        "under": {"valuation": "submod", "marginal": "binary", "eqEnt": true},
+        "texRef": "thm:impl:m1s-to-prop1-matroid"},
 
     {"from": "MMS", "to": "EFX",
         "under": {"marginal": "nonneg", "twoAg": true},
