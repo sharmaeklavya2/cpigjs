@@ -437,6 +437,12 @@
         "texRef": "cex:ef-not-prop-supmod",
         "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true},
         "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"satisfies": "PPROP", "butNot": "PROP1",
+        "texRef": "cex:ef-not-prop-supmod",
+        "under": {"valuation": "supermod", "marginal": "positiveBival", "identical": true, "eqEnt": true}},
+    {"satisfies": "PPROP", "butNot": "PROP1",
+        "texRef": "cex:ef-not-prop-supmod",
+        "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "eqEnt": true}},
 
     {"satisfies": "M1S", "butNot": "PROP1",
         "texRef": "cex:m1s-not-prop1",
