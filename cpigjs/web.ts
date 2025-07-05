@@ -125,7 +125,7 @@ function addSfeParams(output: f2f.Param[], setFamily: SetFamily) {
 
 function addPredParams(output: f2f.Param[], preds: Info[]) {
     for(const pred of preds) {
-        output.push(new f2f.Param(pred.name, new f2f.CheckBoxWidget({defVal: true}),
+        output.push(new f2f.Param(pred.name, new f2f.CheckBoxWidget({defVal: false}),
             {label: pred.label || pred.name}));
     }
 }
