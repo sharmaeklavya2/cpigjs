@@ -214,8 +214,11 @@
         "thmdep": "/fair-division/impl/mms-implies-eefx-goods"},
     {"from": "MMS", "to": "MXS",
         "under": {"valuation": "additive", "eqEnt": true},
-        "texRef": "thm:mms-to-mxs",
+        "texRef": "thm:impl:mms-to-mxs",
         "thmdep": "/fair-division/impl/mms-implies-mxs"},
+    {"from": "MMS", "to": "M1S",
+        "under": {"marginal": "nonneg", "eqEnt": true},
+        "texRef": "thm:impl:mms-to-mxs0"},
 
     {"from": "EEFX", "to": "PROPx",
         "under": {"valuation": "subadd", "marginal": "nonpos"},
