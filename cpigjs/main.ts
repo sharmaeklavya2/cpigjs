@@ -147,10 +147,11 @@ export class ImpGraphGen {
 export interface ProcessedCpigInput {
     predsMap: Map<string, Info>;
     attrsMap: Map<string, AttrInfo>;
-    impGGen: ImpGraphGen;
+    impGGen: ImpGraphGen;  // implication graph generator
     cExsMap: MultiMap<string, CounterExample>;
     fwdPredAttrs: Map<string, PredCond[]>;
     trRevPredAttrs: Map<string, MultiMap<string, PredCond>>;
+    insaneCExs: CounterExample[];
 }
 function capitalize(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -211,9 +212,13 @@ export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef
         const key = JSON.stringify([cEx.satisfies, cEx.butNot]);
         cExsMap.add(key, cEx);
     }
+    const insaneCExs: CounterExample[] = [];
     for(const cEx of input.counterExamples || []) {
         const u = cEx.satisfies, v = cEx.butNot;
         const impG = impGGen.get(cEx.under);
+        if(impG.hasPath(u, v)) {
+            insaneCExs.push(cEx);
+        }
         const uAll = [u, ...impG.getOutTree(u).keys()];
         const vAll = [v, ...impG.getInTree(v).keys()];
         for(const u2 of uAll) {
@@ -246,7 +251,7 @@ export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef
         }
     }
     return {predsMap: predsMap, attrsMap: attrsMap, impGGen: impGGen, cExsMap: cExsMap,
-        fwdPredAttrs: fwdPredAttrs, trRevPredAttrs: trRevPredAttrs};
+        fwdPredAttrs: fwdPredAttrs, trRevPredAttrs: trRevPredAttrs, insaneCExs: insaneCExs};
 }
 
 //=[ answer queries ]===========================================================

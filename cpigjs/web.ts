@@ -53,6 +53,14 @@ const predsDescription = 'Pick predicates to show. If none are selected, all are
 export async function setup(sfUrl: string, inputUrls: string[], config: Config) {
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, config);
     const procInput = processInput(input, sf, texRefs);
+    if(procInput.insaneCExs.length > 0) {
+        const insaneCExsHtml = getCeListHtml(procInput.insaneCExs, sf, config);
+        insaneCExsHtml.setAttribute('id', 'insaneCExs');
+        const setupErrorsHtml = document.getElementById('setup-errors')!;
+        setupErrorsHtml.appendChild(createElement('span', undefined,
+            'Counterexamples that contradict implications:'));
+        setupErrorsHtml.appendChild(insaneCExsHtml);
+    }
 
     const sfeParams: f2f.Param[] = [];
     addSfeParams(sfeParams, sf);
