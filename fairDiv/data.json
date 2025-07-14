@@ -533,6 +533,9 @@
     {"satisfies": "PAPS+PPROP", "butNot": "PROPm|M1S",
         "texRef": "cex:paps-pprop-not-propm-binary-subadd",
         "under": {"valuation": "subadd", "marginal": "binary", "identical": true, "twoAg": false, "eqEnt": true}},
+    {"satisfies": "GMMS", "butNot": "APS",
+        "texRef": "cex:gmms-not-aps-binary-subadd",
+        "under": {"valuation": "subadd", "marginal": "binary", "identical": true, "twoAg": false, "eqEnt": true}},
 
     {"satisfies": "APS+PROPx", "butNot": "PROP",
         "texRef": "cex:single-item",
@@ -649,6 +652,9 @@
     {"name": "APS",
         "under": {"valuation": "additive", "marginal": "negative", "identical": true, "eqEnt": true},
         "part": "Lemma C.1", "link": "https://doi.org/10.1287/moor.2021.0199"},
+    {"name": "APS",
+        "texRef": "cex:gmms-not-aps-binary-subadd",
+        "under": {"valuation": "subadd", "marginal": "binary", "identical": true, "twoAg": false, "eqEnt": true}},
 
     {"name": "MMS",
         "under": {"valuation": "additive", "marginal": "positive", "eqEnt": true},
