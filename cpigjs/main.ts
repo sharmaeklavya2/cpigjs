@@ -56,9 +56,41 @@ export function combineInputs(inputs: CpigInput[]): CpigInput {
     const predAttrs: Record<string, PredCond[]> = {};
     for(const input of inputs) {
         preds.push(...(input.predicates || []));
-        imps.push(...(input.implications || []));
-        cExs.push(...(input.counterExamples || []));
         attrs.push(...(input.attrs || []));
+        for(const imp of input.implications || []) {
+            const fromList = imp.from.split('|');
+            const toList = imp.to.split('+');
+            if(fromList.length === 1 && toList.length === 1) {
+                imps.push(imp);
+            }
+            else {
+                for(const from of fromList) {
+                    for(const to of toList) {
+                        const imp2 = Object.assign({}, imp);
+                        imp2.from = from;
+                        imp2.to = to;
+                        imps.push(imp2);
+                    }
+                }
+            }
+        }
+        for(const cex of input.counterExamples || []) {
+            const satList = cex.satisfies.split('+');
+            const butNotList = cex.butNot.split('|');
+            if(satList.length === 1 && butNotList.length === 1) {
+                cExs.push(cex);
+            }
+            else {
+                for(const sat of satList) {
+                    for(const butNot of butNotList) {
+                        const cex2 = Object.assign({}, cex);
+                        cex2.satisfies = sat;
+                        cex2.butNot = butNot;
+                        cExs.push(cex2);
+                    }
+                }
+            }
+        }
         for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
             if(predAttrs.hasOwnProperty(attrName)) {
                 predAttrs[attrName].push(...predConds);
