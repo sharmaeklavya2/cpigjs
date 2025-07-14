@@ -15,6 +15,7 @@
                 {"name": "supermod", "label": "supermodular"},
                 {"name": "xos", "label": "XOS", "text": "fractionally subadditive"},
                 {"name": "cancelable"},
+                {"name": "submodCanc", "label": "submodular cancelable"},
                 {"name": "unitDemand", "label": "unit demand"},
                 {"name": "singleItem", "label": "single item"}
             ],
@@ -28,9 +29,9 @@
                 ["submod", "additive"],
                 ["supermod", "additive"],
                 ["cancelable", "additive"],
-                ["submod", "unitDemand"],
-                ["cancelable", "unitDemand"],
-                ["cancelable", "singleItem"],
+                ["submod", "submodCanc"],
+                ["cancelable", "submodCanc"],
+                ["submodCanc", "unitDemand"],
                 ["additive", "singleItem"],
                 ["unitDemand", "singleItem"]
             ]
