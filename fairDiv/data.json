@@ -173,9 +173,9 @@
         "under": {"valuation": "additive", "marginal": "nonneg", "eqEnt": true},
         "texRef": "thm:impl:mxs-to-prop1",
         "part": "Theorem 3", "link": "https://doi.org/10.24963/ijcai.2023/284"},
-    {"from": "M1S", "to": "PROP1",
-        "under": {"valuation": "submod", "marginal": "binary", "eqEnt": true},
-        "texRef": "thm:impl:m1s-to-prop1-matroid"},
+    {"from": "M1S", "to": "PROPx",
+        "under": {"valuation": "subadd", "marginal": "binary", "eqEnt": true},
+        "texRef": "thm:impl:m1s-to-propx-binary-subadd"},
 
     {"from": "PMMS", "to": "EFX",
         "under": {"marginal": "nonneg"},
