@@ -460,7 +460,7 @@
     {"satisfies": "PPROP", "butNot": "PROP1",
         "texRef": "cex:ef-not-prop-supmod",
         "under": {"valuation": "supermod", "marginal": "positiveBival", "identical": true, "eqEnt": true}},
-    {"satisfies": "PPROP", "butNot": "PROP1",
+    {"satisfies": "PPROP+PROPavg", "butNot": "PROP1|PROPx",
         "texRef": "cex:ef-not-prop-supmod",
         "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "eqEnt": true}},
 
@@ -642,6 +642,10 @@
     {"name": "PROP1",
         "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true},
         "thmdep": "/fair-division/non-impl/ef-nimpl-prop-supmod"},
+    {"name": "PROPm",
+        "under": {"valuation": "supermod", "marginal": "positiveBival", "identical": true, "twoAg": true, "eqEnt": true}},
+    {"name": "PROPm",
+        "under": {"valuation": "supermod", "marginal": "binary", "identical": true, "twoAg": true, "eqEnt": true}},
 
     {"name": "APS",
         "under": {"valuation": "submod", "marginal": "positive", "identical": true, "twoAg": true, "eqEnt": true},
