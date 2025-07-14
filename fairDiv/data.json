@@ -484,6 +484,9 @@
     {"satisfies": "PROPm", "butNot": "PROPavg",
         "texRef": "cex:ud:propm-not-propavg",
         "under": {"valuation": "unitDemand", "marginal": "nonneg", "identical": true, "eqEnt": true}},
+    {"satisfies": "GAPS", "butNot": "PROPx",
+        "texRef": "cex:gaps-not-propx",
+        "under": {"valuation": "unitDemand", "marginal": "nonneg", "identical": true, "eqEnt": true}},
 
     {"satisfies": "EF", "butNot": "MMS",
         "texRef": "cex:ef-not-mms-pmrf",
