@@ -126,6 +126,12 @@
         "under": {"marginal": "dblStrMono"},
         "texRef": "thm:impl:propm-to-prop1",
         "thmdep": "/fair-division/impl/propm-implies-prop1"},
+    {"from": "PROPm", "to": "PROPavg",
+        "under": {"marginal": "tribool"},
+        "texRef": "thm:impl:propm-to-propavg-propx-binary-subadd"},
+    {"from": "PROPm", "to": "PROPx",
+        "under": {"valuation": "subadd", "marginal": "tribool", "eqEnt": true},
+        "texRef": "thm:impl:propm-to-propavg-propx-binary-subadd"},
 
     {"from": "MEFS", "to": "PROP",
         "under": {"valuation": "subadd"},
