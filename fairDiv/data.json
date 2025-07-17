@@ -456,6 +456,12 @@
         "texRef": "cex:prop1-not-m1s-n2",
         "under": {"valuation": "additive", "marginal": "negUnit", "identical": true, "twoAg": true, "eqEnt": false},
         "thmdep": "/fair-division/non-impl/prop1-nimpl-m1s-binary"},
+    {"satisfies": "GAPS", "butNot": "PROPx",
+        "texRef": "cex:gaps-not-propx-n2",
+        "under": {"valuation": "additive", "marginal": "positiveBival", "identical": true, "twoAg": true, "eqEnt": false}},
+    {"satisfies": "GAPS", "butNot": "PROPx",
+        "texRef": "cex:gaps-not-propx-n2",
+        "under": {"valuation": "additive", "marginal": "negativeBival", "identical": true, "twoAg": true, "eqEnt": false}},
 
     {"satisfies": "EF+GAPS", "butNot": "PROP1|PROPm",
         "texRef": "cex:ef-not-prop-supmod",
