@@ -32,3 +32,13 @@ li {
     transform: rotate(-45deg);
     transform-origin: 50% 0;
 }
+
+body.fullscreen {
+    margin: 0;
+}
+body.fullscreen > h1, body.fullscreen > p {
+    display: none;
+}
+body.fullscreen > #output-container {
+    text-align: center;
+}
