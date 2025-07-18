@@ -303,7 +303,10 @@
         "under": {"valuation": "subadd", "marginal": "binary", "eqEnt": true},
         "texRef": "thm:impl:m1s-to-propx-binary-subadd"},
     {"from": "M1S", "to": "PROPx",
-        "under": {"valuation": "subadd", "marginal": "binary", "twoAg": true},
+        "under": {"valuation": "subadd", "marginal": "tribool", "twoAg": true},
+        "texRef": "thm:impl:m1s-to-propx-binary-subadd"},
+    {"from": "M1S", "to": "PROPx",
+        "under": {"valuation": "subadd", "marginal": "negBinary"},
         "texRef": "thm:impl:m1s-to-propx-binary-subadd"},
 
     {"from": "MEFS", "to": "EF",
