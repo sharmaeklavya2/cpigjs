@@ -60,6 +60,7 @@
                 {"name": "tribool", "label": "{−1, 0, 1}"},
                 {"name": "binary", "label": "{0, 1}"},
                 {"name": "negBinary", "label": "{−1, 0}"},
+                {"name": "pm1", "label": "{-1, 1}"},
                 {"name": "unit", "label": "{1}"},
                 {"name": "negUnit", "label": "{−1}"}
             ],
@@ -86,11 +87,15 @@
                 ["general", "tribool"],
                 ["tribool", "binary"],
                 ["tribool", "negBinary"],
+                ["tribool", "pm1"],
+                ["mixedBival", "pm1"],
                 ["nonnegBival", "binary"],
                 ["nonposBival", "negBinary"],
                 ["binary", "unit"],
+                ["pm1", "unit"],
                 ["positiveBival", "unit"],
                 ["negBinary", "negUnit"],
+                ["pm1", "negUnit"],
                 ["negativeBival", "negUnit"]
             ]
         },
