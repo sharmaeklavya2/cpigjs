@@ -469,7 +469,10 @@
         "under": {"valuation": "additive", "marginal": "negUnit", "identical": true, "eqEnt": false}},
     {"satisfies": "PROP", "butNot": "M1S",
         "texRef": "cex:prop-not-m1s-chores",
-        "under": {"valuation": "additive", "marginal": "negUnit", "eqEnt": false}},
+        "under": {"valuation": "additive", "marginal": "negBinary", "eqEnt": false}},
+    {"satisfies": "PROP", "butNot": "M1S",
+        "texRef": "cex:prop-not-m1s-chores",
+        "under": {"valuation": "additive", "marginal": "negativeBival", "eqEnt": false}},
 
     {"satisfies": "EF+GAPS", "butNot": "PROP1|PROPm",
         "texRef": "cex:ef-not-prop-supmod",
