@@ -467,6 +467,9 @@
     {"satisfies": "GMMS", "butNot": "PROP1",
         "texRef": "cex:gwmms-nimpl-prop1-m1s-ue-chores",
         "under": {"valuation": "additive", "marginal": "negUnit", "identical": true, "eqEnt": false}},
+    {"satisfies": "PROP", "butNot": "M1S",
+        "texRef": "cex:prop-not-m1s-chores",
+        "under": {"valuation": "additive", "marginal": "negUnit", "eqEnt": false}},
 
     {"satisfies": "EF+GAPS", "butNot": "PROP1|PROPm",
         "texRef": "cex:ef-not-prop-supmod",
