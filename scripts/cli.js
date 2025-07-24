@@ -48,7 +48,6 @@ async function main() {
     if(predNames.length <= 2 && predNames.length >= 1) {
         outputAttrReasons(filteredInput, predNames, console);
     }
-    console.log();
     const drawOptions = {showMaybeEdges: args.maybe, drawL2R: args.l2r};
     if(args.output) {
         const ext = getExt(args.output);
@@ -71,6 +70,7 @@ async function main() {
         }
     }
     else {
+        console.log();
         const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
         console.log(lines.join('\n'));
     }
