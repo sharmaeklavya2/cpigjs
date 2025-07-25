@@ -51,8 +51,14 @@ async function outputToFile(fname, drawOptions, filteredInput, predNames) {
     }
 }
 
+function singleBuilder(parser) {
+    parser.option('constraint', {alias: 'c', type: 'string', demandOption: true,
+            describe: "constraint as a JSON"})
+        .option('output', {alias: 'o', type: 'string'})
+}
+
 async function main() {
-    const args = yargs(process.argv.slice(2))
+    return await yargs(process.argv.slice(2))
         .option('sf', {type: 'string', demandOption: true,
             describe: "path to JSON file specifying the set family"})
         .option('input', {alias: 'i', type: 'string', array: true, demandOption: true,
@@ -61,12 +67,12 @@ async function main() {
             describe: "predicates to consider (default: all)"})
         .option('hide_unknown', {boolean: true, describe: "hide speculative implications"})
         .option('l2r', {boolean: true, describe: "draw left to right"})
-        .option('constraint', {alias: 'c', type: 'string', demandOption: true,
-            describe: "constraint as a JSON"})
-        .option('output', {alias: 'o', type: 'string'})
+        .command(['single', '$0'], 'run a single query', singleBuilder, singleQuery)
         .help()
         .parse();
+}
 
+async function singleQuery(args) {
     // console.log(args);
     const [sf, procInput] = await readAndProcessInput(args);
     const constraint = JSON.parse(args.constraint);
