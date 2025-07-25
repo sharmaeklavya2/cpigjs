@@ -31,24 +31,23 @@ function getExt(fname) {
     return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
 }
 
-async function outputToFile(fname, drawOptions, filteredInput, predNames) {
-    const ext = getExt(fname);
-    if(ext === 'dot' || ext === 'svg' || ext === 'pdf' || ext === 'png') {
+async function outputToFile(fname, fmt, drawOptions, filteredInput, predNames) {
+    if(fmt === 'dot' || fmt === 'svg' || fmt === 'pdf' || fmt === 'png') {
         const lines = serializeGraph(filteredInput, predNames, drawOptions, 'dot');
-        if(ext === 'dot') {
+        if(fmt === 'dot') {
             await writeFile(fname, lines.join('\n'));
         }
         else {
             await writeFile(fname + '.dot', lines.join('\n'));
-            child_process.spawn('dot', ['-T' + ext, fname + '.dot', '-o', fname]);
+            child_process.spawn('dot', ['-T' + fmt, fname + '.dot', '-o', fname]);
         }
     }
-    else if(ext === 'txt') {
+    else if(fmt === 'txt') {
         const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
         await writeFile(fname, lines.join('\n'));
     }
     else {
-        throw new Error('unknown output file type ' + ext);
+        throw new Error('unknown output file type ' + fmt);
     }
 }
 
@@ -91,7 +90,8 @@ async function singleQuery(args) {
     }
     const drawOptions = {showMaybeEdges: !(args.hide_unknown), drawL2R: args.l2r};
     if(args.output) {
-        outputToFile(args.output, drawOptions, filteredInput, predNames);
+        const ext = getExt(args.output);
+        outputToFile(args.output, ext, drawOptions, filteredInput, predNames);
     }
     else {
         console.log();
