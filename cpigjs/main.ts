@@ -420,7 +420,7 @@ export function serializeGraph(input: FilteredCpigInput, predNames: string[], dr
         const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
         const redDag = dag.trRed();
         const maybeEdges = drawOptions.showMaybeEdges ? getMaybeEdges(scc, input.impG, input.cExsMap) : [];
-        return sccDagToStr(scc, dag, maybeEdges);
+        return sccDagToStr(scc, redDag, maybeEdges);
     }
     else if(format === 'dot') {
         return getDotGraph(input, predNames, drawOptions);
