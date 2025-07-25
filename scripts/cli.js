@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "../cpigjs/setFamily.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "../cpigjs/main.js";
@@ -57,6 +57,15 @@ function singleBuilder(parser) {
         .option('output', {alias: 'o', type: 'string'})
 }
 
+function bulkBuilder(parser) {
+    parser.option('constraintsFile', {alias: 'c', type: 'string', demandOption: true,
+            describe: "JSON file containing a list of constraints"})
+        .option('outDir', {alias: 'o', type: 'string', demandOption: true,
+            describe: "path to output directory"})
+        .option('fmt', {type: 'string', 'default': 'pdf',
+            choices: ['pdf', 'svg', 'png', 'dot', 'txt']})
+}
+
 async function main() {
     return await yargs(process.argv.slice(2))
         .option('sf', {type: 'string', demandOption: true,
@@ -68,6 +77,7 @@ async function main() {
         .option('hide_unknown', {boolean: true, describe: "hide speculative implications"})
         .option('l2r', {boolean: true, describe: "draw left to right"})
         .command(['single', '$0'], 'run a single query', singleBuilder, singleQuery)
+        .command('bulk', 'run multiple queries', bulkBuilder, bulkQuery)
         .help()
         .parse();
 }
@@ -97,6 +107,24 @@ async function singleQuery(args) {
         console.log();
         const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
         console.log(lines.join('\n'));
+    }
+}
+
+async function bulkQuery(args) {
+    // console.log(args);
+    const constraintsPromise = readFile(args.constraintsFile, encUtf8).then(JSON.parse);
+    const [sf, procInput] = await readAndProcessInput(args);
+    const constraints = await constraintsPromise;
+
+    const predNames = args.pred ?? [];
+    const drawOptions = {showMaybeEdges: !(args.hide_unknown), drawL2R: args.l2r};
+
+    await mkdir(args.outDir, {recursive: true});
+    for(const constraint of constraints) {
+        const filteredInput = filterInput(procInput, sf, constraint);
+        const constraintStr = sf.serialize(sf.canonicalize(constraint));
+        const fname = args.outDir + '/' + constraintStr + '.' + args.fmt;
+        outputToFile(fname, args.fmt, drawOptions, filteredInput, predNames);
     }
 }
 
