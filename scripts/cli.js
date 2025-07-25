@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "../cpigjs/setFamily.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "../cpigjs/main.js";
@@ -9,6 +9,7 @@ import { Graph } from "../cpigjs/graph.js";
 import yargs from 'yargs';
 
 const encUtf8 = { encoding: 'utf8' };
+const pendingPromises = [];
 
 async function readAndProcessInput(args) {
     const sfPromise = readFile(args.sf, encUtf8)
@@ -39,7 +40,8 @@ async function outputToFile(fname, fmt, drawOptions, filteredInput, predNames) {
         }
         else {
             await writeFile(fname + '.dot', lines.join('\n'));
-            child_process.spawn('dot', ['-T' + fmt, fname + '.dot', '-o', fname]);
+            const child = child_process.spawn('dot', ['-T' + fmt, fname + '.dot', '-o', fname]);
+            child.on('exit', (exitCode) => {pendingPromises.push(unlink(fname + '.dot'));});
         }
     }
     else if(fmt === 'txt') {
@@ -67,7 +69,7 @@ function bulkBuilder(parser) {
 }
 
 async function main() {
-    return await yargs(process.argv.slice(2))
+    await yargs(process.argv.slice(2))
         .option('sf', {type: 'string', demandOption: true,
             describe: "path to JSON file specifying the set family"})
         .option('input', {alias: 'i', type: 'string', array: true, demandOption: true,
@@ -80,6 +82,7 @@ async function main() {
         .command('bulk', 'run multiple queries', bulkBuilder, bulkQuery)
         .help()
         .parse();
+    await Promise.all(pendingPromises);
 }
 
 async function singleQuery(args) {
