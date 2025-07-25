@@ -34,6 +34,10 @@ export class SetFamily {
         throw new Error('SetFamily.canonicalize is not implemented');
     }
 
+    serialize(x: unknown): string {
+        throw new Error('SetFamily.serialize is not implemented');
+    }
+
     prettify(x: unknown): unknown {
         return x;
     }
@@ -62,6 +66,10 @@ export class BoolSetFamily extends SetFamily {
         else {
             throw new Error('expected a boolean | null | undefined');
         }
+    }
+
+    serialize(x: boolean): string {
+        return x ? '1' : '0';
     }
 
     contains(a: boolean, b: boolean): boolean {
@@ -109,6 +117,10 @@ export class DagSetFamily extends SetFamily {
         }
     }
 
+    serialize(x: string): string {
+        return x;
+    }
+
     contains(a: string, b: string): boolean {
         return a === b || this.containments.has(a + "," + b);
     }
@@ -151,6 +163,10 @@ export class ProdSetFamily extends SetFamily {
             d[this.parts[i].info.name] = x[i];
         }
         return d;
+    }
+
+    serialize(x: Array<unknown>): string {
+        return this.parts.map((part: SetFamily, i: number) => part.serialize(x[i])).join('-');
     }
 
     contains(a: any, b: any): boolean {
