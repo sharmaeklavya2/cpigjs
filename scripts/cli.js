@@ -8,8 +8,9 @@ import { outputPath, outputAttrReasons } from "../cpigjs/cli.js";
 import { Graph } from "../cpigjs/graph.js";
 import yargs from 'yargs';
 
+const encUtf8 = { encoding: 'utf8' };
+
 async function readAndProcessInput(args) {
-    const encUtf8 = { encoding: 'utf8' };
     const sfPromise = readFile(args.sf, encUtf8)
         .then(contents => SetFamily.fromJson(JSON.parse(contents)));
     const inputsPromise = Promise.all(args.input.map(
@@ -78,7 +79,7 @@ async function singleQuery(args) {
     const constraint = JSON.parse(args.constraint);
     const filteredInput = filterInput(procInput, sf, constraint);
 
-    const predNames = args.pred ?? []
+    const predNames = args.pred ?? [];
     if(predNames.length === 2) {
         const [u, v] = args.pred;
         outputPath(filteredInput, u, v, console);
