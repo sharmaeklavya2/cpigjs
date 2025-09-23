@@ -51,9 +51,10 @@ To return all implications for additive valuations over goods when agents have e
 
     node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{"valuation": "additive", "marginal": "nonneg", "eqEnt": true}' -o goods.pdf
 
-To output the sequence of implications from EF (envy freeness) to EF1 for general valuations, run
+To output the sequence of implications from EEF (epistemic envy freeness)
+to MMS (maximin share) for additive valuations, run
 
-    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{}' --pred EF EF1
+    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{"valuation": "additive"}' --pred EEF MMS
 
 To run unit tests, run `npx mocha scripts/test.js`.
 
