@@ -505,9 +505,9 @@ export function getDotGraph(input: FilteredCpigInput, predNames: readonly string
     const redDag = dag.trRed();
     const rankdir = drawOptions.drawL2R ? 'LR' : 'TB';
     const lines = ['digraph G {',
-        `graph [margin=0, rankdir="${rankdir}"];`,
+        `graph [margin=0, rankdir="${rankdir}", ranksep=0.3, nodesep=0.15];`,
         'edge [arrowhead=vee, arrowsize=0.75];',
-        'node [shape=box, margin="0.1,0.03", width=0, height=0, style=filled];'];
+        'node [shape=box, margin="0.05,0.015", width=0, height=0, style=filled];'];
     for(const u of redDag.adj.keys()) {
         const uAttrs: Record<string, string> = {'label': componentStr(scc.get(u)!, false, input.predsMap)};
         for(const attrName of input.predAttrsSummary.getAll(u)) {
