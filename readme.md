@@ -32,8 +32,8 @@ Instead, we implicitly define a set family $Σ$ over $Ω$
 and every implication is conditioned on a set from $Σ$.
 
 For the problem of fairly allocating indivisible items,
-`fairDiv/setFamily.json` describes the family $Σ$
-and `fairDiv/data.json` describes the predicates and implications.
+`fairDiv/setFamily.json` describes the family $Σ$,
+and `fairDiv/primary.json` and `fairDiv/secondary.json` describe the predicates and implications.
 
 ## Setup
 
