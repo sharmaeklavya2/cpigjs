@@ -8,6 +8,9 @@ for the problem of [fairly allocating indivisible items](https://en.wikipedia.or
 The `fairDiv` directory contains data on implications, which `cpigjs` can use to
 infer additional implications and draw them as a DAG.
 
+See the paper [arXiv:2502.02815](https://arxiv.org/abs/2502.02815) for the motivation behind this project
+and a more mathematically-formal explanation of what this program does.
+
 ## Introduction
 
 There is a set $Φ$ of predicates on a ground set $Ω$
