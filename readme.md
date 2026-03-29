@@ -52,12 +52,12 @@ Install [Graphviz](https://graphviz.org/documentation/) and ensure that the
 To return all implications for additive valuations over goods when agents have equal entitlements
 (including open problems), and save the output to `goods.pdf`, run
 
-    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{"valuation": "additive", "marginal": "nonneg", "eqEnt": true}' -o goods.pdf
+    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/primary.json -c '{"valuation": "additive", "marginal": "nonneg", "eqEnt": true}' -o goods.pdf
 
 To output the sequence of implications from EEF (epistemic envy freeness)
 to MMS (maximin share) for additive valuations, run
 
-    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{"valuation": "additive"}' --pred EEF MMS
+    node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/primary.json -c '{"valuation": "additive"}' --pred EEF MMS
 
 To run unit tests, run `npx mocha scripts/test.js`.
 
