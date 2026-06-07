@@ -1,16 +1,9 @@
 import { Info, SetFamily, BoolSetFamily, DagSetFamily, ProdSetFamily } from "./setFamily.js";
-import { CpigInput, ProcessedCpigInput, FilteredCpigInput } from "./main.js";
-import { Implication, CounterExample, PredCond, Proof } from "./main.js";
+import { CpigInput, ProcessedCpigInput, FilteredCpigInput, RawTexRef } from "./main.js";
+import { Implication, CounterExample, PredCond, Proof, Config } from "./main.js";
 import { combineInputs, processInput, filterInput, getDotGraph } from "./main.js";
-import { Edge, Graph } from "./graph.js";
-import { MultiMap } from "./multiMap.js";
 import * as f2f from 'funcToForm';
 import { instance as loadViz } from 'dotviz';
-
-export interface Config {
-    texRefsUrl?: string;
-    defaultProofUrl?: string;
-}
 
 function drawDotGraph(dotInput: string): void {
     const graphElem = document.getElementById("graph");
@@ -52,7 +45,7 @@ const predsDescription = 'Pick predicates to show. If none are selected, all are
 
 export async function setup(sfUrl: string, inputUrls: string[], config: Config) {
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, config);
-    const procInput = processInput(input, sf, texRefs);
+    const procInput = processInput(input, sf, texRefs, config);
     if(procInput.insaneCExs.length > 0) {
         const insaneCExsHtml = getCeListHtml(procInput.insaneCExs, sf, config);
         insaneCExsHtml.setAttribute('id', 'insaneCExs');
@@ -81,10 +74,12 @@ export async function setup(sfUrl: string, inputUrls: string[], config: Config) 
     });
 }
 
-export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config) {
-    const pageLoadPromise = new Promise(function(resolve, reject) {
+export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config):
+        Promise<{sf: SetFamily, input: CpigInput, texRefs: RawTexRef[]}> {
+    /* const pageLoadPromise = new Promise(function(resolve, reject) {
         window.addEventListener('DomContentLoaded', resolve);
     });
+    */
     const sfPromise = window.fetch(sfUrl)
         .then(response => response.json())
         .then(json => SetFamily.fromJson(json));
@@ -153,7 +148,7 @@ function getProofHtml(proof: Proof, config: Config, className?: string): HTMLEle
         if(proof.part) {
             hasProof = true;
             div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
-            if(proof.link || config.defaultProofUrl) {
+            if(proof.link || config.paperUrl) {
                 div.appendChild(createElement('span', {}, ' of '));
             }
         }
@@ -162,7 +157,7 @@ function getProofHtml(proof: Proof, config: Config, className?: string): HTMLEle
             proofLink = proof.link;
         }
         else if(proof.part) {
-            proofLink = config.defaultProofUrl;
+            proofLink = config.paperUrl;
         }
         if(proofLink) {
             hasProof = true;

@@ -51,6 +51,12 @@ export interface CpigInput {
     predAttrs?: Record<string, PredCond[]>;
 }
 
+export interface Config {
+    texRefsUrl?: string;
+    paperUrl?: string;
+    showPageNumber?: boolean;
+}
+
 export function combineInputs(inputs: CpigInput[]): CpigInput {
     const preds = [], imps = [], cExs = [], attrs = [];
     const predAttrs: Record<string, PredCond[]> = {};
@@ -189,38 +195,49 @@ function capitalize(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function processTexRefs(texRefs: RawTexRef[]): Map<string, string> {
+export function processTexRefs(texRefs: RawTexRef[], config: Config): Map<string, string> {
     const refMap = new Map<string, string>();
     for(const texRef of texRefs) {
         if(refMap.has(texRef.texLabel)) {
             throw new Error(`duplicate texLabel ${texRef.texLabel} found`);
         }
-        refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId} (page ${texRef.page})`);
-        // refMap.set(texRef.texLabel, `${capitalize(texRef.type)} ${texRef.outputId}`);
+        const valueParts = [capitalize(texRef.type), texRef.outputId];
+        if(config.showPageNumber) {
+            valueParts.push(`(page ${texRef.page})`);
+        }
+        refMap.set(texRef.texLabel, valueParts.join(' '));
     }
     return refMap;
 }
 
-export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[]): ProcessedCpigInput {
+function getTexRef(texLabel: string, texRefMap: Map<string, string>): string | undefined {
+    const texRef = texRefMap.get(texLabel);
+    if(texRef === undefined) {
+        console.warn(`Could not find texRef ${JSON.stringify(texLabel)}.`);
+    }
+    return texRef;
+}
+
+export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[], config: Config): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
-    const texRefMap = processTexRefs(texRefs);
+    const texRefMap = processTexRefs(texRefs, config);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
 
     // replace texRef by part
     const proofs: Proof[] = [];
-    proofs.push(...(input.implications || []));
-    proofs.push(...(input.counterExamples || []));
-    for(const [attrName, predConds] of Object.entries(input.predAttrs || {})) {
+    proofs.push(...(input.implications ?? []));
+    proofs.push(...(input.counterExamples ?? []));
+    for(const [_, predConds] of Object.entries(input.predAttrs ?? {})) {
         proofs.push(...predConds);
     }
     for(const proof of proofs) {
         if(proof.part === undefined && proof.texRef !== undefined) {
             if(Array.isArray(proof.texRef)) {
-                const parts = proof.texRef.map(texLabel => texRefMap.get(texLabel) || texLabel);
+                const parts = proof.texRef.map(texLabel => getTexRef(texLabel, texRefMap) || texLabel);
                 proof.part = parts.join(', ');
             }
             else {
-                const newPart = texRefMap.get(proof.texRef);
+                const newPart = getTexRef(proof.texRef, texRefMap);
                 if(newPart !== undefined) {
                     proof.part = newPart;
                 }
@@ -364,7 +381,7 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     return maybeEdges;
 }
 
-function componentStr(S: string[], parens: boolean, predsMap?: Map<string, Info>) {
+function componentStr(S: string[], parens: boolean, predsMap?: Map<string, Info>): string {
     const begDelim = parens ? '( ' : '';
     const endDelim = parens ? ' )' : '';
     let labels = S;
