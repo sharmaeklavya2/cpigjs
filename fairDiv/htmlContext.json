@@ -6,5 +6,9 @@
 "dataFiles": ["data.json"],
 "prefixHTML": "<p>See <a href=\"https://arxiv.org/abs/2502.02815\">arXiv:2502.02815</a> for background. Source code at <a href=\"https://github.com/sharmaeklavya2/cpigjs\">github:sharmaeklavya2/cpigjs</a>.</p>",
 "suffixHTML": "",
-"config": {}
+"config": {
+    "texRefsUrl": "https://sharmaeklavya2.github.io/fd-impls/texRefs.json",
+    "paperUrl": "https://sharmaeklavya2.github.io/fd-impls/paper.pdf",
+    "showPageNumber": true
+}
 }
