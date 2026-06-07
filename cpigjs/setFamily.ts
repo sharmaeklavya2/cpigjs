@@ -4,7 +4,7 @@ export interface Info {
     name: string;
     label?: string;
     text?: string;
-    link?: string;
+    url?: string;
 }
 
 export class SetFamily {

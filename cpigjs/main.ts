@@ -7,8 +7,8 @@ import { Info, SetFamily } from "./setFamily.js";
 export interface Proof {
     proof?: string;
     part?: string;
-    link?: string;
-    thmdep?: string;
+    url?: string;
+    linkText?: string;
     texRef?: string | string[];
 }
 

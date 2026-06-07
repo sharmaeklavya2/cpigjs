@@ -148,20 +148,20 @@ function getProofHtml(proof: Proof, config: Config, className?: string): HTMLEle
         if(proof.part) {
             hasProof = true;
             div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
-            if(proof.link || config.paperUrl) {
+            if(proof.url || config.paperUrl) {
                 div.appendChild(createElement('span', {}, ' of '));
             }
         }
-        let proofLink;
-        if(proof.link) {
-            proofLink = proof.link;
+        let proofUrl;
+        if(proof.url) {
+            proofUrl = proof.url;
         }
         else if(proof.part) {
-            proofLink = config.paperUrl;
+            proofUrl = config.paperUrl;
         }
-        if(proofLink) {
+        if(proofUrl) {
             hasProof = true;
-            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proofLink}, proofLink));
+            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proofUrl}, proofUrl));
         }
         /*
         else if(proof.thmdep) {
