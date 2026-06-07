@@ -11,9 +11,10 @@
   "author": "Eklavya Sharma",
   "license": "MIT",
   "dependencies": {
-    "yargs": "^17.7.2"
+    "yargs": "^17.7"
   },
   "devDependencies": {
-    "mocha": "^11.0.1"
+    "typescript": "^6.0",
+    "mocha": "^11.7"
   }
 }
