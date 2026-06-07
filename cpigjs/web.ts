@@ -75,7 +75,7 @@ export async function setup(sfUrl: string, inputUrls: string[], config: Config) 
 }
 
 export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config):
-        Promise<{sf: SetFamily, input: CpigInput, texRefs: RawTexRef[]}> {
+        Promise<{sf: SetFamily, input: CpigInput, texRefs: RawTexRef[] | undefined}> {
     /* const pageLoadPromise = new Promise(function(resolve, reject) {
         window.addEventListener('DomContentLoaded', resolve);
     });
@@ -86,13 +86,14 @@ export async function fetchInput(sfUrl: string, inputUrls: string[], config: Con
     const inputsPromise = Promise.all(inputUrls.map(
         inputUrl => window.fetch(inputUrl).then(response => response.json())));
     let texRefsPromise;
-    if(config.texRefsUrl !== undefined) {
-        texRefsPromise = window.fetch(config.texRefsUrl).then(response => response.json());
+    const configSaysTexRefs = (config.texRefsUrl !== undefined && config.paperUrl !== undefined);
+    if(configSaysTexRefs) {
+        texRefsPromise = window.fetch(config.texRefsUrl!).then(response => response.json());
     }
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);
-    let texRefs = [];
-    if(config.texRefsUrl !== undefined) {
+    let texRefs = undefined;
+    if(configSaysTexRefs) {
         texRefs = await texRefsPromise;
     }
     return {sf: sf, input: input, texRefs: texRefs};
@@ -133,44 +134,32 @@ function addPredParams(output: f2f.Param[], preds: Info[]) {
     }
 }
 
-function getProofHtml(proof: Proof, config: Config, className?: string): HTMLElement {
+function getProofHtml(proof: Proof, _: Config, className?: string): HTMLElement {
     const div = createElement('div', {'class': 'proof-info'});
     if(className !== undefined) {
         div.classList.add(className);
     }
     div.appendChild(createElement('span', {}, 'proof: '));
-    let hasProof = false;
     if(proof.proof) {
         div.appendChild(createElement('span', {'class': 'proof-text'}, proof.proof));
-        hasProof = true;
     }
-    else {
-        if(proof.part) {
-            hasProof = true;
+    else if(proof.url !== undefined) {
+        if(proof.part !== undefined) {
             div.appendChild(createElement('span', {'class': 'proof-part'}, proof.part));
-            if(proof.url || config.paperUrl) {
+            // if the user wants to display part without a url, they must explicitly set url to "" or null.
+            if(proof.url) {
                 div.appendChild(createElement('span', {}, ' of '));
             }
         }
-        let proofUrl;
         if(proof.url) {
-            proofUrl = proof.url;
+            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proof.url},
+                proof.linkText ?? proof.url));
         }
-        else if(proof.part) {
-            proofUrl = config.paperUrl;
-        }
-        if(proofUrl) {
-            hasProof = true;
-            div.appendChild(createElement('a', {'class': 'proof-link', 'href': proofUrl}, proofUrl));
-        }
-        /*
-        else if(proof.thmdep) {
-            div.appendChild(createElement('span', {}, 'thmdep: '));
-            div.appendChild(createElement('span', {'class': 'proof-thmdep '}, proof.thmdep));
-        }
-        */
     }
-    if(!hasProof) {
+    else {
+        if(proof.part !== undefined) {
+            console.warn(`Proof has 'part' but not 'url': ${JSON.stringify(proof)}.`);
+        }
         div.replaceChildren();
     }
     return div;

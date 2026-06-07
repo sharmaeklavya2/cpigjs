@@ -11,6 +11,21 @@ export interface Proof {
     linkText?: string;
     texRef?: string | string[];
 }
+/* A proof can have one of the following types:
+1.  textual proof:
+    a proof (or its sketch) is given as plain text in `proof`.
+    Fields `part`, `url`, `linkText`, and `texRef` will be ignored.
+2.  proof in companion paper:
+    `texRef` contains the TeX `\label` of the theorem/lemma/example in the companion paper.
+    The url to the companion paper is given in `config.paperUrl` in `htmlContext.json`.
+    `part` and `url` are empty.
+    During preprocessing, `part` is populated using `texRef`, `url` is populated using `config.paperUrl`,
+    and `linkText` is populated using `config.paperLinkText`, and then it is treated like an external result.
+3.  proof in external paper:
+    this result's proof is in the paper given by `url`.
+    `part` may be empty, but if present, specifies the section/theorem/lemma/example number in the paper.
+    `texRef` is ignored.
+*/
 
 export interface RawTexRef {
     type: string;
@@ -54,6 +69,7 @@ export interface CpigInput {
 export interface Config {
     texRefsUrl?: string;
     paperUrl?: string;
+    paperLinkText?: string;
     showPageNumber?: boolean;
 }
 
@@ -218,28 +234,39 @@ function getTexRef(texLabel: string, texRefMap: Map<string, string>): string | u
     return texRef;
 }
 
-export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[], config: Config): ProcessedCpigInput {
+export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[] | undefined, config: Config): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
-    const texRefMap = processTexRefs(texRefs, config);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
 
-    // replace texRef by part
-    const proofs: Proof[] = [];
-    proofs.push(...(input.implications ?? []));
-    proofs.push(...(input.counterExamples ?? []));
-    for(const [_, predConds] of Object.entries(input.predAttrs ?? {})) {
-        proofs.push(...predConds);
-    }
-    for(const proof of proofs) {
-        if(proof.part === undefined && proof.texRef !== undefined) {
-            if(Array.isArray(proof.texRef)) {
-                const parts = proof.texRef.map(texLabel => getTexRef(texLabel, texRefMap) || texLabel);
-                proof.part = parts.join(', ');
-            }
-            else {
-                const newPart = getTexRef(proof.texRef, texRefMap);
-                if(newPart !== undefined) {
-                    proof.part = newPart;
+    // change 'companion paper proofs' to 'external paper proofs'
+    if(texRefs !== undefined) {
+        // build a map of label to theorem/lemma/example number
+        const texRefMap = processTexRefs(texRefs, config);
+        // collect all proofs
+        const proofs: Proof[] = [];
+        proofs.push(...(input.implications ?? []));
+        proofs.push(...(input.counterExamples ?? []));
+        for(const [_, predConds] of Object.entries(input.predAttrs ?? {})) {
+            proofs.push(...predConds);
+        }
+        // modify proofs
+        for(const proof of proofs) {
+            if(proof.part === undefined && proof.url === undefined && proof.texRef !== undefined) {
+                if(Array.isArray(proof.texRef)) {
+                    const parts = proof.texRef.map(texLabel => getTexRef(texLabel, texRefMap) || texLabel);
+                    proof.part = parts.join(', ');
+                }
+                else {
+                    const newPart = getTexRef(proof.texRef, texRefMap);
+                    if(newPart !== undefined) {
+                        proof.part = newPart;
+                    }
+                }
+                if(proof.part !== undefined) {
+                    proof.url = config.paperUrl;
+                    if(config.paperLinkText !== undefined) {
+                        proof.linkText = config.paperLinkText;
+                    }
                 }
             }
         }
