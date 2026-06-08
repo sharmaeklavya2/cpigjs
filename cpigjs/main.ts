@@ -234,22 +234,35 @@ function getTexRef(texLabel: string, texRefMap: Map<string, string>): string | u
     return texRef;
 }
 
+function standardizeUrl(url: string): string {
+    if(url.toLowerCase().startsWith('doi:')) {
+        const doi = url.slice(4);
+        return `https://doi.org/${doi}`;
+    }
+    else if(url.toLowerCase().startsWith('arxiv:')) {
+        const arxivId = url.slice(6);
+        return `https://arxiv.org/abs/${arxivId}`;
+    }
+    else {
+        return url;
+    }
+}
+
 export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[] | undefined, config: Config): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
 
+    // collect all proofs
+    const proofs: Proof[] = [];
+    proofs.push(...(input.implications ?? []));
+    proofs.push(...(input.counterExamples ?? []));
+    for(const [_, predConds] of Object.entries(input.predAttrs ?? {})) {
+        proofs.push(...predConds);
+    }
+
     // change 'companion paper proofs' to 'external paper proofs'
     if(texRefs !== undefined) {
-        // build a map of label to theorem/lemma/example number
         const texRefMap = processTexRefs(texRefs, config);
-        // collect all proofs
-        const proofs: Proof[] = [];
-        proofs.push(...(input.implications ?? []));
-        proofs.push(...(input.counterExamples ?? []));
-        for(const [_, predConds] of Object.entries(input.predAttrs ?? {})) {
-            proofs.push(...predConds);
-        }
-        // modify proofs
         for(const proof of proofs) {
             if(proof.part === undefined && proof.url === undefined && proof.texRef !== undefined) {
                 if(Array.isArray(proof.texRef)) {
@@ -268,6 +281,17 @@ export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef
                         proof.linkText = config.paperLinkText;
                     }
                 }
+            }
+        }
+    }
+
+    // standardize urls in proofs
+    for(const proof of proofs) {
+        if(proof.linkText === undefined && proof.url !== undefined) {
+            const stdUrl = standardizeUrl(proof.url);
+            if(stdUrl !== proof.url) {
+                proof.linkText = proof.url;
+                proof.url = stdUrl;
             }
         }
     }
