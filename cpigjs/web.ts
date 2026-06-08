@@ -74,6 +74,25 @@ export async function setup(sfUrl: string, inputUrls: string[], config: Config) 
     });
 }
 
+class FetchError extends Error {
+    constructor(public response: Response) {
+        const errMsgParts = ['HTTP ', response.status];
+        if(response.statusText) {
+            errMsgParts.push(': ');
+            errMsgParts.push(response.statusText);
+        }
+        super(errMsgParts.join(''));
+        this.name = "FetchError";
+    }
+}
+
+function assertFetchOk(response: Response): Response {
+    if (!response.ok) {
+        throw new FetchError(response);
+    }
+    return response;
+}
+
 export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config):
         Promise<{sf: SetFamily, input: CpigInput, texRefs: RawTexRef[] | undefined}> {
     /* const pageLoadPromise = new Promise(function(resolve, reject) {
@@ -81,14 +100,15 @@ export async function fetchInput(sfUrl: string, inputUrls: string[], config: Con
     });
     */
     const sfPromise = window.fetch(sfUrl)
+        .then(assertFetchOk)
         .then(response => response.json())
         .then(json => SetFamily.fromJson(json));
     const inputsPromise = Promise.all(inputUrls.map(
-        inputUrl => window.fetch(inputUrl).then(response => response.json())));
+        inputUrl => window.fetch(inputUrl).then(assertFetchOk).then(response => response.json())));
     let texRefsPromise;
     const configSaysTexRefs = (config.texRefsUrl !== undefined && config.paperUrl !== undefined);
     if(configSaysTexRefs) {
-        texRefsPromise = window.fetch(config.texRefsUrl!).then(response => response.json());
+        texRefsPromise = window.fetch(config.texRefsUrl!).then(assertFetchOk).then(response => response.json());
     }
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);
