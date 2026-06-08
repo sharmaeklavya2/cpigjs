@@ -108,7 +108,15 @@ export async function fetchInput(sfUrl: string, inputUrls: string[], config: Con
     let texRefsPromise;
     const configSaysTexRefs = (config.texRefsUrl !== undefined && config.paperUrl !== undefined);
     if(configSaysTexRefs) {
-        texRefsPromise = window.fetch(config.texRefsUrl!).then(assertFetchOk).then(response => response.json());
+        texRefsPromise = window.fetch(config.texRefsUrl!, {integrity: config.texRefsUrlIntegrity})
+            .then(assertFetchOk)
+            .then(response => response.json())
+            .catch((e) => {
+                if(e instanceof Error) {
+                    console.warn('An error occurred while fetching config.texRefsUrl:', e);
+                    return undefined;
+                }
+            });
     }
     const sf = await sfPromise;
     const input = combineInputs(await inputsPromise);

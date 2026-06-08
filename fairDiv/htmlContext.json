@@ -8,6 +8,7 @@
 "suffixHTML": "",
 "config": {
     "texRefsUrl": "https://sharmaeklavya2.github.io/fd-impls/texRefs.json",
+    "texRefsUrlIntegrity": "sha384-9YMlWsC/MsSlBdtyOPiRvryvNqWy4TCIK6WbyXKh6SvOctrKQbKb7kY8FgY/shS0",
     "paperUrl": "https://sharmaeklavya2.github.io/fd-impls/paper.pdf",
     "showPageNumber": true
 }

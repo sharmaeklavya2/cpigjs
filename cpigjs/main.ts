@@ -68,6 +68,7 @@ export interface CpigInput {
 
 export interface Config {
     texRefsUrl?: string;
+    texRefsUrlIntegrity?: string;
     paperUrl?: string;
     paperLinkText?: string;
     showPageNumber?: boolean;
