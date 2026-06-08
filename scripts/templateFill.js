@@ -70,10 +70,7 @@ async function main() {
     const templatePromise = readFile(args.template, encUtf8);
     const context = await contextPromise;
     const template = await templatePromise;
-
     const parts = templateFill(template, context, '{{', '}}');
-    const output = parts.join('');
-
     await writeFile(args.output, parts.join(''));
 }
 

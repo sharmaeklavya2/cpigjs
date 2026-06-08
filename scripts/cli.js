@@ -5,7 +5,6 @@ import child_process from 'node:child_process';
 import { SetFamily } from "../cpigjs/setFamily.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "../cpigjs/main.js";
 import { outputPath, outputAttrReasons } from "../cpigjs/cli.js";
-import { Graph } from "../cpigjs/graph.js";
 import yargs from 'yargs';
 
 const encUtf8 = { encoding: 'utf8' };

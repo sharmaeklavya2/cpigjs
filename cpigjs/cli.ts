@@ -1,5 +1,4 @@
-import { MultiMap } from "./multiMap.js";
-import { CpigInput, ProcessedCpigInput, FilteredCpigInput, Implication, PredCond, CounterExample } from "./main.js";
+import { FilteredCpigInput } from "./main.js";
 
 export interface Ostream {
     log: (...args: any[]) => undefined;
