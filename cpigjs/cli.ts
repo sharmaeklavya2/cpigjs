@@ -5,7 +5,7 @@ export interface Ostream {
     error: (...args: any[]) => undefined;
 }
 
-export function outputPath(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): void {
+export function outputImplPathAndCexs(input: FilteredCpigInput, u: string, v: string, stdout: Ostream): void {
     if(!input.predsMap.has(u)) {
         throw new Error('unknown predicate ' + u);
     }
@@ -31,7 +31,7 @@ export function outputPath(input: FilteredCpigInput, u: string, v: string, stdou
     }
 }
 
-export function outputAttrReasons(input: FilteredCpigInput, predNames: string[], stdout: Ostream) {
+export function outputAttrReasons(input: FilteredCpigInput, predNames: readonly string[], stdout: Ostream): void {
     for(const [attrName, attrReasonsMap] of input.predAttrs.entries()) {
         for(const predName of predNames) {
             if(!input.predsMap.has(predName)) {

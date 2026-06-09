@@ -74,7 +74,7 @@ export interface Config {
     showPageNumber?: boolean;
 }
 
-export function combineInputs(inputs: CpigInput[]): CpigInput {
+export function combineInputs(inputs: readonly CpigInput[]): CpigInput {
     const preds = [], imps = [], cExs = [], attrs = [];
     const predAttrs: Record<string, PredCond[]> = {};
     for(const input of inputs) {
@@ -181,7 +181,7 @@ function validateInput(input: CpigInput, sf: SetFamily): {'predsMap': Map<string
 export class ImpGraphGen {
     predNames: string[];
     cache: Map<string, Graph<string, Implication>>;
-    constructor(predNames: Iterable<string>, public sf: SetFamily, public imps: Implication[]) {
+    constructor(predNames: Iterable<string>, public sf: SetFamily, public imps: readonly Implication[]) {
         this.predNames = Array.from(predNames);
         this.cache = new Map();
     }
@@ -212,7 +212,7 @@ function capitalize(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function processTexRefs(texRefs: RawTexRef[], config: Config): Map<string, string> {
+export function processTexRefs(texRefs: readonly RawTexRef[], config: Config): Map<string, string> {
     const refMap = new Map<string, string>();
     for(const texRef of texRefs) {
         if(refMap.has(texRef.texLabel)) {
@@ -249,7 +249,7 @@ function standardizeUrl(url: string): string {
     }
 }
 
-export function processInput(input: CpigInput, sf: SetFamily, texRefs: RawTexRef[] | undefined, config: Config): ProcessedCpigInput {
+export function processInput(input: CpigInput, sf: SetFamily, texRefs: readonly RawTexRef[] | undefined, config: Config): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
 
@@ -433,7 +433,7 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     return maybeEdges;
 }
 
-function componentStr(S: string[], parens: boolean, predsMap?: Map<string, Info>): string {
+function componentStr(S: readonly string[], parens: boolean, predsMap?: Map<string, Info>): string {
     const begDelim = parens ? '( ' : '';
     const endDelim = parens ? ' )' : '';
     let labels = S;
@@ -483,7 +483,7 @@ function toDotAttrs(d: object): string {
     }
 }
 
-export function serializeGraph(input: FilteredCpigInput, predNames: string[], drawOptions: DrawOptions,
+export function serializeGraph(input: FilteredCpigInput, predNames: readonly string[], drawOptions: DrawOptions,
         format: string): string[] {
     if(format === 'txt') {
         const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
@@ -504,7 +504,7 @@ interface DrawOptions {
     drawL2R: boolean;
 }
 
-export function getDotGraph(input: FilteredCpigInput, predNames: string[], drawOptions: DrawOptions): string[] {
+export function getDotGraph(input: FilteredCpigInput, predNames: readonly string[], drawOptions: DrawOptions): string[] {
     const {scc, dag} = input.impG.trCompression(predNames.length > 0 ? predNames : undefined);
     const redDag = dag.trRed();
     const rankdir = drawOptions.drawL2R ? 'LR' : 'TB';

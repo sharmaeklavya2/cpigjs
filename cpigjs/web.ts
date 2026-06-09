@@ -43,7 +43,7 @@ function setupOutput(): void {
 
 const predsDescription = 'Pick predicates to show. If none are selected, all are shown. If two are selected, proofs of (non-)implcation are shown. If at most two are selected, proofs of (in)feasibility are shown.';
 
-export async function setup(sfUrl: string, inputUrls: string[], config: Config) {
+export async function setup(sfUrl: string, inputUrls: readonly string[], config: Config) {
     const {sf, input, texRefs} = await fetchInput(sfUrl, inputUrls, config);
     const procInput = processInput(input, sf, texRefs, config);
     if(procInput.insaneCExs.length > 0) {
@@ -93,7 +93,7 @@ function assertFetchOk(response: Response): Response {
     return response;
 }
 
-export async function fetchInput(sfUrl: string, inputUrls: string[], config: Config):
+export async function fetchInput(sfUrl: string, inputUrls: readonly string[], config: Config):
         Promise<{sf: SetFamily, input: CpigInput, texRefs: RawTexRef[] | undefined}> {
     /* const pageLoadPromise = new Promise(function(resolve, reject) {
         window.addEventListener('DomContentLoaded', resolve);
@@ -155,7 +155,7 @@ function addSfeParams(output: f2f.Param[], setFamily: SetFamily) {
     }
 }
 
-function addPredParams(output: f2f.Param[], preds: Info[]) {
+function addPredParams(output: f2f.Param[], preds: readonly Info[]) {
     for(const pred of preds) {
         output.push(new f2f.Param(pred.name, new f2f.CheckBoxWidget({defVal: false}),
             {label: pred.label || pred.name}));
@@ -233,7 +233,7 @@ function getUnderHtml(under: any, sf: SetFamily, className?: string): HTMLElemen
     return elem;
 }
 
-function getImplPathHtml(path: Implication[], sf: SetFamily, config: Config): HTMLElement {
+function getImplPathHtml(path: readonly Implication[], sf: SetFamily, config: Config): HTMLElement {
     const olElem = createElement('ol', {'class': 'implPath'});
     for(const e of path) {
         const liElem = createElement('li', {'class': 'proof-step'});
@@ -249,7 +249,7 @@ function getImplPathHtml(path: Implication[], sf: SetFamily, config: Config): HT
     return olElem;
 }
 
-function getCeListHtml(ceList: CounterExample[], sf: SetFamily, config: Config): HTMLElement {
+function getCeListHtml(ceList: readonly CounterExample[], sf: SetFamily, config: Config): HTMLElement {
     const olElem = createElement('ol', {'class': 'ceList'});
     for(const ce of ceList) {
         const liElem = createElement('li', {'class': 'ce-reason'});
@@ -311,7 +311,7 @@ let colorToCssClass: Record<string, string> = {
     'red': 'danger',
 };
 
-function showExistenceProofHtml(predNames: string[], input: FilteredCpigInput, sf: SetFamily, config: Config) {
+function showExistenceProofHtml(predNames: readonly string[], input: FilteredCpigInput, sf: SetFamily, config: Config) {
     const verticesElem = document.getElementById('vertices')!;
     verticesElem.replaceChildren();
     for(const predName of predNames) {

@@ -4,7 +4,7 @@ import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import child_process from 'node:child_process';
 import { SetFamily } from "../cpigjs/setFamily.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "../cpigjs/main.js";
-import { outputPath, outputAttrReasons } from "../cpigjs/cli.js";
+import { outputImplPathAndCexs, outputAttrReasons } from "../cpigjs/cli.js";
 import yargs from 'yargs';
 
 const encUtf8 = { encoding: 'utf8' };
@@ -93,9 +93,9 @@ async function singleQuery(args) {
     const predNames = args.pred ?? [];
     if(predNames.length === 2) {
         const [u, v] = args.pred;
-        outputPath(filteredInput, u, v, console);
+        outputImplPathAndCexs(filteredInput, u, v, console);
         console.log();
-        outputPath(filteredInput, v, u, console);
+        outputImplPathAndCexs(filteredInput, v, u, console);
     }
     if(predNames.length <= 2 && predNames.length >= 1) {
         outputAttrReasons(filteredInput, predNames, console);

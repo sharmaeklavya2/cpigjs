@@ -1,10 +1,10 @@
 import { Edge, Graph } from "./graph.js";
 
 export interface Info {
-    name: string;
-    label?: string;
-    text?: string;
-    url?: string;
+    readonly name: string;
+    readonly label?: string;
+    readonly text?: string;
+    readonly url?: string;
 }
 
 export class SetFamily {
@@ -77,7 +77,7 @@ export class BoolSetFamily extends SetFamily {
     }
 }
 
-type sspair = [string, string];
+type sspair = readonly [string, string];
 
 function pairToEdge(p: sspair): Edge<string> {
     return {from: p[0], to: p[1]};
@@ -87,7 +87,7 @@ export class DagSetFamily extends SetFamily {
     nameToValue: Map<string, Info>;
     containments: Set<string>;
 
-    constructor(info: Info, public defVal: string, public values: Info[], containments: sspair[]) {
+    constructor(info: Info, public defVal: string, public values: readonly Info[], containments: readonly sspair[]) {
         super(info);
         this.nameToValue = new Map(values.map((info: Info) => [info.name, info]));
         const edges = containments.map(pairToEdge);
@@ -96,7 +96,7 @@ export class DagSetFamily extends SetFamily {
         this.containments = new Set(trEdges.map((e: Edge<string>) => e.from + ',' + e.to));
     }
 
-    static fromJson(obj: {info: Info, default: string, values: Info[], containments: sspair[]}) {
+    static fromJson(obj: {info: Info, default: string, values: readonly Info[], containments: readonly sspair[]}) {
         return new DagSetFamily(obj.info, obj.default, obj.values, obj.containments);
     }
 
@@ -127,7 +127,7 @@ export class DagSetFamily extends SetFamily {
 }
 
 export class ProdSetFamily extends SetFamily {
-    constructor(info: Info, public parts: SetFamily[]) {
+    constructor(info: Info, public parts: readonly SetFamily[]) {
         super(info);
     }
 
@@ -135,7 +135,7 @@ export class ProdSetFamily extends SetFamily {
         return ['ProdSetFamily(', this.info.name, ', parts=[', this.parts ,'])'].join('');
     }
 
-    static fromJson(obj: {info: Info, parts: unknown[]}): ProdSetFamily {
+    static fromJson(obj: {info: Info, parts: readonly unknown[]}): ProdSetFamily {
         const parts = obj.parts.map((partObj: unknown) => SetFamily.fromJson(partObj));
         return new ProdSetFamily(obj.info, parts);
     }
