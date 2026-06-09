@@ -1,7 +1,7 @@
 {
 "attrs": [
-    {"name": "feasible", "propgDir": "fwd", "color": "green"},
-    {"name": "infeasible", "propgDir": "rev", "color": "red"}
+    {"name": "feasible", "propgDir": "fwd", "color": "green", "style": "filled,rounded"},
+    {"name": "infeasible", "propgDir": "rev", "color": "red", "shape": "none"}
 ],
 "predicates": [
     {"name": "APS", "text": "AnyPrice Share"},
