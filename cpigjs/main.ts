@@ -28,11 +28,11 @@ export interface Proof {
 */
 
 export interface RawTexRef {
-    type: string;
-    texLabel: string;
-    outputId: string;
-    anchor: string
-    page: string
+    readonly type: string;
+    readonly texLabel: string;
+    readonly outputId: string;
+    readonly anchor: string
+    readonly page: string
 }
 
 export interface Implication extends Edge<string>, Proof {
@@ -40,22 +40,22 @@ export interface Implication extends Edge<string>, Proof {
 }
 
 export interface CounterExample extends Proof {
-    satisfies: string;
-    butNot: string;
+    readonly satisfies: string;
+    readonly butNot: string;
     under: any;
 }
 
 export interface PredCond extends Proof {
-    name: string;
+    readonly name: string;
     under: any;
 }
 
 export interface AttrInfo extends Info {
-    color?: string;
-    bgColor?: string;
-    shape?: string;
-    style?: string;
-    propgDir?: "fwd" | "rev";  // propagation direction
+    readonly color?: string;
+    readonly bgColor?: string;
+    readonly shape?: string;
+    readonly style?: string;
+    readonly propgDir?: "fwd" | "rev";  // propagation direction
 }
 
 export interface CpigInput {
@@ -67,15 +67,15 @@ export interface CpigInput {
 }
 
 export interface Config {
-    texRefsUrl?: string;
-    texRefsUrlIntegrity?: string;
-    paperUrl?: string;
-    paperLinkText?: string;
-    showPageNumber?: boolean;
+    readonly texRefsUrl?: string;
+    readonly texRefsUrlIntegrity?: string;
+    readonly paperUrl?: string;
+    readonly paperLinkText?: string;
+    readonly showPageNumber?: boolean;
 }
 
 export function combineInputs(inputs: readonly CpigInput[]): CpigInput {
-    const preds = [], imps = [], cExs = [], attrs = [];
+    const preds: Info[] = [], imps: Implication[] = [], cExs: CounterExample[] = [], attrs: AttrInfo[] = [];
     const predAttrs: Record<string, PredCond[]> = {};
     for(const input of inputs) {
         preds.push(...(input.predicates || []));
@@ -89,9 +89,7 @@ export function combineInputs(inputs: readonly CpigInput[]): CpigInput {
             else {
                 for(const from of fromList) {
                     for(const to of toList) {
-                        const imp2 = Object.assign({}, imp);
-                        imp2.from = from;
-                        imp2.to = to;
+                        const imp2 = Object.assign({}, imp, {from: from, to: to}) as Implication;
                         imps.push(imp2);
                     }
                 }
@@ -106,9 +104,7 @@ export function combineInputs(inputs: readonly CpigInput[]): CpigInput {
             else {
                 for(const sat of satList) {
                     for(const butNot of butNotList) {
-                        const cex2 = Object.assign({}, cex);
-                        cex2.satisfies = sat;
-                        cex2.butNot = butNot;
+                        const cex2 = Object.assign({}, cex, {satisfies: sat, butNot: butNot}) as CounterExample;
                         cExs.push(cex2);
                     }
                 }

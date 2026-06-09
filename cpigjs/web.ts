@@ -75,7 +75,7 @@ export async function setup(sfUrl: string, inputUrls: readonly string[], config:
 }
 
 class FetchError extends Error {
-    constructor(public response: Response) {
+    constructor(public readonly response: Response) {
         const errMsgParts = ['HTTP ', response.status];
         if(response.statusText) {
             errMsgParts.push(': ');

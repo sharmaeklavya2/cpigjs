@@ -1,20 +1,20 @@
 import { CircularQueue } from "./queue.js";
 
 export interface Edge<T> {
-    from: T;
-    to: T;
+    readonly from: T;
+    readonly to: T;
 }
 
 export class Graph<T, ET extends Edge<T>> {
-    outTreeCache: Map<T, Map<T, ET>>;
-    inTreeCache: Map<T, Map<T, ET>>;
+    readonly outTreeCache: Map<T, ReadonlyMap<T, ET>>;
+    readonly inTreeCache: Map<T, ReadonlyMap<T, ET>>;
 
-    constructor(public adj: Map<T, ET[]>, public radj: Map<T, ET[]>, public edges: ET[]) {
+    constructor(public readonly adj: ReadonlyMap<T, ET[]>, public readonly radj: ReadonlyMap<T, ET[]>, public readonly edges: readonly ET[]) {
         this.outTreeCache = new Map();
         this.inTreeCache = new Map();
     }
 
-    static fromVE<T, ET extends Edge<T>>(vertices: Iterable<T>, edges: ET[]): Graph<T, ET> {
+    static fromVE<T, ET extends Edge<T>>(vertices: Iterable<T>, edges: readonly ET[]): Graph<T, ET> {
         const adj = new Map<T, ET[]>();
         const radj = new Map<T, ET[]>();
         for(const v of vertices) {
@@ -41,13 +41,13 @@ export class Graph<T, ET extends Edge<T>> {
         return new Graph(adj, radj, edges);
     }
 
-    getOutTree(root: T): Map<T, ET> {
+    getOutTree(root: T): ReadonlyMap<T, ET> {
         // Returns all (u, e) pairs, where u is reachable from root, and e is an edge incident to u.
-        let pred = this.outTreeCache.get(root);
-        if(pred !== undefined) {
-            return pred;
+        let predCached = this.outTreeCache.get(root);
+        if(predCached !== undefined) {
+            return predCached;
         }
-        pred = new Map<T, ET>();
+        let pred = new Map<T, ET>();
         const queue = new CircularQueue<T>(this.adj.size);
         queue.push(root);
         while(queue.size > 0) {
@@ -67,13 +67,13 @@ export class Graph<T, ET extends Edge<T>> {
         return pred;
     }
 
-    getInTree(root: T): Map<T, ET> {
+    getInTree(root: T): ReadonlyMap<T, ET> {
         // Returns all (u, e) pairs, where root is reachable from u, and e is an edge originating from u.
-        let succ = this.inTreeCache.get(root);
-        if(succ !== undefined) {
-            return succ;
+        let succCached = this.inTreeCache.get(root);
+        if(succCached !== undefined) {
+            return succCached;
         }
-        succ = new Map<T, ET>();
+        let succ = new Map<T, ET>();
         const queue = new CircularQueue<T>(this.adj.size);
         queue.push(root);
         while(queue.size > 0) {
@@ -157,7 +157,7 @@ export class Graph<T, ET extends Edge<T>> {
                 const rFromU = this.getOutTree(u);
                 for(const v of rFromU.keys()) {
                     if(v2i.has(v)) {
-                        const ui = v2i.get(u)!, vi = v2i.get(v)!;
+                        // const ui = v2i.get(u)!, vi = v2i.get(v)!;
                         const rFromV = this.getOutTree(v);
                         if(rFromV.has(u)) {
                             sccLeader.set(v, u);
