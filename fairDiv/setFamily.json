@@ -60,7 +60,7 @@
                 {"name": "tribool", "label": "{−1, 0, 1}"},
                 {"name": "binary", "label": "{0, 1}"},
                 {"name": "negBinary", "label": "{−1, 0}"},
-                {"name": "pm1", "label": "{-1, 1}"},
+                {"name": "pm1", "label": "{−1, 1}"},
                 {"name": "unit", "label": "{1}"},
                 {"name": "negUnit", "label": "{−1}"}
             ],
