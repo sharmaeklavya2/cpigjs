@@ -495,9 +495,9 @@ export function serializeGraph(input: FilteredCpigInput, predNames: readonly str
     }
 }
 
-interface DrawOptions {
-    showMaybeEdges?: boolean;
-    drawL2R: boolean;
+export interface DrawOptions {
+    readonly showMaybeEdges?: boolean;
+    readonly drawL2R: boolean;
 }
 
 export function getDotGraph(input: FilteredCpigInput, predNames: readonly string[], drawOptions: DrawOptions): string[] {

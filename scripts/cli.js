@@ -2,60 +2,38 @@
 
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import child_process from 'node:child_process';
-import { SetFamily } from "../cpigjs/setFamily.js";
-import { combineInputs, processInput, filterInput, serializeGraph } from "../cpigjs/main.js";
-import { outputImplPathAndCexs, outputAttrReasons } from "../cpigjs/cli.js";
+import { singleQuery, bulkQuery } from "../cpigjs/cli.js";
 import yargs from 'yargs';
 
-const encUtf8 = { encoding: 'utf8' };
-const pendingPromises = [];
+const encUtf8 = {encoding: 'utf8'};
+const recursiveTrue = {recursive: true};
 
-async function readAndProcessInput(args) {
-    const sfPromise = readFile(args.sf, encUtf8)
-        .then(contents => SetFamily.fromJson(JSON.parse(contents)));
-    const inputsPromise = Promise.all(args.input.map(
-        inputPath => readFile(inputPath, encUtf8).then(JSON.parse)));
-    const sf = await sfPromise;
-    const inputs = await inputsPromise;
-
-    const input = combineInputs(inputs);
-    const procInput = processInput(input, sf);
-    if(procInput.insaneCExs.length > 0) {
-        console.warn('contradictory counterexamples found!');
-    }
-    return [sf, procInput];
-}
-
-function getExt(fname) {
-    // from https://stackoverflow.com/a/12900504
-    return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2);
-}
-
-async function outputToFile(fname, fmt, drawOptions, filteredInput, predNames) {
-    if(fmt === 'dot' || fmt === 'svg' || fmt === 'pdf' || fmt === 'png') {
-        const lines = serializeGraph(filteredInput, predNames, drawOptions, 'dot');
-        if(fmt === 'dot') {
-            await writeFile(fname, lines.join('\n'));
-        }
-        else {
-            await writeFile(fname + '.dot', lines.join('\n'));
-            const child = child_process.spawn('dot', ['-T' + fmt, fname + '.dot', '-o', fname]);
-            child.on('exit', (exitCode) => {pendingPromises.push(unlink(fname + '.dot'));});
-        }
-    }
-    else if(fmt === 'txt') {
-        const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
-        await writeFile(fname, lines.join('\n'));
-    }
-    else {
-        throw new Error('unknown output file type ' + fmt);
-    }
-}
+const CLI_ENV = {
+    'readFile': function(path) {
+            return readFile(path, encUtf8);
+        },
+    'writeFile': writeFile,
+    'spawn': function(command, args, onExit) {
+            const child = child_process.spawn(command, args);
+            if(onExit !== undefined) {
+                child.on('exit', onExit);
+            }
+        },
+    'mkdirP': function(path) {
+            return mkdir(path, recursiveTrue);
+        },
+    'unlink': unlink,
+};
 
 function singleBuilder(parser) {
     parser.option('constraint', {alias: 'c', type: 'string', demandOption: true,
             describe: "constraint as a JSON"})
         .option('output', {alias: 'o', type: 'string'})
+}
+
+function singleQueryYargs(args) {
+    return singleQuery({sfPath: args.sf, inputPaths: args.input, constraintStr: args.constraint,
+        outputPath: args.output, predNames: args.pred, hideUnknown: args.hideUnknown, l2r: args.l2r}, CLI_ENV);
 }
 
 function bulkBuilder(parser) {
@@ -67,6 +45,11 @@ function bulkBuilder(parser) {
             choices: ['pdf', 'svg', 'png', 'dot', 'txt']})
 }
 
+function bulkQueryYargs(args) {
+    return bulkQuery({sfPath: args.sf, inputPaths: args.input, constraintsFile: args.constraintsFile, fmt: args.fmt,
+        outDir: args.outDir, predNames: args.pred, hideUnknown: args.hideUnknown, l2r: args.l2r}, CLI_ENV);
+}
+
 async function main() {
     await yargs(process.argv.slice(2))
         .option('sf', {type: 'string', demandOption: true,
@@ -75,59 +58,12 @@ async function main() {
             describe: "path to JSON file containing predicates and implications"})
         .option('pred', {type: 'string', array: true,
             describe: "predicates to consider (default: all)"})
-        .option('hide_unknown', {boolean: true, describe: "hide speculative implications"})
+        .option('hideUnknown', {boolean: true, describe: "hide speculative implications"})
         .option('l2r', {boolean: true, describe: "draw left to right"})
-        .command(['single', '$0'], 'run a single query', singleBuilder, singleQuery)
-        .command('bulk', 'run multiple queries', bulkBuilder, bulkQuery)
+        .command(['single', '$0'], 'run a single query', singleBuilder, singleQueryYargs)
+        .command('bulk', 'run multiple queries', bulkBuilder, bulkQueryYargs)
         .help()
         .parse();
-    await Promise.all(pendingPromises);
-}
-
-async function singleQuery(args) {
-    // console.log(args);
-    const [sf, procInput] = await readAndProcessInput(args);
-    const constraint = JSON.parse(args.constraint);
-    const filteredInput = filterInput(procInput, sf, constraint);
-
-    const predNames = args.pred ?? [];
-    if(predNames.length === 2) {
-        const [u, v] = args.pred;
-        outputImplPathAndCexs(filteredInput, u, v, console);
-        console.log();
-        outputImplPathAndCexs(filteredInput, v, u, console);
-    }
-    if(predNames.length <= 2 && predNames.length >= 1) {
-        outputAttrReasons(filteredInput, predNames, console);
-    }
-    const drawOptions = {showMaybeEdges: !(args.hide_unknown), drawL2R: args.l2r};
-    if(args.output) {
-        const ext = getExt(args.output);
-        outputToFile(args.output, ext, drawOptions, filteredInput, predNames);
-    }
-    else {
-        console.log();
-        const lines = serializeGraph(filteredInput, predNames, drawOptions, 'txt');
-        console.log(lines.join('\n'));
-    }
-}
-
-async function bulkQuery(args) {
-    // console.log(args);
-    const constraintsPromise = readFile(args.constraintsFile, encUtf8).then(JSON.parse);
-    const [sf, procInput] = await readAndProcessInput(args);
-    const constraints = await constraintsPromise;
-
-    const predNames = args.pred ?? [];
-    const drawOptions = {showMaybeEdges: !(args.hide_unknown), drawL2R: args.l2r};
-
-    await mkdir(args.outDir, {recursive: true});
-    for(const constraint of constraints) {
-        const filteredInput = filterInput(procInput, sf, constraint);
-        const constraintStr = sf.serialize(sf.canonicalize(constraint));
-        const fname = args.outDir + '/' + constraintStr + '.' + args.fmt;
-        outputToFile(fname, args.fmt, drawOptions, filteredInput, predNames);
-    }
 }
 
 await main();
