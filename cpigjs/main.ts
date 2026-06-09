@@ -245,7 +245,7 @@ function standardizeUrl(url: string): string {
     }
 }
 
-export function processInput(input: CpigInput, sf: SetFamily, texRefs: readonly RawTexRef[] | undefined, config: Config): ProcessedCpigInput {
+export function processInput(input: CpigInput, sf: SetFamily, texRefs?: readonly RawTexRef[], config: Config = {}): ProcessedCpigInput {
     const {predsMap, attrsMap} = validateInput(input, sf);
     const impGGen = new ImpGraphGen(predsMap.keys(), sf, input.implications || []);
 

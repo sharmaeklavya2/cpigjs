@@ -19,7 +19,7 @@ async function readAndProcessInput(args) {
     const inputs = await inputsPromise;
 
     const input = combineInputs(inputs);
-    const procInput = processInput(input, sf, []);
+    const procInput = processInput(input, sf);
     if(procInput.insaneCExs.length > 0) {
         console.warn('contradictory counterexamples found!');
     }
