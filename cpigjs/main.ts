@@ -457,12 +457,17 @@ function sccDagToStr(scc: Map<string, string[]>, dag: Graph<string, Edge<string>
 }
 
 const textColors: Record<string, string> = {
-    'red': '#660a0a',
+    'red':   '#660a0a',
     'green': '#0d400d',
 };
 
+const borderColors: Record<string, string> = {
+    'red':   '#a36262',
+    'green': '#648c64',
+};
+
 const bgColors: Record<string, string> = {
-    'red': '#ffe8e8',
+    'red':   '#ffe8e8',
     'green': '#e8ffe8',
 };
 
@@ -514,7 +519,7 @@ export function getDotGraph(input: FilteredCpigInput, predNames: readonly string
             const attrInfo = input.attrsMap.get(attrName)!;
             if(attrInfo.color !== undefined) {
                 uAttrs.fontcolor = textColors[attrInfo.color] ?? attrInfo.color;
-                uAttrs.color = textColors[attrInfo.color] ?? attrInfo.color;
+                uAttrs.color = borderColors[attrInfo.color] ?? attrInfo.color;
                 if(bgColors.hasOwnProperty(attrInfo.color)) {
                     uAttrs.fillcolor = bgColors[attrInfo.color];
                 }
@@ -531,6 +536,8 @@ export function getDotGraph(input: FilteredCpigInput, predNames: readonly string
         }
         if(uAttrs.fillcolor === undefined) {
             uAttrs.fillcolor = '#eeeeee';
+            uAttrs.fontcolor = '#000000';
+            uAttrs.color = '#666666';
         }
         lines.push(`"${u}"${toDotAttrs(uAttrs)};`);
     }
