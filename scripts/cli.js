@@ -31,9 +31,14 @@ function singleBuilder(parser) {
         .option('output', {alias: 'o', type: 'string'})
 }
 
+function getCommonArgs(args) {
+    return {sfPath: args.sf, inputPaths: args.input,
+        predNames: args.pred, hideUnknown: args.hideUnknown, l2r: args.l2r};
+}
+
 function singleQueryYargs(args) {
-    return singleQuery({sfPath: args.sf, inputPaths: args.input, constraintStr: args.constraint,
-        outputPath: args.output, predNames: args.pred, hideUnknown: args.hideUnknown, l2r: args.l2r}, CLI_ENV);
+    return singleQuery(Object.assign(getCommonArgs(args),
+        {constraintStr: args.constraint, outputPath: args.output}), CLI_ENV);
 }
 
 function bulkBuilder(parser) {
@@ -46,8 +51,8 @@ function bulkBuilder(parser) {
 }
 
 function bulkQueryYargs(args) {
-    return bulkQuery({sfPath: args.sf, inputPaths: args.input, constraintsFile: args.constraintsFile, fmt: args.fmt,
-        outDir: args.outDir, predNames: args.pred, hideUnknown: args.hideUnknown, l2r: args.l2r}, CLI_ENV);
+    return bulkQuery(Object.assign(getCommonArgs(args),
+        {constraintsFile: args.constraintsFile, outDir: args.outDir, fmt: args.fmt}), CLI_ENV);
 }
 
 async function main() {
