@@ -59,6 +59,10 @@ to MMS (maximin share) for additive valuations, run
 
     node scripts/cli.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c '{"valuation": "additive"}' --pred EEF MMS
 
+To verify the resolution of a large number of settings (i.e., verify that these settings have very few open problems left), run
+
+    node scripts/countOpenProblems.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c fairDiv/almost-resolved-settings.json
+
 To run unit tests, run `npx mocha scripts/test.js`.
 
 ## How to Run in the Browser

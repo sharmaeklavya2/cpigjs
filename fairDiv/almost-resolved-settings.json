@@ -1,0 +1,16 @@
+[
+{
+    "valuation": "additive",
+    "marginal": ["nonneg", "nonpos", "general", "binary", "negBinary"],
+    "twoAg": [false, true], "identical": [false, true], "eqEnt": [false, true]
+},
+{
+    "valuation": ["submod", "subadd", "general"],
+    "marginal": ["nonneg", "positive", "binary"],
+    "twoAg": [false, true], "identical": [false, true], "eqEnt": true
+},
+{
+    "valuation": "unitDemand", "marginal": "nonneg",
+    "twoAg": [false, true], "identical": [false, true], "eqEnt": true
+}
+]
