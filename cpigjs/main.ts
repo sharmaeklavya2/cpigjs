@@ -362,7 +362,7 @@ export interface FilteredCpigInput {
     predAttrsSummary: MultiMap<string, string>;  // key is predicate, value is attribute
 }
 
-export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstraint: any): FilteredCpigInput {
+export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstraint: any, computePredAttrs: boolean = true): FilteredCpigInput {
     const constraint = sf.canonicalize(rawConstraint);
     const impG = input.impGGen.get(constraint);
 
@@ -373,42 +373,44 @@ export function filterInput(input: ProcessedCpigInput, sf: SetFamily, rawConstra
     }
 
     const predAttrs = new Map<string, MultiMap<string, PredCond>>();
-    for(const [attrName, attrInfo] of input.attrsMap.entries()) {
-        if(attrInfo.propgDir === 'fwd') {
-            const oldPredConds = input.fwdPredAttrs.get(attrName)!;
-            const newPredConds = new MultiMap<string, PredCond>();
-            for(const predCond of oldPredConds) {
-                if(sf.contains(predCond.under, constraint)) {
-                    newPredConds.add(predCond.name, predCond);
-                }
-            }
-            for(const predCond of oldPredConds) {
-                if(sf.contains(predCond.under, constraint)) {
-                    for(const predName of impG.getOutTree(predCond.name).keys()) {
-                        newPredConds.add(predName, predCond);
-                    }
-                }
-            }
-            predAttrs.set(attrName, newPredConds);
-        }
-        else if(attrInfo.propgDir === 'rev') {
-            const oldPredConds = input.trRevPredAttrs.get(attrName)!;
-            const newPredConds = new MultiMap<string, PredCond>();
-            for(const [predName, reasons] of oldPredConds.map.entries()) {
-                for(const reason of reasons) {
-                    if(sf.contains(constraint, reason.under)) {
-                        newPredConds.add(predName, reason);
-                    }
-                }
-            }
-            predAttrs.set(attrName, newPredConds);
-        }
-    }
-
     const predAttrsSummary = new MultiMap<string, string>();
-    for(const [attrName, predCondMap] of predAttrs.entries()) {
-        for(const predName of predCondMap.map.keys()) {
-            predAttrsSummary.add(predName, attrName);
+    if(computePredAttrs) {
+        for(const [attrName, attrInfo] of input.attrsMap.entries()) {
+            if(attrInfo.propgDir === 'fwd') {
+                const oldPredConds = input.fwdPredAttrs.get(attrName)!;
+                const newPredConds = new MultiMap<string, PredCond>();
+                for(const predCond of oldPredConds) {
+                    if(sf.contains(predCond.under, constraint)) {
+                        newPredConds.add(predCond.name, predCond);
+                    }
+                }
+                for(const predCond of oldPredConds) {
+                    if(sf.contains(predCond.under, constraint)) {
+                        for(const predName of impG.getOutTree(predCond.name).keys()) {
+                            newPredConds.add(predName, predCond);
+                        }
+                    }
+                }
+                predAttrs.set(attrName, newPredConds);
+            }
+            else if(attrInfo.propgDir === 'rev') {
+                const oldPredConds = input.trRevPredAttrs.get(attrName)!;
+                const newPredConds = new MultiMap<string, PredCond>();
+                for(const [predName, reasons] of oldPredConds.map.entries()) {
+                    for(const reason of reasons) {
+                        if(sf.contains(constraint, reason.under)) {
+                            newPredConds.add(predName, reason);
+                        }
+                    }
+                }
+                predAttrs.set(attrName, newPredConds);
+            }
+        }
+
+        for(const [attrName, predCondMap] of predAttrs.entries()) {
+            for(const predName of predCondMap.map.keys()) {
+                predAttrsSummary.add(predName, attrName);
+            }
         }
     }
 
