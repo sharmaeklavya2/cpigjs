@@ -175,8 +175,8 @@ function validateInput(input: CpigInput, sf: SetFamily): {'predsMap': Map<string
 //=[ Process input ]============================================================
 
 export class ImpGraphGen {
-    predNames: string[];
-    cache: Map<string, Graph<string, Implication>>;
+    readonly predNames: readonly string[];
+    readonly cache: Map<string, Graph<string, Implication>>;
     constructor(predNames: Iterable<string>, public sf: SetFamily, public imps: readonly Implication[]) {
         this.predNames = Array.from(predNames);
         this.cache = new Map();
