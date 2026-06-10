@@ -61,7 +61,7 @@ function getExt(fname: string): string {
 export interface CliEnv {
     readFile: (path: string) => Promise<string>;
     writeFile: (path: string, contents: string) => Promise<void>;
-    spawn: (command: string, args?: readonly string[], onExit?: () => Promise<void>) => void;
+    spawn?: (command: string, args?: readonly string[], onExit?: () => Promise<void>) => void;
     mkdirP?: (path: string) => Promise<void>;
     unlink?: (path: string) => Promise<void>;
 }
@@ -91,10 +91,13 @@ async function outputDotToFile(fname: string, fmt: string, lines: readonly strin
         if(fmt === 'dot') {
             await env.writeFile(fname, lines.join('\n'));
         }
-        else {
+        else if(env.spawn !== undefined) {
             await env.writeFile(fname + '.dot', lines.join('\n'));
             const onExit = env.unlink === undefined ? undefined : async () => {await env.unlink!(fname + '.dot');}
             env.spawn('dot', ['-T' + fmt, fname + '.dot', '-o', fname], onExit);
+        }
+        else {
+            throw new Error(`output file type ${fmt} requires 'spawn' to be implemented`);
         }
     }
     else if(fmt === 'txt') {
