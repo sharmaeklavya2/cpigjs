@@ -1,6 +1,7 @@
 import { SetFamily } from "./setFamily.js";
 import { FilteredCpigInput, ProcessedCpigInput } from "./main.js";
 import { combineInputs, processInput, filterInput, serializeGraph } from "./main.js";
+import { cartProdObject } from "./cartProd.js";
 
 interface Ostream {
     log: (...args: any[]) => void;
@@ -159,10 +160,20 @@ export async function singleQuery(i: SingleQueryInput, env: CliEnv): Promise<voi
     }
 }
 
+export function flattenConstraints(constraints: Record<string, unknown>[]): Record<string, unknown>[] {
+    const output = [];
+    for(const constraint of constraints) {
+        for(const constraint2 of cartProdObject(constraint)) {
+            output.push(constraint2);
+        }
+    }
+    return output;
+}
+
 export async function bulkQuery(i: BulkQueryInput, env: CliEnv): Promise<void> {
     const constraintsPromise = env.readFile(i.constraintsFile).then(JSON.parse);
     const [sf, procInput] = await readAndProcessInput(i.sfPath, i.inputPaths, env);
-    const constraints = await constraintsPromise;
+    const constraints = flattenConstraints(await constraintsPromise);
 
     const predNames = i.predNames ?? [];
     const drawOptions = {showMaybeEdges: !(i.hideUnknown), drawL2R: Boolean(i.l2r)};

@@ -1,7 +1,7 @@
 import { SetFamily } from "./setFamily.js";
 import { ProcessedCpigInput } from "./main.js";
 import { countMaybeEdges, filterInput } from "./main.js";
-import { readAndProcessInput, CliEnv } from "./cli.js";
+import { readAndProcessInput, CliEnv, flattenConstraints } from "./cli.js";
 
 function countMaybeAll(input: ProcessedCpigInput, sf: SetFamily, rawConstraints: readonly unknown[],
         predNames?: readonly string[]): [unknown, number][] {
@@ -41,7 +41,8 @@ export async function main(i: QueryInput, env: CliEnv): Promise<void> {
         readAndProcessInput(i.sfPath, i.inputPaths, env),
         env.readFile(i.constraintsPath).then(JSON.parse),
         ]);
-    const constrCounts = countMaybeAll(procInput, sf, constraints, i.predNames);
+    const constraints2 = flattenConstraints(constraints);
+    const constrCounts = countMaybeAll(procInput, sf, constraints2, i.predNames);
     if(constrCounts.length === 0) {
         console.warn('Empty output.');
     }

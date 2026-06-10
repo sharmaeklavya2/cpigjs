@@ -1,4 +1,5 @@
 import { Graph } from "../cpigjs/graph.js";
+import { cartProdArray, cartProdObject } from "../cpigjs/cartProd.js";
 import assert from 'assert';
 
 function pairsToEdges(pairs) {
@@ -24,5 +25,42 @@ describe('Graph', () => {
         const redGraph = graph.trRed();
         assert.deepStrictEqual(redGraph.edges, pairsToEdges([
             ["a", "b"], ["a", "c"], ["b", "d"], ["c", "d"], ["d", "e"]]));
+    });
+});
+
+describe('cartProd', () => {
+    it('works for array of singletons', () => {
+        const a = [[10], [20], ['hello']];
+        const output = cartProdArray(a);
+        const expected = [[10, 20, 'hello']];
+        assert.deepStrictEqual(output, expected);
+    });
+    it('works for singleton', () => {
+        const a = [[10, 20, 30]];
+        const output = cartProdArray(a);
+        const expected = [[10], [20], [30]];
+        assert.deepStrictEqual(output, expected);
+    });
+    it('works for 2-by-2', () => {
+        const a = [['big', 'small'], ['house', 'car']];
+        const output = cartProdArray(a);
+        const expected = [['big', 'house'], ['big', 'car'], ['small', 'house'], ['small', 'car']];
+        assert.deepStrictEqual(output, expected);
+    });
+    it('works for an empty member', () => {
+        const a = [['big', 'small'], [], ['house', 'car']];
+        const output = cartProdArray(a);
+        assert.deepStrictEqual(output, []);
+    });
+    it('works for objects', () => {
+        const a = {'size': ['big', 'small'], 'color': 'red', 'thing': ['house', 'car']};
+        const output = cartProdObject(a);
+        const expected = [
+            {'size': 'big', 'color': 'red', 'thing': 'house'},
+            {'size': 'big', 'color': 'red', 'thing': 'car'},
+            {'size': 'small', 'color': 'red', 'thing': 'house'},
+            {'size': 'small', 'color': 'red', 'thing': 'car'},
+        ];
+        assert.deepStrictEqual(output, expected);
     });
 });
