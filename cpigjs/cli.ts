@@ -66,7 +66,7 @@ export interface CliEnv {
     unlink?: (path: string) => Promise<void>;
 }
 
-async function readAndProcessInput(sfPath: string, inputPaths: readonly string[], env: CliEnv):
+export async function readAndProcessInput(sfPath: string, inputPaths: readonly string[], env: CliEnv):
         Promise<[SetFamily, ProcessedCpigInput]> {
     const sfPromise = env.readFile(sfPath)
         .then(contents => SetFamily.fromJson(JSON.parse(contents)));

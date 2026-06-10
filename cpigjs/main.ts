@@ -431,6 +431,15 @@ function getMaybeEdges(scc: Map<string, string[]>, impG: Graph<string, Implicati
     return maybeEdges;
 }
 
+export function countMaybeEdges(input: FilteredCpigInput, predNames?: readonly string[]): number {
+    if(predNames !== undefined && predNames.length === 0) {
+        predNames = undefined;
+    }
+    const scc = input.impG.trCompression(predNames).scc;
+    const maybeEdges = getMaybeEdges(scc, input.impG, input.cExsMap);
+    return maybeEdges.length;
+}
+
 function componentStr(S: readonly string[], parens: boolean, predsMap?: Map<string, Info>): string {
     const begDelim = parens ? '( ' : '';
     const endDelim = parens ? ' )' : '';
