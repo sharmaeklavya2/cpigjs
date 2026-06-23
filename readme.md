@@ -41,8 +41,7 @@ and `fairDiv/data.json` describes the predicates and implications.
 ## Setup
 
 1.  Install the project's dependencies (`npm install`).
-2.  Install typescript (`npm install -g typescript`).
-3.  Run `npx tsc` to compile the typescript code in `cpigjs`.
+2.  Run `npx tsc` to compile the typescript code in `cpigjs`.
 
 ## How to Run with node
 
