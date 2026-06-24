@@ -5,11 +5,12 @@ to draw Conditional Predicate Implication Graphs.
 
 The primary application of `cpigjs` is visualizing implications among fairness notions
 for the problem of [fairly allocating indivisible items](https://en.wikipedia.org/wiki/Fair_item_allocation).
-The `fairDiv` directory contains data on implications, which `cpigjs` can use to
-infer additional implications and draw them as a DAG.
+The `fairDiv` directory contains data on implications between fairness notions,
+which `cpigjs` can use to infer additional implications and draw them as a DAG.
 
 See the paper [arXiv:2502.02815](https://arxiv.org/abs/2502.02815) for the motivation behind this project
 and a more mathematically-formal explanation of what this program does.
+The paper calls this program 'inference engine' instead of cpigjs.
 
 ## Introduction
 
@@ -43,6 +44,13 @@ and `fairDiv/data.json` describes the predicates and implications.
 1.  Install the project's dependencies (`npm install`).
 2.  Run `npx tsc` to compile the typescript code in `cpigjs`.
 
+## How to Run in the Browser
+
+First, generate an HTML file by running `npm run buildWeb`.
+
+Then serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
+and open `fairDiv/index.html` in your web browser.
+
 ## How to Run with node
 
 Install [Graphviz](https://graphviz.org/documentation/) and ensure that the
@@ -63,10 +71,3 @@ To verify the resolution of a large number of settings (i.e., verify that these 
     node scripts/countOpenProblems.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c fairDiv/almost-resolved-settings.json
 
 To run unit tests, run `npx mocha scripts/test.js`.
-
-## How to Run in the Browser
-
-First, generate an HTML file by running `npm run buildWeb`.
-
-Then serve this project's root directory (i.e., `fairDiv`'s parent directory) using an HTTP server,
-and open `fairDiv/index.html` in your web browser.
