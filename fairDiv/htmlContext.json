@@ -1,15 +1,14 @@
 {
 "title": "Implications in Fair Division of Indivisible Items",
-"funcToFormUrl": "https://sharmaeklavya2.github.io/funcToForm",
-"dotvizUrl": "https://cdn.jsdelivr.net/npm/@viz-js/viz@3.4.0/lib/viz-standalone.mjs",
+"funcToFormUrl": "../external/funcToForm",
+"dotvizUrl": "../external/graphviz.js",
 "familyFile": "setFamily.json",
 "dataFiles": ["data.json"],
 "prefixHTML": "<p>See <a href=\"https://arxiv.org/abs/2502.02815\">arXiv:2502.02815</a> for background. Source code at <a href=\"https://github.com/sharmaeklavya2/cpigjs\">github:sharmaeklavya2/cpigjs</a>.</p>",
 "suffixHTML": "",
 "config": {
-    "texRefsUrl": "https://sharmaeklavya2.github.io/fd-impls/texRefs.json",
-    "texRefsUrlIntegrity": "sha384-bFKjkwW9ly1HvX81hAwiXeUC61X7C5HXqQaa4XvyFKPTNEkjo/7crMwGk87cw3FE",
-    "paperUrl": "https://sharmaeklavya2.github.io/fd-impls/paper.pdf",
+    "texRefsUrl": "../external/fd-impls/texRefs.json",
+    "paperUrl": "../external/fd-impls/paper.pdf",
     "showPageNumber": true
 }
 }
