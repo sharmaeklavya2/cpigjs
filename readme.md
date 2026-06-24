@@ -70,4 +70,8 @@ To verify the resolution of a large number of settings (i.e., verify that these 
 
     node scripts/countOpenProblems.js --sf fairDiv/setFamily.json -i fairDiv/data.json -c fairDiv/almost-resolved-settings.json
 
+To create the figures used in the paper and put them in a directory named `output`, run
+
+    node scripts/cli.js bulk --sf fairDiv/setFamily.json -i fairDiv/data.json -c fairDiv/paper-figures.json -o output
+
 To run unit tests, run `npx mocha scripts/test.js`.

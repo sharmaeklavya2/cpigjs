@@ -1,0 +1,10 @@
+[
+{"valuation": "additive", "marginal": ["nonneg", "nonpos"], "twoAg": false, "eqEnt": true},
+{"valuation": "additive", "marginal": "general", "twoAg": [false, true], "eqEnt": true},
+{"valuation": "additive", "marginal": "tribool", "twoAg": false, "eqEnt": true},
+{"valuation": "additive", "marginal": ["nonneg", "nonpos"], "twoAg": false, "eqEnt": false},
+{"valuation": ["submod", "subadd"], "marginal": "nonneg", "twoAg": false, "eqEnt": true},
+{"valuation": "submod", "marginal": "nonneg", "twoAg": true, "eqEnt": true},
+{"valuation": "submod", "marginal": "binary", "twoAg": false, "eqEnt": true},
+{"valuation": "general", "marginal": ["nonneg", "positive"], "twoAg": false, "eqEnt": true}
+]
