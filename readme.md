@@ -10,7 +10,7 @@ which `cpigjs` can use to infer additional implications and draw them as a DAG.
 
 See the paper [arXiv:2502.02815](https://arxiv.org/abs/2502.02815) for the motivation behind this project
 and a more mathematically-formal explanation of what this program does.
-The paper calls this program 'inference engine' instead of cpigjs.
+The paper calls this program 'inference engine' instead of `cpigjs`.
 
 ## Introduction
 
@@ -42,7 +42,7 @@ and `fairDiv/data.json` describes the predicates and implications.
 ## Setup
 
 1.  Install the project's dependencies (`npm install`).
-2.  Run `npx tsc` to compile the typescript code in `cpigjs`.
+2.  Run `npx tsc` to compile the typescript code.
 
 ## How to Run in the Browser
 
