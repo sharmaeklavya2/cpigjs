@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { main as tsMain } from "../cpigjs/countMaybeCli.js";
+import { main as tsMain } from "../code/countMaybeCli.js";
 import yargs from 'yargs';
 
 const encUtf8 = {encoding: 'utf8'};

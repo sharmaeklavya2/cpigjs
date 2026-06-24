@@ -2,7 +2,7 @@
 
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import child_process from 'node:child_process';
-import { singleQuery, bulkQuery } from "../cpigjs/cli.js";
+import { singleQuery, bulkQuery } from "../code/cli.js";
 import yargs from 'yargs';
 
 const encUtf8 = {encoding: 'utf8'};

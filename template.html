@@ -12,17 +12,17 @@
 }}
 </script>
 <link rel="stylesheet" href="{{funcToFormUrl}}/funcToForm.css" />
-<link rel="stylesheet" href="../cpigjs/cpigjs.css" />
+<link rel="stylesheet" href="../code/cpigjs.css" />
 <link rel="modulepreload" href="{{funcToFormUrl}}/v2.js" />
 <link rel="modulepreload" href="{{dotvizUrl}}" />
-<link rel="modulepreload" href="../cpigjs/web.js" />
-<link rel="modulepreload" href="../cpigjs/main.js" />
-<link rel="modulepreload" href="../cpigjs/setFamily.js" />
-<link rel="modulepreload" href="../cpigjs/multiMap.js" />
-<link rel="modulepreload" href="../cpigjs/graph.js" />
-<link rel="modulepreload" href="../cpigjs/queue.js" />
+<link rel="modulepreload" href="../code/web.js" />
+<link rel="modulepreload" href="../code/main.js" />
+<link rel="modulepreload" href="../code/setFamily.js" />
+<link rel="modulepreload" href="../code/multiMap.js" />
+<link rel="modulepreload" href="../code/graph.js" />
+<link rel="modulepreload" href="../code/queue.js" />
 <script type="module">
-import { setup } from '../cpigjs/web.js';
+import { setup } from '../code/web.js';
 const config = {{config|json}};
 await setup({{familyFile|json}}, {{dataFiles|json}}, config);
 </script>

@@ -1,5 +1,5 @@
-import { Graph } from "../cpigjs/graph.js";
-import { cartProdArray, cartProdObject } from "../cpigjs/cartProd.js";
+import { Graph } from "../code/graph.js";
+import { cartProdArray, cartProdObject } from "../code/cartProd.js";
 import assert from 'assert';
 
 function pairsToEdges(pairs) {
